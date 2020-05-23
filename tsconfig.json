@@ -1,0 +1,42 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"baseUrl": "./src",
+		"module": "none",
+		"sourceMap": true,
+		"jsx": "react",
+		"outFile": "dist/bundle.js",
+		"declaration": false,
+		"removeComments": true,
+		"alwaysStrict": true,
+		"allowUnreachableCode": false,
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"forceConsistentCasingInFileNames": true,
+		"downlevelIteration": true,
+		"experimentalDecorators": true,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"target": "ESNext",
+		"strictNullChecks": true,
+		"emitDecoratorMetadata": true,
+		"typeRoots": ["node_modules/@types"],
+		"lib": [
+			"es2015",
+			"dom.iterable",
+			"es2016.array.include",
+			"es2017.object",
+			"dom"
+		],
+		"outDir": "./dist/",
+		"allowJs": true,
+		"noEmit": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true
+	}
+}

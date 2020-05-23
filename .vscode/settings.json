@@ -1,0 +1,25 @@
+{
+    "[javascript, typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        },
+        "eslint.alwaysShowStatus": true,
+        "eslint.validate": ["javascript", "typescript"]
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+
+    // Usage of WSL with another Git Tool
+
+    "prettier.ignorePath": ".gitignore",
+    "prettier.configPath": ".prettierrc.json",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.exclude": {
+        "**/.DS_Store": false,
+        "**/.git": false,
+        "**/.hg": false,
+        "**/.svn": false,
+        "**/CVS": false
+    }
+}

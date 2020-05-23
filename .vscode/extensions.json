@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "formulahendry.auto-rename-tag",
+        "formulahendry.auto-close-tag",
+        "msjsdiag.debugger-for-chrome",
+        "firefox-devtools.vscode-firefox-debug",
+        "esbenp.prettier-vscode",
+        "christian-kohler.path-intellisense",
+        "rbbit.typescript-hero",
+        "stringham.move-ts",
+        "dbaeumer.vscode-eslint"
+    ]
+}
