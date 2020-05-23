@@ -10,8 +10,6 @@ PRs are also the place to specify and discuss feature development. You can use G
 
 :information_source: [Forks](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) | [Creating a pull request from a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 
-![create pull request](https://raw.githubusercontent.com/wintergatan-community/vmmx-schema/master/images/create%20PR.gif)
-
 ![create pull request](https://raw.githubusercontent.com/wintergatan-community/virtual-mmx/master/images/create%20PR.gif)
 
 ## Contributing
