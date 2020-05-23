@@ -18,7 +18,6 @@ We use [TypeScript](https://www.typescriptlang.org/), [React](https://reactjs.or
 To aid our eyes, we use [Prettier](https://prettier.io/docs/en/editors.html) with the following `.prettierrc` configuration:
 ```json
 {
-  "tabWidth": 2,
   "useTabs": true
 }
 ```
