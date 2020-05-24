@@ -36,7 +36,7 @@ To aid our eyes, we use [Prettier](https://prettier.io/docs/en/editors.html) wit
 
 Use [eslint](https://eslint.org/) to highlight code problems.
 
-> In the future, Prettier and eslint will be required for merging.
+> In the future, Prettier and eslint will be checked against before merging.
 
 ## Introduce yourself
 
