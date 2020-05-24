@@ -14,13 +14,13 @@ If someone wants to work on a feature, they should **comment "Claim"** to be ass
 
 ![Flowchart](./images/flowchart.svg)
 
-> :information_source: [Forks](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) | [Creating a PR from a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+:information_source: [Forks](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) | [Creating a PR from a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 
 While the issue is the place to discuss the feature, the PR is the place to discuss the code (usually between assignees).
 
 ![Where to discuss](./images/where-to-discuss.svg)
 
-> :information_source: [GitHub Flavored Markdown](https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf)
+:information_source: [GitHub Flavored Markdown](https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf)
 
 ## Contributing
 
