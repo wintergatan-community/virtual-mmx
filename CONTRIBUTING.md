@@ -4,7 +4,7 @@
 
 If you're unfamiliar with the GitHub flow, [this](https://guides.github.com/introduction/flow/) is a good, 5 minute long introduction. We're using the **Fork & Pull** model.
 
-**Issues** marked as feature are the base of our flow. These mark single bits of work (Tasks, Features) that can be done in parallel.  
+**Issues** marked as feature are the base of our flow. These mark single bits of work (tasks, seatures) that can be done in parallel.  
 An overview of these can be found in [Development Tasks](https://github.com/wintergatan-community/virtual-mmx/projects/1).  
 Features further down the line can be found on the [Brainstorming board](https://github.com/orgs/wintergatan-community/projects/1).
 
