@@ -3,7 +3,6 @@
 	"version": "0.1.0-alpha",
 	"private": true,
 	"dependencies": {
-		"vmmx-schema": "wintergatan-community/vmmx-schema",
 		"@testing-library/jest-dom": "^4.2.4",
 		"@testing-library/react": "^9.5.0",
 		"@testing-library/user-event": "^7.2.1",
@@ -16,8 +15,9 @@
 		"react-bootstrap": "^1.0.1",
 		"react-dom": "^16.13.1",
 		"react-scripts": "3.4.1",
-		"tone": "^13.8.25",
-		"typescript": "^3.7.5"
+		"tone": "^14.5.28",
+		"typescript": "^3.7.5",
+		"vmmx-schema": "wintergatan-community/vmmx-schema"
 	},
 	"scripts": {
 		"start": "react-scripts start",
