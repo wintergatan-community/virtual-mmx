@@ -31,8 +31,8 @@
 		}
 	},
 	"lint-staged": {
-		"*.{js,ts}": "eslint --cache --fix --ignore-path .eslintignore",
-		"*.{js,ts,css,md}": "prettier --write --ignore-path .eslintignore"
+		"*.{js,ts,tsx}": "eslint --cache --fix --ignore-path .eslintignore",
+		"*.{js,ts,tsx,css,md}": "prettier --write --ignore-path .eslintignore"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
