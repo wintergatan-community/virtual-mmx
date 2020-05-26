@@ -25,7 +25,10 @@ function SubdivisonOption({ type, y }: SubdivisonOptionProps) {
 	);
 	return (
 		<g
-			style={{ transform: `translate(${width - 40}px, ${height - 40 - y}px)` }}
+			style={{
+				transform: `translate(${width - 40}px, ${height - 40 - y}px)`,
+				position: "static",
+			}}
 			onClick={() => {
 				setNoteDivision(noteDivisions[type]);
 			}}

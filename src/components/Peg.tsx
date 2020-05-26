@@ -26,7 +26,7 @@ export function Peg({ tick, channel, activeDivision, click }: MarbleSlotProps) {
 		1,
 		0,
 		channelToPixel(1) - w
-	); //channelToPixel(1) / 2 - w/2 +
+	); //channelToPixel(1) / 2 - w/2
 
 	return (
 		<g style={{ transform: `translate(${x}px, ${y}px)` }}>

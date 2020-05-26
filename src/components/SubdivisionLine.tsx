@@ -11,7 +11,7 @@ export function SubdivisionLine({ tick }: SubdivisionLineProps) {
 
 	return (
 		<g style={{ transform: `translateY(${y}px)` }}>
-			<line x1={0} x2={height} stroke="#171717" />
+			<line x1={0} x2={height} stroke="#201e1b" />
 		</g>
 	);
 }

@@ -11,6 +11,7 @@ type SubdivisionCheckerKey = "realistic"; // TODO more
 interface EditorContext {
 	width: number;
 	height: number;
+	channels: string[];
 	textColor: string;
 	spacing: number;
 	setSpacing: (newSpacing: number) => void;
@@ -28,17 +29,22 @@ interface EditorContext {
 	setShowEmpties: (newShowEmpties: boolean) => void;
 	subdivisionChecker: SubdivisionChecker;
 	setSubdivisionChecker: (type: SubdivisionCheckerKey) => void;
+	viewingEditorTick: number;
+	setViewingEditorTick: (newViewingEditorTick: number) => void;
+	viewingEditorChannel: number;
+	setViewingEditorChannel: (newViewingEditorChannel: number) => void;
 }
 
 export const EditorContext = createContext({} as EditorContext);
 
 export default function EditorContextProvider(props: { children: any }) {
-	const width = 500;
-	const height = 500;
+	const channels = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#"];
+	const channelWidth = 45;
+	const width = channels.length * channelWidth;
+	const height = 1500;
 	const textColor = "gray";
 	const [spacing, setSpacing] = useState(20); // pixels per quarter notes
 	const tpq = 12; // ticks per quarter note
-	const channelWidth = 40;
 	const noteDivisions: { [type in NoteDivision]: number } = {
 		quarter: tpq,
 		eighth: tpq / 2,
@@ -89,11 +95,15 @@ export default function EditorContextProvider(props: { children: any }) {
 		noteDivision,
 	]);
 
+	const [viewingEditorTick, setViewingEditorTick] = useState(0);
+	const [viewingEditorChannel, setViewingEditorChannel] = useState(0);
+
 	return (
 		<EditorContext.Provider
 			value={{
 				width,
 				height,
+				channels,
 				textColor,
 				spacing,
 				setSpacing,
@@ -111,6 +121,10 @@ export default function EditorContextProvider(props: { children: any }) {
 				setShowEmpties,
 				setSubdivisionChecker,
 				subdivisionChecker,
+				viewingEditorTick,
+				setViewingEditorTick,
+				viewingEditorChannel,
+				setViewingEditorChannel,
 			}}
 		>
 			{props.children}
