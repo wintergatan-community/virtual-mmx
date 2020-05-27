@@ -1,20 +1,23 @@
 import * as Tone from "tone";
 import { Program } from "vmmx-schema";
 import { vibraphoneChannelToNote } from "../helpers";
+import { ToneDropEvent } from "./events";
 
 export class VmmxPlayer {
 	vibes: Tone.PluckSynth;
 	program: Program;
+	timeline: Tone.Timeline<ToneDropEvent>;
 	constructor(prog: Program) {
 		// create a new pluck synth that is routed to master
 		this.vibes = new Tone.PluckSynth().toDestination();
 		this.program = prog;
+		this.timeline = new Tone.Timeline();
 		this.initializeTransport();
 		this.loadProgram();
+		this.loadTransport();
 	}
 	createTrigger(note: number | string): (time: number | string) => void {
 		return (time): void => {
-			console.log(`playing note ${note} at time ${time}`);
 			this.vibes.triggerAttack(note, time);
 		};
 	}
@@ -28,12 +31,25 @@ export class VmmxPlayer {
 	loadProgram(): void {
 		this.program.dropEvents.forEach((evt) => {
 			if (evt.kind === "vibraphone") {
+				// add the events to the timeline
+				this.timeline.add(new ToneDropEvent(evt));
+			}
+		});
+	}
+	loadTransport(): void {
+		this.timeline.forEach((timelineEvent) => {
+			if (timelineEvent.dropEvent.kind === "vibraphone") {
 				// schedule all vibraphone events
-				Tone.Transport.schedule(
-					this.createTrigger(
-						vibraphoneChannelToNote(evt.channel, this.program.state.vibraphone)
-					),
-					evt.tick + "i"
+				timelineEvent.setId(
+					Tone.Transport.schedule(
+						this.createTrigger(
+							vibraphoneChannelToNote(
+								timelineEvent.dropEvent.channel,
+								this.program.state.vibraphone
+							)
+						),
+						timelineEvent.time
+					)
 				);
 			}
 		});
