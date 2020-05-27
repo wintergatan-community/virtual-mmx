@@ -6,7 +6,7 @@ interface ResizeGridTempProps {
 	y: number;
 }
 
-export function ResizeGridTemp({ x, y }: ResizeGridTempProps) {
+export default function ResizeGridTemp({ x, y }: ResizeGridTempProps) {
 	const { spacing, setSpacing } = useContext(EditorContext);
 	return (
 		<g style={{ transform: `translate(${x}px, ${y}px)` }}>

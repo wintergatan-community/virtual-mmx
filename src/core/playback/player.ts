@@ -7,6 +7,7 @@ export class VmmxPlayer {
 	vibes: Tone.PluckSynth;
 	program: Program;
 	timeline: Tone.Timeline<ToneDropEvent>;
+
 	constructor(prog: Program) {
 		// create a new pluck synth that is routed to master
 		this.vibes = new Tone.PluckSynth().toDestination();
@@ -16,11 +17,13 @@ export class VmmxPlayer {
 		this.loadProgram();
 		this.loadTransport();
 	}
+
 	createTrigger(note: number | string): (time: number | string) => void {
 		return (time): void => {
 			this.vibes.triggerAttack(note, time);
 		};
 	}
+
 	initializeTransport() {
 		Tone.Transport.bpm.value = this.program.state.machine.bpm;
 		Tone.Transport.PPQ = this.program.metadata.tpq;
@@ -28,6 +31,7 @@ export class VmmxPlayer {
 		Tone.Transport.loopStart = 0;
 		Tone.Transport.loopEnd = "16m";
 	}
+
 	loadProgram(): void {
 		this.program.dropEvents.forEach((evt) => {
 			if (evt.kind === "vibraphone") {
@@ -36,6 +40,7 @@ export class VmmxPlayer {
 			}
 		});
 	}
+
 	loadTransport(): void {
 		this.timeline.forEach((timelineEvent) => {
 			if (timelineEvent.dropEvent.kind === "vibraphone") {
@@ -54,12 +59,14 @@ export class VmmxPlayer {
 			}
 		});
 	}
+
 	public play(): void {
 		if (Tone.context.state !== "running") {
 			Tone.context.resume();
 		}
 		Tone.Transport.start();
 	}
+
 	public stop(): void {
 		Tone.Transport.stop();
 		Tone.Transport.position = 0;

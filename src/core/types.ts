@@ -1,7 +1,5 @@
-export interface MarbleEvent {
-	tick: number;
-	channel: number;
-}
-// currently doesn't conform to schema for simplicity TODO
+import { ReactElement } from "react";
 
 export type NoteSubdivision = "quarter" | "eighth" | "sixteenth" | "triplet";
+
+export type SomeReactChildren = ReactElement[] | ReactElement;

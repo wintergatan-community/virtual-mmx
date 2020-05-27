@@ -1,22 +1,23 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { EditorContext } from "../../contexts/EditorContext";
 import { range } from "../../core/helpers";
-import { RunningChannel } from "./RunningChannel";
-import { Peg } from "./Peg";
+import RunningChannel from "./RunningChannel";
+import SubdivisionLine from "./SubdivisionLine";
+import Peg from "./Peg";
 import SubdivisonChooser from "./SubdivisionChooser";
-import { SubdivisionLine } from "./SubdivisionLine";
-import { MarbleEvent } from "../../core/types";
-import { GearSide } from "./GearSide";
+import GearSide from "./GearSide";
+import WheelBlur from "./WheelBlur";
+import { VibraphoneChannel } from "vmmx-schema";
 
-export function ProgramEditor() {
+export default function ProgramEditor() {
 	const {
 		width,
 		height,
 		pixelToTick,
 		pixelToChannel,
 		noteSubdivision,
-		marbleEvents,
-		setMarbleEvents,
+		tickedDropEvents,
+		setTickedDropEvents,
 		showEmpties,
 		spacing,
 		setSpacing,
@@ -31,20 +32,23 @@ export function ProgramEditor() {
 	const visibleStartTick = 0; // TODO correctly
 	const visibleEndTick = tickDivisions[tickDivisions.length - 1]; // TODO out of bounds
 
-	const [mousePos, setMousePos] = useState<MarbleEvent>();
+	const [mousePos, setMousePos] = useState<{
+		mouseTick: number;
+		mouseChannel: number;
+	}>();
 
 	const updateMousePos = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		if (!svgRef.current) return;
 		const svgBound = svgRef.current.getBoundingClientRect();
 		const x = e.clientX - svgBound.left;
 		const looseChannel = pixelToChannel(x);
-		const channel = Math.floor(looseChannel);
+		const mouseChannel = Math.floor(looseChannel);
 
 		const y = e.clientY - svgBound.top;
 		const looseTick = pixelToTick(y);
-		const tick = Math.floor(looseTick / noteSubdivision) * noteSubdivision;
+		const mouseTick = Math.floor(looseTick / noteSubdivision) * noteSubdivision;
 
-		setMousePos({ tick, channel });
+		setMousePos({ mouseTick, mouseChannel });
 	};
 
 	const handleScroll = (e: React.WheelEvent<SVGSVGElement>) => {
@@ -61,13 +65,15 @@ export function ProgramEditor() {
 		}
 	};
 
-	const addPeg = (tick: number, channel: number) => {
-		const newMarbleEvents = marbleEvents.concat({
+	const addPeg = (tick: number, channel: VibraphoneChannel) => {
+		// TODO fix for other instruments
+		const newTickedDropEvents = tickedDropEvents.concat({
 			tick,
 			channel,
+			kind: "vibraphone",
 		});
-		newMarbleEvents.sort((a, b) => a.tick - b.tick);
-		setMarbleEvents(newMarbleEvents);
+		newTickedDropEvents.sort((a, b) => a.tick - b.tick);
+		setTickedDropEvents(newTickedDropEvents);
 	};
 
 	return (
@@ -91,13 +97,17 @@ export function ProgramEditor() {
 					{tickDivisions.map((tick, i) => (
 						<SubdivisionLine tick={tick} key={i} />
 					))}
-					{marbleEvents.map((event, i) => {
+					{tickedDropEvents.map((event, i) => {
+						// TODO fix for other instruments
+						if (event.kind !== "vibraphone") return null;
 						const { tick, channel } = event;
 						if (tick > visibleEndTick || tick < visibleStartTick) return null; // TODO optimize
 
 						const removePeg = () => {
-							let newMarbleEvents = marbleEvents.filter((e) => e !== event);
-							setMarbleEvents(newMarbleEvents);
+							let newTickedDropEvents = tickedDropEvents.filter(
+								(e) => e !== event
+							);
+							setTickedDropEvents(newTickedDropEvents);
 						};
 
 						return (
@@ -113,17 +123,25 @@ export function ProgramEditor() {
 					{(() => {
 						// TODO this is ugly and needs to get out of a IIEF
 						if (!mousePos) return;
-						const { tick, channel } = mousePos;
+						const { mouseTick, mouseChannel } = mousePos;
 						if (
-							marbleEvents.some((e) => e.tick === tick && e.channel === channel)
+							// TODO fix for other instruments
+							tickedDropEvents.some(
+								(e) =>
+									e.kind === "vibraphone" &&
+									e.tick === mouseTick &&
+									e.channel === mouseChannel
+							)
 						)
 							return null;
 						return (
 							<Peg
-								tick={tick}
-								channel={channel}
+								tick={mouseTick}
+								channel={mouseChannel}
 								activeDivision={false}
-								click={() => addPeg(tick, channel)}
+								click={() =>
+									addPeg(mouseTick, mouseChannel as VibraphoneChannel)
+								}
 							/>
 						);
 					})()}
@@ -137,41 +155,5 @@ export function ProgramEditor() {
 				<WheelBlur />
 			</svg>
 		</div>
-	);
-}
-
-function WheelBlur() {
-	// shadows not great rn
-	const { width } = useContext(EditorContext);
-
-	return (
-		<>
-			<defs>
-				<filter id="wheelBlurTop" height="200%">
-					<feOffset dy={30} />
-					<feGaussianBlur stdDeviation={10} />
-					<feBlend in="SourceGraphic" />
-				</filter>
-			</defs>
-			<rect
-				x={0}
-				y={-70}
-				width={width}
-				height={70}
-				style={{ fill: "#ddd2", filter: "url(#wheelBlurTop)" }}
-			/>
-			<rect
-				x={0}
-				y={-470}
-				width={width}
-				height={70}
-				style={{
-					fill: "#000a",
-					filter: "url(#wheelBlurTop)",
-					transform: `rotate(180deg)`,
-					transformOrigin: "50% 0%",
-				}}
-			/>
-		</>
 	);
 }

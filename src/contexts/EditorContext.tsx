@@ -1,5 +1,9 @@
-import React, { createContext, useState, useCallback } from "react";
-import { NoteSubdivision, MarbleEvent } from "../core/types";
+import React, { createContext, useState, useCallback, useContext } from "react";
+import { NoteSubdivision, SomeReactChildren } from "../core/types";
+import { GlobalContext } from "./GlobalContext";
+
+import { Note } from "vmmx-schema/note_names";
+import { TickedDropEvent } from "vmmx-schema";
 
 // this needs a serious rethink. Probably using useReducer
 // currently, any more of less "global" state is being provided by this context
@@ -11,8 +15,8 @@ type SubdivisionCheckerKey = "realistic"; // TODO more
 interface EditorContext {
 	width: number;
 	height: number;
-	channels: string[];
 	textColor: string;
+	channels: Note[];
 	spacing: number;
 	setSpacing: (newSpacing: number) => void;
 	tpq: number;
@@ -23,8 +27,8 @@ interface EditorContext {
 	noteSubdivision: number;
 	setNoteSubdivision: (newNoteSubdivision: number) => void;
 	noteSubdivisions: { [type in NoteSubdivision]: number };
-	marbleEvents: MarbleEvent[];
-	setMarbleEvents: (newMarbleEvents: MarbleEvent[]) => void;
+	tickedDropEvents: TickedDropEvent[];
+	setTickedDropEvents: (newTickedDropEvents: TickedDropEvent[]) => void;
 	showEmpties: boolean;
 	setShowEmpties: (newShowEmpties: boolean) => void;
 	subdivisionChecker: SubdivisionChecker;
@@ -37,8 +41,12 @@ interface EditorContext {
 
 export const EditorContext = createContext({} as EditorContext);
 
-export default function EditorContextProvider(props: { children: any }) {
-	const channels = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#"];
+export default function EditorContextProvider(props: {
+	children: SomeReactChildren;
+}) {
+	const { program } = useContext(GlobalContext);
+	const channels = Object.values(program.state.vibraphone.notes); // TODO account for drums and bass
+
 	const channelWidth = 45;
 	const width = channels.length * channelWidth;
 	const height = 1500;
@@ -56,11 +64,9 @@ export default function EditorContextProvider(props: { children: any }) {
 	);
 	const [showEmpties, setShowEmpties] = useState(true);
 
-	const [marbleEvents, setMarbleEvents] = useState<MarbleEvent[]>([
-		{ tick: 0, channel: 1 },
-		{ tick: 12, channel: 2 },
-		{ tick: 36, channel: 3 },
-	]); // here for testing
+	const [tickedDropEvents, setTickedDropEvents] = useState<TickedDropEvent[]>(
+		[]
+	);
 
 	function tickToPixel(tick: number) {
 		return (tick * spacing) / tpq;
@@ -117,8 +123,8 @@ export default function EditorContextProvider(props: { children: any }) {
 				noteSubdivision,
 				noteSubdivisions,
 				setNoteSubdivision,
-				marbleEvents,
-				setMarbleEvents,
+				tickedDropEvents,
+				setTickedDropEvents,
 				showEmpties,
 				setShowEmpties,
 				setSubdivisionChecker,

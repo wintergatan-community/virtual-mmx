@@ -5,7 +5,7 @@ interface SubdivisionLineProps {
 	tick: number;
 }
 
-export function SubdivisionLine({ tick }: SubdivisionLineProps) {
+export default function SubdivisionLine({ tick }: SubdivisionLineProps) {
 	const { height, tickToPixel } = useContext(EditorContext);
 	const y = tickToPixel(tick);
 

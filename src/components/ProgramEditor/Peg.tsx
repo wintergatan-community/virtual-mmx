@@ -9,7 +9,12 @@ interface MarbleSlotProps {
 	click: () => void;
 }
 
-export function Peg({ tick, channel, activeDivision, click }: MarbleSlotProps) {
+export default function Peg({
+	tick,
+	channel,
+	activeDivision,
+	click,
+}: MarbleSlotProps) {
 	const {
 		tickToPixel,
 		channelToPixel,

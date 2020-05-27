@@ -5,7 +5,7 @@ interface GearSideProps {
 	x: number;
 }
 
-export function GearSide({ x }: GearSideProps) {
+export default function GearSide({ x }: GearSideProps) {
 	const segs = range(0, 30, 1);
 	return (
 		<g style={{ transform: `translateX(${x}px)` }}>

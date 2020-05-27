@@ -6,7 +6,7 @@ interface RunningChannelProps {
 	channel: number;
 }
 
-export function RunningChannel({ channel, note }: RunningChannelProps) {
+export default function RunningChannel({ channel, note }: RunningChannelProps) {
 	const { height, textColor, channelToPixel } = useContext(EditorContext);
 	const x = channelToPixel(channel);
 	const channelOne = channelToPixel(1);
