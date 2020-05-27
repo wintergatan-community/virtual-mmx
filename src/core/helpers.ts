@@ -1,3 +1,5 @@
+import { VibraphoneChannel, VibraphoneState } from "vmmx-schema";
+
 export function range(start: number, stop: number, step?: number) {
 	if (typeof step === "undefined") {
 		step = 1;
@@ -31,4 +33,12 @@ export function arrToPolyLine(points: number[][]) {
 		res += point[0] + "," + point[1] + " ";
 	}
 	return res;
+}
+
+export function vibraphoneChannelToNote(
+	channel: VibraphoneChannel,
+	vibraphoneState: VibraphoneState
+): string {
+	const note = vibraphoneState.notes[channel];
+	return note;
 }
