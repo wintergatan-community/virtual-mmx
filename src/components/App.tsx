@@ -1,6 +1,6 @@
 import React from "react";
 import EditorContextProvider from "../contexts/EditorContext";
-import { ProgramEditor } from "./ProgramEditor";
+import { ProgramEditor } from "./ProgramEditor/ProgramEditor";
 
 export default function App() {
 	return (

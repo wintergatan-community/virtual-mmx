@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { EditorContext } from "../contexts/EditorContext";
+import { EditorContext } from "../../contexts/EditorContext";
 
 interface ResizeGridTempProps {
 	x: number;

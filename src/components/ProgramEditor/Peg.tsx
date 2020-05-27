@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { EditorContext } from "../contexts/EditorContext";
-import { mapValue } from "../core/helpers";
+import { EditorContext } from "../../contexts/EditorContext";
+import { mapValue } from "../../core/helpers";
 
 interface MarbleSlotProps {
 	tick: number;

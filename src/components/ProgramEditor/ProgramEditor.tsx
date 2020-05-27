@@ -1,11 +1,12 @@
 import React, { useContext, useState, useRef } from "react";
-import { EditorContext } from "../contexts/EditorContext";
-import { range } from "../core/helpers";
+import { EditorContext } from "../../contexts/EditorContext";
+import { range } from "../../core/helpers";
 import { RunningChannel } from "./RunningChannel";
 import { Peg } from "./Peg";
 import SubdivisonChooser from "./SubdivisionChooser";
 import { SubdivisionLine } from "./SubdivisionLine";
-import { MarbleEvent } from "../core/types";
+import { MarbleEvent } from "../../core/types";
+import { GearSide } from "./GearSide";
 
 export function ProgramEditor() {
 	const {
@@ -130,6 +131,8 @@ export function ProgramEditor() {
 					{
 						showEmpties ? null : null // TODO, add this thing
 					}
+					<GearSide x={0} />
+					<GearSide x={475} />
 				</g>
 				<WheelBlur />
 			</svg>

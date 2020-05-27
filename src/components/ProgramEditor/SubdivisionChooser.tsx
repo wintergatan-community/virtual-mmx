@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { EditorContext } from "../contexts/EditorContext";
-import { NoteDivision } from "../core/types";
+import { EditorContext } from "../../contexts/EditorContext";
+import { NoteDivision } from "../../core/types";
 
 export default function SubdivisonChooser() {
 	const { noteDivisions } = useContext(EditorContext);

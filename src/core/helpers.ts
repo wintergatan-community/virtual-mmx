@@ -24,3 +24,11 @@ export function mapValue(
 ) {
 	return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 }
+
+export function arrToPolyLine(points: number[][]) {
+	let res = "";
+	for (let point of points) {
+		res += point[0] + "," + point[1] + " ";
+	}
+	return res;
+}
