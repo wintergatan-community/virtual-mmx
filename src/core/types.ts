@@ -4,4 +4,4 @@ export interface MarbleEvent {
 }
 // currently doesn't conform to schema for simplicity TODO
 
-export type NoteDivision = "quarter" | "eighth" | "sixteenth" | "triplet";
+export type NoteSubdivision = "quarter" | "eighth" | "sixteenth" | "triplet";

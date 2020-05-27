@@ -1,26 +1,30 @@
 import React, { useContext } from "react";
 import { EditorContext } from "../../contexts/EditorContext";
-import { NoteDivision } from "../../core/types";
+import { NoteSubdivision } from "../../core/types";
 
 export default function SubdivisonChooser() {
-	const { noteDivisions } = useContext(EditorContext);
+	const { noteSubdivisions } = useContext(EditorContext);
 
 	return (
 		<g>
-			{Object.keys(noteDivisions).map((division, i) => (
-				<SubdivisonOption type={division as NoteDivision} y={i * 40} key={i} />
+			{Object.keys(noteSubdivisions).map((division, i) => (
+				<SubdivisonOption
+					type={division as NoteSubdivision}
+					y={i * 40}
+					key={i}
+				/>
 			))}
 		</g>
 	);
 }
 
 interface SubdivisonOptionProps {
-	type: NoteDivision;
+	type: NoteSubdivision;
 	y: number;
 }
 
 function SubdivisonOption({ type, y }: SubdivisonOptionProps) {
-	const { width, height, setNoteDivision, noteDivisions } = useContext(
+	const { width, height, setNoteSubdivision, noteSubdivisions } = useContext(
 		EditorContext
 	);
 	return (
@@ -30,7 +34,7 @@ function SubdivisonOption({ type, y }: SubdivisonOptionProps) {
 				position: "static",
 			}}
 			onClick={() => {
-				setNoteDivision(noteDivisions[type]);
+				setNoteSubdivision(noteSubdivisions[type]);
 			}}
 		>
 			<rect width={40} height={40} fill="white" stroke="black" />

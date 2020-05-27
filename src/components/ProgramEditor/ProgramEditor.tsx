@@ -14,7 +14,7 @@ export function ProgramEditor() {
 		height,
 		pixelToTick,
 		pixelToChannel,
-		noteDivision,
+		noteSubdivision,
 		marbleEvents,
 		setMarbleEvents,
 		showEmpties,
@@ -27,7 +27,7 @@ export function ProgramEditor() {
 
 	const svgRef = useRef<SVGSVGElement>(null);
 
-	const tickDivisions = range(0, pixelToTick(width), noteDivision);
+	const tickDivisions = range(0, pixelToTick(width), noteSubdivision);
 	const visibleStartTick = 0; // TODO correctly
 	const visibleEndTick = tickDivisions[tickDivisions.length - 1]; // TODO out of bounds
 
@@ -42,7 +42,7 @@ export function ProgramEditor() {
 
 		const y = e.clientY - svgBound.top;
 		const looseTick = pixelToTick(y);
-		const tick = Math.floor(looseTick / noteDivision) * noteDivision;
+		const tick = Math.floor(looseTick / noteSubdivision) * noteSubdivision;
 
 		setMousePos({ tick, channel });
 	};
@@ -105,7 +105,7 @@ export function ProgramEditor() {
 								tick={tick}
 								channel={channel}
 								key={i}
-								activeDivision={tick % noteDivision === 0}
+								activeDivision={tick % noteSubdivision === 0}
 								click={removePeg}
 							/>
 						);

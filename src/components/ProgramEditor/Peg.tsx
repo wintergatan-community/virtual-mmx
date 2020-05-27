@@ -14,12 +14,12 @@ export function Peg({ tick, channel, activeDivision, click }: MarbleSlotProps) {
 		tickToPixel,
 		channelToPixel,
 		subdivisionChecker,
-		noteDivision,
+		noteSubdivision,
 	} = useContext(EditorContext);
 	const x = channelToPixel(channel);
 	const y = tickToPixel(tick);
 	const w = 10;
-	const h = Math.min(20, Math.max(tickToPixel(noteDivision) - 5, 5));
+	const h = Math.min(20, Math.max(tickToPixel(noteSubdivision) - 5, 5));
 	const shift = mapValue(
 		subdivisionChecker(tick),
 		0,

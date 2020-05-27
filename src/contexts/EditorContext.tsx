@@ -1,5 +1,5 @@
 import React, { createContext, useState, useCallback } from "react";
-import { NoteDivision, MarbleEvent } from "../core/types";
+import { NoteSubdivision, MarbleEvent } from "../core/types";
 
 // this needs a serious rethink. Probably using useReducer
 // currently, any more of less "global" state is being provided by this context
@@ -20,9 +20,9 @@ interface EditorContext {
 	pixelToTick: (x: number) => number;
 	channelToPixel: (channel: number) => number;
 	pixelToChannel: (channel: number) => number;
-	noteDivision: number;
-	setNoteDivision: (newNoteDivision: number) => void;
-	noteDivisions: { [type in NoteDivision]: number };
+	noteSubdivision: number;
+	setNoteSubdivision: (newNoteSubdivision: number) => void;
+	noteSubdivisions: { [type in NoteSubdivision]: number };
 	marbleEvents: MarbleEvent[];
 	setMarbleEvents: (newMarbleEvents: MarbleEvent[]) => void;
 	showEmpties: boolean;
@@ -45,13 +45,15 @@ export default function EditorContextProvider(props: { children: any }) {
 	const textColor = "gray";
 	const [spacing, setSpacing] = useState(20); // pixels per quarter notes
 	const tpq = 12; // ticks per quarter note
-	const noteDivisions: { [type in NoteDivision]: number } = {
+	const noteSubdivisions: { [type in NoteSubdivision]: number } = {
 		quarter: tpq,
 		eighth: tpq / 2,
 		sixteenth: tpq / 4,
 		triplet: (tpq * 2) / 3,
 	};
-	const [noteDivision, setNoteDivision] = useState(noteDivisions.quarter);
+	const [noteSubdivision, setNoteSubdivision] = useState(
+		noteSubdivisions.quarter
+	);
 	const [showEmpties, setShowEmpties] = useState(true);
 
 	const [marbleEvents, setMarbleEvents] = useState<MarbleEvent[]>([
@@ -77,11 +79,11 @@ export default function EditorContextProvider(props: { children: any }) {
 		[key in SubdivisionCheckerKey]: SubdivisionChecker;
 	} = {
 		realistic(tick: number) {
-			if (tick % noteDivisions.eighth === 0) {
+			if (tick % noteSubdivisions.eighth === 0) {
 				return 0.5;
-			} else if (tick % noteDivisions.sixteenth === 0) {
+			} else if (tick % noteSubdivisions.sixteenth === 0) {
 				return 0.1;
-			} else if (tick % noteDivisions.triplet === 0) {
+			} else if (tick % noteSubdivisions.triplet === 0) {
 				return 0.9;
 			}
 			return 0;
@@ -92,7 +94,7 @@ export default function EditorContextProvider(props: { children: any }) {
 		"realistic"
 	);
 	const subdivisionChecker = useCallback(subdivisionCheckers[s], [
-		noteDivision,
+		noteSubdivision,
 	]);
 
 	const [viewingEditorTick, setViewingEditorTick] = useState(0);
@@ -112,9 +114,9 @@ export default function EditorContextProvider(props: { children: any }) {
 				pixelToTick,
 				channelToPixel,
 				pixelToChannel,
-				noteDivision,
-				noteDivisions,
-				setNoteDivision,
+				noteSubdivision,
+				noteSubdivisions,
+				setNoteSubdivision,
 				marbleEvents,
 				setMarbleEvents,
 				showEmpties,
