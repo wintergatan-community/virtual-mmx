@@ -31,8 +31,6 @@ export default function Pegs({ tickDivisions }: PegsProps) {
 
 		return (
 			<Peg
-				// tick={tick}
-				// channel={channel}
 				toneDropEvent={event}
 				activeDivision={tick % noteSubdivision === 0}
 				spawnsEvent={true}

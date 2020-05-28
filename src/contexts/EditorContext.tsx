@@ -19,7 +19,6 @@ interface EditorContext {
 	channels: Note[];
 	spacing: number;
 	setSpacing: (newSpacing: number) => void;
-	tpq: number;
 	tickToPixel: (tick: number) => number;
 	pixelToTick: (x: number) => number;
 	channelToPixel: (channel: number) => number;
@@ -44,7 +43,7 @@ export const EditorContext = createContext({} as EditorContext);
 export default function EditorContextProvider(props: {
 	children: SomeReactChildren;
 }) {
-	const { program, dropEvents, setDropEvents } = useContext(GlobalContext);
+	const { program, tpq, dropEvents, setDropEvents } = useContext(GlobalContext);
 	const channels = Object.values(program.state.vibraphone.notes); // TODO account for drums and bass
 
 	const channelWidth = 45;
@@ -52,7 +51,7 @@ export default function EditorContextProvider(props: {
 	const height = 1500;
 	const textColor = "gray";
 	const [spacing, setSpacing] = useState(20); // pixels per quarter notes
-	const tpq = 12; // ticks per quarter note
+
 	const noteSubdivisions: { [type in NoteSubdivision]: number } = {
 		quarter: tpq,
 		eighth: tpq / 2,
@@ -111,7 +110,6 @@ export default function EditorContextProvider(props: {
 				textColor,
 				spacing,
 				setSpacing,
-				tpq,
 				tickToPixel,
 				pixelToTick,
 				channelToPixel,

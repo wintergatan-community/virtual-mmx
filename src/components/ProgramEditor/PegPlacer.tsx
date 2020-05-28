@@ -10,14 +10,10 @@ interface PegPlacerProps {
 }
 
 export default function PegPlacer({ mousePos }: PegPlacerProps) {
-	const { player } = useContext(GlobalContext);
-	const {
-		dropEvents,
-		setDropEvents,
-		channelToPixel,
-		tickToPixel,
-		tpq,
-	} = useContext(EditorContext);
+	const { player, tpq } = useContext(GlobalContext);
+	const { dropEvents, setDropEvents, channelToPixel, tickToPixel } = useContext(
+		EditorContext
+	);
 
 	if (!mousePos) return null;
 	const { mouseTick, mouseChannel } = mousePos;

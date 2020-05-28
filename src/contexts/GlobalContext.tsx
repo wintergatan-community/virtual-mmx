@@ -10,6 +10,7 @@ interface GlobalContext {
 	player: VmmxPlayer;
 	dropEvents: ToneDropEvent[];
 	setDropEvents: React.Dispatch<React.SetStateAction<ToneDropEvent[]>>;
+	tpq: number;
 }
 
 export const GlobalContext = createContext({} as GlobalContext);
@@ -64,7 +65,9 @@ export default function GlobalContextProvider(props: {
 	});
 	const player = useRef(new VmmxPlayer(program));
 
+	// TODO needs to be tied to program.dropEvents
 	const [dropEvents, setDropEvents] = useState<ToneDropEvent[]>([]);
+	const tpq = program.metadata.tpq;
 
 	useEffect(() => {
 		if (init) return;
@@ -95,6 +98,7 @@ export default function GlobalContextProvider(props: {
 				player: player.current,
 				dropEvents,
 				setDropEvents,
+				tpq,
 			}}
 		>
 			{props.children}
