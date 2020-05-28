@@ -1,9 +1,15 @@
-import React, { createContext } from "react";
+import React, { createContext, useEffect, useState, useRef } from "react";
 import { Program } from "vmmx-schema";
 import { SomeReactChildren } from "../core/types";
+import { VmmxPlayer } from "../core/playback/player";
+import { ToneDropEvent } from "../core/playback/events";
 
 interface GlobalContext {
 	program: Program;
+	setProgram: React.Dispatch<React.SetStateAction<Program>>;
+	player: VmmxPlayer;
+	dropEvents: ToneDropEvent[];
+	setDropEvents: React.Dispatch<React.SetStateAction<ToneDropEvent[]>>;
 }
 
 export const GlobalContext = createContext({} as GlobalContext);
@@ -11,8 +17,8 @@ export const GlobalContext = createContext({} as GlobalContext);
 export default function GlobalContextProvider(props: {
 	children: SomeReactChildren;
 }) {
-	const program: Program = {
-		dropEvents: [],
+	const [init, setInit] = useState(false);
+	const [program, setProgram] = useState<Program>({
 		metadata: {
 			author: "Martin Mollin",
 			title: "Marble Machine (Piano Version)",
@@ -54,10 +60,43 @@ export default function GlobalContextProvider(props: {
 				},
 			},
 		},
-	};
+		dropEvents: [],
+	});
+	const player = useRef(new VmmxPlayer(program));
+
+	const [dropEvents, setDropEvents] = useState<ToneDropEvent[]>([]);
+
+	useEffect(() => {
+		if (init) return;
+
+		// const dropEventsEXAMPLE: TickedDropEvent[] = range(1, 11, 1).map((i) => ({
+		// 	kind: "vibraphone",
+		// 	channel: i as VibraphoneChannel,
+		// 	tick: (i - 1) * (program.metadata.tpq / 2),
+		// }));
+
+		// setProgram((prevProgram) => {
+		// 	return {
+		// 		...prevProgram,
+		// 		dropEvents: dropEventsEXAMPLE,
+		// 	};
+		// });
+
+		// player.current.loadDropEvents(dropEventsEXAMPLE);
+
+		setInit(true);
+	}, [program, init]);
 
 	return (
-		<GlobalContext.Provider value={{ program }}>
+		<GlobalContext.Provider
+			value={{
+				program,
+				setProgram,
+				player: player.current,
+				dropEvents,
+				setDropEvents,
+			}}
+		>
 			{props.children}
 		</GlobalContext.Provider>
 	);

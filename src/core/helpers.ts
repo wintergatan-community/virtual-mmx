@@ -1,15 +1,13 @@
 import { VibraphoneChannel, VibraphoneState } from "vmmx-schema";
 
 export function range(start: number, stop: number, step?: number) {
-	if (typeof step === "undefined") {
-		step = 1;
-	}
+	if (step === undefined) step = 1;
 
+	let result: number[] = [];
 	if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
-		return [];
+		return result;
 	}
 
-	let result = [];
 	for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
 		result.push(i);
 	}

@@ -1,13 +1,17 @@
 import React, { useContext, useRef, useState } from "react";
 import { EditorContext } from "../../contexts/EditorContext";
 import { range } from "../../core/helpers";
-import RunningChannel from "./RunningChannel";
-import SubdivisionLine from "./SubdivisionLine";
-import Peg from "./Peg";
+import PegPlacer from "./PegPlacer";
 import SubdivisonChooser from "./SubdivisionChooser";
 import GearSide from "./GearSide";
 import WheelBlur from "./WheelBlur";
-import { VibraphoneChannel } from "vmmx-schema";
+import Pegs from "./Pegs";
+import ProgramGrid from "./ProgramGrid";
+
+export interface EditorMousePos {
+	mouseTick: number;
+	mouseChannel: number;
+}
 
 export default function ProgramEditor() {
 	const {
@@ -16,28 +20,20 @@ export default function ProgramEditor() {
 		pixelToTick,
 		pixelToChannel,
 		noteSubdivision,
-		tickedDropEvents,
-		setTickedDropEvents,
 		showEmpties,
 		spacing,
 		setSpacing,
 		viewingEditorTick,
 		setViewingEditorTick,
-		channels,
 	} = useContext(EditorContext);
 
 	const svgRef = useRef<SVGSVGElement>(null);
 
 	const tickDivisions = range(0, pixelToTick(width), noteSubdivision);
-	const visibleStartTick = 0; // TODO correctly
-	const visibleEndTick = tickDivisions[tickDivisions.length - 1]; // TODO out of bounds
 
-	const [mousePos, setMousePos] = useState<{
-		mouseTick: number;
-		mouseChannel: number;
-	}>();
+	const [mousePos, setMousePos] = useState<EditorMousePos>();
 
-	const updateMousePos = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+	const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		if (!svgRef.current) return;
 		const svgBound = svgRef.current.getBoundingClientRect();
 		const x = e.clientX - svgBound.left;
@@ -65,86 +61,21 @@ export default function ProgramEditor() {
 		}
 	};
 
-	const addPeg = (tick: number, channel: VibraphoneChannel) => {
-		// TODO fix for other instruments
-		const newTickedDropEvents = tickedDropEvents.concat({
-			tick,
-			channel,
-			kind: "vibraphone",
-		});
-		newTickedDropEvents.sort((a, b) => a.tick - b.tick);
-		setTickedDropEvents(newTickedDropEvents);
-	};
-
 	return (
 		<div style={{ width, height: 400, overflow: "hidden" }}>
 			{/* overflow: "scroll" */}
 			<svg
 				viewBox={`0 0 ${width} ${height}`}
-				style={{
-					width,
-					height,
-				}}
-				onMouseMove={updateMousePos}
+				style={{ width, height }}
+				onMouseMove={handleMouseMove}
 				onWheel={handleScroll}
 				ref={svgRef}
 			>
 				<g style={{ transform: `translateY(${viewingEditorTick}px)` }}>
 					{/* moving */}
-					{channels.map((note, channel) => (
-						<RunningChannel note={note} channel={channel} key={channel} />
-					))}
-					{tickDivisions.map((tick, i) => (
-						<SubdivisionLine tick={tick} key={i} />
-					))}
-					{tickedDropEvents.map((event, i) => {
-						// TODO fix for other instruments
-						if (event.kind !== "vibraphone") return null;
-						const { tick, channel } = event;
-						if (tick > visibleEndTick || tick < visibleStartTick) return null; // TODO optimize
-
-						const removePeg = () => {
-							let newTickedDropEvents = tickedDropEvents.filter(
-								(e) => e !== event
-							);
-							setTickedDropEvents(newTickedDropEvents);
-						};
-
-						return (
-							<Peg
-								tick={tick}
-								channel={channel}
-								key={i}
-								activeDivision={tick % noteSubdivision === 0}
-								click={removePeg}
-							/>
-						);
-					})}
-					{(() => {
-						// TODO this is ugly and needs to get out of a IIEF
-						if (!mousePos) return;
-						const { mouseTick, mouseChannel } = mousePos;
-						if (
-							// TODO fix for other instruments
-							tickedDropEvents.some(
-								(e) =>
-									e.kind === "vibraphone" &&
-									e.tick === mouseTick &&
-									e.channel === mouseChannel
-							)
-						)
-							return null;
-						return (
-							<Peg
-								tick={mouseTick}
-								channel={mouseChannel}
-								activeDivision={false}
-								click={() =>
-									addPeg(mouseTick, mouseChannel as VibraphoneChannel)
-								}
-							/>
-						);
-					})()}
+					<ProgramGrid tickDivisions={tickDivisions} />
+					<Pegs tickDivisions={tickDivisions} />
+					<PegPlacer mousePos={mousePos} />
 					<SubdivisonChooser />
 					{
 						showEmpties ? null : null // TODO, add this thing

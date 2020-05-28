@@ -1,26 +1,30 @@
 import React, { useContext } from "react";
 import { EditorContext } from "../../contexts/EditorContext";
 import { mapValue } from "../../core/helpers";
+import { ToneDropEvent } from "../../core/playback/events";
 
-interface MarbleSlotProps {
-	tick: number;
-	channel: number;
+interface PegProps {
+	toneDropEvent: ToneDropEvent;
 	activeDivision: boolean;
-	click: () => void;
+	spawnsEvent: boolean;
+	click?: () => void;
 }
 
 export default function Peg({
-	tick,
-	channel,
+	toneDropEvent,
 	activeDivision,
 	click,
-}: MarbleSlotProps) {
+}: PegProps) {
 	const {
 		tickToPixel,
 		channelToPixel,
 		subdivisionChecker,
 		noteSubdivision,
 	} = useContext(EditorContext);
+
+	const dropEvent = toneDropEvent.dropEvent;
+	if (dropEvent.kind !== "vibraphone") return null; // TODO other instrument support
+	const { tick, channel } = dropEvent;
 	const x = channelToPixel(channel);
 	const y = tickToPixel(tick);
 	const w = 10;

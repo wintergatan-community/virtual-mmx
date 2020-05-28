@@ -7,18 +7,13 @@ export class ToneDropEvent implements TimelineEvent {
 	/** The [[TickedDropEvent]] that this event represents. */
 	readonly dropEvent: TickedDropEvent;
 	/** The ID assigned to this event once it has been scheduled. */
-	private _transportId?: number;
+	readonly id: number;
+
+	private static idCount = 0;
 	constructor(dropEvent: TickedDropEvent) {
 		this.time = Time(dropEvent.tick, "i").toSeconds();
+		console.log(this.time);
 		this.dropEvent = dropEvent;
-	}
-	setId(newId: number) {
-		if (this._transportId != null) {
-			throw new Error("setId() can only be called once");
-		}
-		this._transportId = newId;
-	}
-	get id(): number | undefined {
-		return this._transportId;
+		this.id = ToneDropEvent.idCount++;
 	}
 }

@@ -3,7 +3,7 @@ import { NoteSubdivision, SomeReactChildren } from "../core/types";
 import { GlobalContext } from "./GlobalContext";
 
 import { Note } from "vmmx-schema/note_names";
-import { TickedDropEvent } from "vmmx-schema";
+import { ToneDropEvent } from "../core/playback/events";
 
 // this needs a serious rethink. Probably using useReducer
 // currently, any more of less "global" state is being provided by this context
@@ -27,8 +27,8 @@ interface EditorContext {
 	noteSubdivision: number;
 	setNoteSubdivision: (newNoteSubdivision: number) => void;
 	noteSubdivisions: { [type in NoteSubdivision]: number };
-	tickedDropEvents: TickedDropEvent[];
-	setTickedDropEvents: (newTickedDropEvents: TickedDropEvent[]) => void;
+	dropEvents: ToneDropEvent[];
+	setDropEvents: (newTickedDropEvents: ToneDropEvent[]) => void;
 	showEmpties: boolean;
 	setShowEmpties: (newShowEmpties: boolean) => void;
 	subdivisionChecker: SubdivisionChecker;
@@ -44,7 +44,7 @@ export const EditorContext = createContext({} as EditorContext);
 export default function EditorContextProvider(props: {
 	children: SomeReactChildren;
 }) {
-	const { program } = useContext(GlobalContext);
+	const { program, dropEvents, setDropEvents } = useContext(GlobalContext);
 	const channels = Object.values(program.state.vibraphone.notes); // TODO account for drums and bass
 
 	const channelWidth = 45;
@@ -63,10 +63,6 @@ export default function EditorContextProvider(props: {
 		noteSubdivisions.quarter
 	);
 	const [showEmpties, setShowEmpties] = useState(true);
-
-	const [tickedDropEvents, setTickedDropEvents] = useState<TickedDropEvent[]>(
-		[]
-	);
 
 	function tickToPixel(tick: number) {
 		return (tick * spacing) / tpq;
@@ -123,8 +119,8 @@ export default function EditorContextProvider(props: {
 				noteSubdivision,
 				noteSubdivisions,
 				setNoteSubdivision,
-				tickedDropEvents,
-				setTickedDropEvents,
+				dropEvents,
+				setDropEvents,
 				showEmpties,
 				setShowEmpties,
 				setSubdivisionChecker,

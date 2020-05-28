@@ -45,22 +45,32 @@ export class VmmxPlayer {
 		this.timeline.forEach((timelineEvent) => {
 			if (timelineEvent.dropEvent.kind === "vibraphone") {
 				// schedule all vibraphone events
-				timelineEvent.setId(
-					Tone.Transport.schedule(
-						this.createTrigger(
-							vibraphoneChannelToNote(
-								timelineEvent.dropEvent.channel,
-								this.program.state.vibraphone
-							)
-						),
-						timelineEvent.time
-					)
+				// timelineEvent.setId(
+				Tone.Transport.schedule(
+					this.createTrigger(
+						vibraphoneChannelToNote(
+							timelineEvent.dropEvent.channel,
+							this.program.state.vibraphone
+						)
+					),
+					timelineEvent.time
 				);
+				// );
 			}
 		});
 	}
 
+	public addDropEvent(dropEvent: ToneDropEvent) {
+		this.timeline.add(dropEvent);
+	}
+
+	public removeDropEvent(dropEvent: ToneDropEvent) {
+		this.timeline.remove(dropEvent);
+	}
+
 	public play(): void {
+		Tone.Transport.cancel();
+		this.loadTransport();
 		if (Tone.context.state !== "running") {
 			Tone.context.resume();
 		}
