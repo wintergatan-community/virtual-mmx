@@ -1,46 +1,56 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
+import React from "react";
 import { NoteSubdivision } from "../../core/types";
+import { useStores } from "../../contexts/StoreContext";
+import { observer, useLocalStore } from "mobx-react";
 
-export default function SubdivisonChooser() {
-	const { noteSubdivisions } = useContext(EditorContext);
+export const SubdivisonChooser = observer(() => {
+	const { editor } = useStores();
 
 	return (
 		<g>
-			{Object.keys(noteSubdivisions).map((division, i) => (
+			{Object.keys(editor.ticksPerNoteSubdivisions).map((division, i) => (
 				<SubdivisonOption
 					type={division as NoteSubdivision}
 					y={i * 40}
-					key={i}
+					key={division}
 				/>
 			))}
 		</g>
 	);
-}
+});
 
 interface SubdivisonOptionProps {
 	type: NoteSubdivision;
 	y: number;
 }
 
-function SubdivisonOption({ type, y }: SubdivisonOptionProps) {
-	const { width, height, setNoteSubdivision, noteSubdivisions } = useContext(
-		EditorContext
-	);
+export const SubdivisonOption = observer((props: SubdivisonOptionProps) => {
+	const { editor } = useStores();
+	const store = useLocalStore(() => ({
+		handleClick() {
+			editor.ticksPerNoteSubdivision =
+				editor.ticksPerNoteSubdivisions[props.type]; // TODO use action
+		},
+		get x() {
+			return editor.channelWidth - 40;
+		},
+		get y() {
+			return editor.programEditorHeight - 40 - props.y;
+		},
+	}));
+
 	return (
 		<g
 			style={{
-				transform: `translate(${width - 40}px, ${height - 40 - y}px)`,
-				position: "static",
+				transform: `translate(${store.x}px, ${store.y}px)`,
+				position: "static", // TODO unneeded?
 			}}
-			onClick={() => {
-				setNoteSubdivision(noteSubdivisions[type]);
-			}}
+			onClick={store.handleClick}
 		>
 			<rect width={40} height={40} fill="white" stroke="black" />
 			<text x={20} y={20} textAnchor="middle" fontSize={10}>
-				{type}
+				{props.type}
 			</text>
 		</g>
 	);
-}
+});

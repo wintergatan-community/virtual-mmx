@@ -1,23 +1,40 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
-import RunningChannel from "./RunningChannel";
-import SubdivisionLine from "./SubdivisionLine";
+import React from "react";
+import { RunningChannel } from "./RunningChannel";
+import { SubdivisionLine } from "./SubdivisionLine";
+import { useStores } from "../../contexts/StoreContext";
+import { observer } from "mobx-react";
 
 interface ProgramGridProps {
 	tickDivisions: number[];
 }
 
-export default function ProgramGrid({ tickDivisions }: ProgramGridProps) {
-	const { channels } = useContext(EditorContext);
-
+export const ProgramGrid = observer(({ tickDivisions }: ProgramGridProps) => {
 	return (
 		<>
-			{channels.map((note, channel) => (
-				<RunningChannel note={note} channel={channel} key={channel} />
-			))}
+			<SubdivisionLines tickDivisions={tickDivisions} />
+			<RunningChannels />
+		</>
+	);
+});
+
+const SubdivisionLines = observer(({ tickDivisions }: ProgramGridProps) => {
+	// TODO maybe move tickDivisions or props name
+	return (
+		<>
 			{tickDivisions.map((tick, i) => (
 				<SubdivisionLine tick={tick} key={i} />
 			))}
 		</>
 	);
-}
+});
+
+const RunningChannels = observer(() => {
+	const { editor } = useStores();
+	return (
+		<>
+			{editor.channels.map((note, channel) => (
+				<RunningChannel note={note} channel={channel} key={channel} />
+			))}
+		</>
+	);
+});

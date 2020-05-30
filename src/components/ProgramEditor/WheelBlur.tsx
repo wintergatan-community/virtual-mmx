@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
+import React from "react";
+import { useStores } from "../../contexts/StoreContext";
+import { observer } from "mobx-react";
 
-export default function WheelBlur() {
+export const WheelBlur = observer(() => {
 	// shadows not great rn
-	const { width } = useContext(EditorContext);
+	const { editor } = useStores();
 
 	return (
 		<>
@@ -17,14 +18,14 @@ export default function WheelBlur() {
 			<rect
 				x={0}
 				y={-70}
-				width={width}
+				width={editor.programEditorWidth}
 				height={70}
 				style={{ fill: "#ddd2", filter: "url(#wheelBlurTop)" }}
 			/>
 			<rect
 				x={0}
 				y={-470}
-				width={width}
+				width={editor.programEditorWidth}
 				height={70}
 				style={{
 					fill: "#000a",
@@ -35,4 +36,4 @@ export default function WheelBlur() {
 			/>
 		</>
 	);
-}
+});

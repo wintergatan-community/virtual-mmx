@@ -1,59 +1,73 @@
+import React from "react";
 import { EditorMousePos } from "./ProgramEditor";
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
 import { VibraphoneChannel } from "vmmx-schema";
 import { ToneDropEvent } from "../../core/playback/events";
-import { GlobalContext } from "../../contexts/GlobalContext";
+
+import { observer, useLocalStore } from "mobx-react";
+import { useStores } from "../../contexts/StoreContext";
 
 interface PegPlacerProps {
 	mousePos?: EditorMousePos;
 }
 
-export default function PegPlacer({ mousePos }: PegPlacerProps) {
-	const { player, tpq } = useContext(GlobalContext);
-	const { dropEvents, setDropEvents, channelToPixel, tickToPixel } = useContext(
-		EditorContext
+export const PegPlacer = observer((props: PegPlacerProps) => {
+	const { global, editor } = useStores();
+	const store = useLocalStore(
+		(source) => ({
+			// if (!mousePos) return null;
+
+			get mouseTick() {
+				if (!source.mousePos) return -1; // maybe not this way
+				return source.mousePos.mouseTick;
+			},
+			get mouseChannel() {
+				if (!source.mousePos) return -1; // maybe not this way
+				return source.mousePos.mouseChannel;
+			},
+			// TODO speed up
+			get alreadyPlaced() {
+				return global.dropEvents.some(
+					(e) =>
+						e.dropEvent.kind === "vibraphone" &&
+						e.dropEvent.tick === store.mouseTick &&
+						e.dropEvent.channel === store.mouseChannel
+				);
+			},
+			addPeg() {
+				// TODO fix for other instruments
+				const newDropEvent = new ToneDropEvent({
+					tick: store.mouseTick,
+					channel: store.mouseChannel as VibraphoneChannel,
+					kind: "vibraphone",
+				});
+				const newDropEvents = global.dropEvents.concat(newDropEvent);
+				global.player.addDropEvent(newDropEvent);
+				console.log("created " + newDropEvent.id);
+				newDropEvents.sort((a, b) => a.dropEvent.tick - b.dropEvent.tick);
+				// TODO optimize
+				global.dropEvents = newDropEvents; // TODO should be action, use mutation
+			},
+
+			get x() {
+				return editor.channelToPixel(store.mouseChannel);
+			},
+			get y() {
+				return editor.tickToPixel(store.mouseTick);
+			},
+		}),
+		props
 	);
 
-	if (!mousePos) return null;
-	const { mouseTick, mouseChannel } = mousePos;
-	// TODO speed up
-	const alreadyPlaced = dropEvents.some(
-		(e) =>
-			e.dropEvent.kind === "vibraphone" &&
-			e.dropEvent.tick === mouseTick &&
-			e.dropEvent.channel === mouseChannel
-	);
-	if (alreadyPlaced) return null;
-
-	const addPeg = () => {
-		// TODO fix for other instruments
-		const newDropEvent = new ToneDropEvent({
-			tick: mouseTick,
-			channel: mouseChannel as VibraphoneChannel,
-			kind: "vibraphone",
-		});
-		const newDropEvents = dropEvents.concat(newDropEvent);
-		player.addDropEvent(newDropEvent);
-		console.log("created " + newDropEvent.id);
-		newDropEvents.sort((a, b) => a.dropEvent.tick - b.dropEvent.tick);
-		// TODO optimize
-
-		setDropEvents(newDropEvents);
-	};
-
-	const x = channelToPixel(mouseChannel);
-	const y = tickToPixel(mouseTick);
-
-	return (
+	return store.alreadyPlaced ? null : (
 		<g>
 			<rect
 				style={{
-					transform: `translate(${x}px, ${y}px)`,
+					transform: `translate(${store.x}px, ${store.y}px)`,
 				}}
-				onClick={addPeg}
-				width={channelToPixel(1)}
-				height={tickToPixel(tpq)}
+				onMouseDown={store.addPeg}
+				onMouseMove={(e) => e.buttons === 1 && store.addPeg()}
+				width={editor.channelToPixel(1)}
+				height={editor.tickToPixel(global.tpq)}
 				fill="#0004"
 			/>
 			{/* <Peg
@@ -64,4 +78,4 @@ export default function PegPlacer({ mousePos }: PegPlacerProps) {
 			/> */}
 		</g>
 	);
-}
+});

@@ -1,16 +1,13 @@
 import React from "react";
-import EditorContextProvider from "../contexts/EditorContext";
-import ProgramEditor from "./ProgramEditor/ProgramEditor";
-import TransportControls from "./transport/TransportContols";
-import GlobalContextProvider from "../contexts/GlobalContext";
+import { ProgramEditor } from "./ProgramEditor/ProgramEditor";
+import { TransportControls } from "./transport/TransportContols";
+import { observer } from "mobx-react";
 
-export default function App() {
+export const App = observer(() => {
 	return (
-		<GlobalContextProvider>
-			<EditorContextProvider>
-				<ProgramEditor />
-			</EditorContextProvider>
+		<>
+			<ProgramEditor />
 			<TransportControls />
-		</GlobalContextProvider>
+		</>
 	);
-}
+});

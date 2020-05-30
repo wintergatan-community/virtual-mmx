@@ -1,33 +1,44 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
+import React from "react";
+import { useStores } from "../../contexts/StoreContext";
+import { observer, useLocalStore } from "mobx-react";
 
 interface RunningChannelProps {
 	note: string;
 	channel: number;
 }
 
-export default function RunningChannel({ channel, note }: RunningChannelProps) {
-	const { height, textColor, channelToPixel } = useContext(EditorContext);
-	const x = channelToPixel(channel);
-	const channelOne = channelToPixel(1);
+export const RunningChannel = observer((props: RunningChannelProps) => {
+	const { editor } = useStores();
+	const store = useLocalStore(
+		(source) => ({
+			get x() {
+				return editor.channelToPixel(source.channel);
+			},
+			get channelOne() {
+				// TODO move this away from this component
+				return editor.channelToPixel(1);
+			},
+		}),
+		props
+	);
 
 	return (
-		<g style={{ transform: `translateX(${x}px)` }}>
+		<g style={{ transform: `translateX(${store.x}px)` }}>
 			<text
-				x={channelOne}
+				x={store.channelOne}
 				y={20}
 				textAnchor="middle"
 				dominantBaseline="middle"
-				fill={textColor}
+				fill="gray"
 			>
-				{note}
+				{props.note}
 			</text>
 			<rect
-				width={channelOne}
-				height={height}
+				width={store.channelOne}
+				height={editor.programEditorHeight}
 				fill="#262421"
 				stroke="#101010"
 			/>
 		</g>
 	);
-}
+});

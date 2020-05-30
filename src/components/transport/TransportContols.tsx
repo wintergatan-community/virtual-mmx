@@ -1,17 +1,36 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Button } from "react-bootstrap";
-import { GlobalContext } from "../../contexts/GlobalContext";
+import { useStores } from "../../contexts/StoreContext";
+import { observer, useLocalStore } from "mobx-react";
 
-export default function TransportControls() {
-	const { player } = useContext(GlobalContext);
+// export const TransportControls = observer(() => {
+// 	const { global } = useStores();
 
-	const play = () => player.play();
-	const stop = () => player.stop();
+// 	const play = () => global.player.play();
+// 	const stop = () => global.player.stop();
 
+// 	return (
+// 		<div>
+// 			<Button onClick={play}>Play</Button>
+// 			<Button onClick={stop}>Stop</Button>
+// 		</div>
+// 	);
+// });
+
+export const TransportControls = observer(() => {
+	const { global } = useStores();
+	const store = useLocalStore(() => ({
+		play() {
+			global.player.play();
+		},
+		stop() {
+			global.player.stop();
+		},
+	}));
 	return (
 		<div>
-			<Button onClick={play}>Play</Button>
-			<Button onClick={stop}>Stop</Button>
+			<Button onClick={store.play}>Play</Button>
+			<Button onClick={store.stop}>Stop</Button>
 		</div>
 	);
-}
+});

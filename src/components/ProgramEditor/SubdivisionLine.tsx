@@ -1,17 +1,24 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
+import React from "react";
+import { useStores } from "../../contexts/StoreContext";
+import { observer, useLocalStore } from "mobx-react";
 
 interface SubdivisionLineProps {
 	tick: number;
 }
 
-export default function SubdivisionLine({ tick }: SubdivisionLineProps) {
-	const { height, tickToPixel } = useContext(EditorContext);
-	const y = tickToPixel(tick);
-
+export const SubdivisionLine = observer((props: SubdivisionLineProps) => {
+	const { editor } = useStores();
+	const store = useLocalStore(
+		(source) => ({
+			get y() {
+				return editor.tickToPixel(source.tick);
+			},
+		}),
+		props
+	);
 	return (
-		<g style={{ transform: `translateY(${y}px)` }}>
-			<line x1={0} x2={height} stroke="#201e1b" />
+		<g style={{ transform: `translateY(${store.y}px)` }}>
+			<line x1={0} x2={editor.programEditorHeight} stroke="#201e1b" />
 		</g>
 	);
-}
+});

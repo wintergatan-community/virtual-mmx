@@ -2,20 +2,21 @@ import * as Tone from "tone";
 import { Program } from "vmmx-schema";
 import { vibraphoneChannelToNote } from "../helpers";
 import { ToneDropEvent } from "./events";
+import { observable } from "mobx";
 
 export class VmmxPlayer {
 	vibes: Tone.PluckSynth;
-	program: Program;
+	@observable program: Program;
 	timeline: Tone.Timeline<ToneDropEvent>;
 
-	constructor(prog: Program) {
+	constructor() {
 		// create a new pluck synth that is routed to master
 		this.vibes = new Tone.PluckSynth().toDestination();
-		this.program = prog;
+		this.program = {} as Program;
 		this.timeline = new Tone.Timeline();
-		this.initializeTransport();
-		this.loadProgram();
-		this.loadTransport();
+		// this.initializeTransport();
+		// this.loadProgram();
+		// this.loadTransport();
 	}
 
 	createTrigger(note: number | string): (time: number | string) => void {

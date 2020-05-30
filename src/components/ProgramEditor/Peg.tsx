@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
-import { EditorContext } from "../../contexts/EditorContext";
+import React from "react";
 import { mapValue } from "../../core/helpers";
 import { ToneDropEvent } from "../../core/playback/events";
+import { observer, useLocalStore } from "mobx-react";
+import { useStores } from "../../contexts/StoreContext";
 
 interface PegProps {
 	toneDropEvent: ToneDropEvent;
@@ -10,43 +11,59 @@ interface PegProps {
 	click?: () => void;
 }
 
-export default function Peg({
-	toneDropEvent,
-	activeDivision,
-	click,
-}: PegProps) {
-	const {
-		tickToPixel,
-		channelToPixel,
-		subdivisionChecker,
-		noteSubdivision,
-	} = useContext(EditorContext);
+export const Peg = observer((props: PegProps) => {
+	const { editor } = useStores();
+	const store = useLocalStore(
+		(source) => ({
+			get dropEvent() {
+				return source.toneDropEvent.dropEvent;
+			},
 
-	const dropEvent = toneDropEvent.dropEvent;
-	if (dropEvent.kind !== "vibraphone") return null; // TODO other instrument support
-	const { tick, channel } = dropEvent;
-	const x = channelToPixel(channel);
-	const y = tickToPixel(tick);
-	const w = 10;
-	const h = Math.min(20, Math.max(tickToPixel(noteSubdivision) - 5, 5));
-	const shift = mapValue(
-		subdivisionChecker(tick),
-		0,
-		1,
-		0,
-		channelToPixel(1) - w
-	); //channelToPixel(1) / 2 - w/2
+			get tick() {
+				return this.dropEvent.tick;
+			},
+			get channel() {
+				if (this.dropEvent.kind !== "vibraphone") return null; // TODO other instrument support
+				return this.dropEvent.channel;
+			},
+			get x() {
+				return editor.channelToPixel(this.channel ?? -1); // oh god, im starting to see a problem
+			},
+			get y() {
+				return editor.tickToPixel(this.tick);
+			},
+			get w() {
+				return 10;
+			},
+			get h() {
+				return Math.min(
+					20,
+					Math.max(editor.tickToPixel(editor.ticksPerNoteSubdivision) - 5, 5)
+				);
+			},
+			get shift() {
+				return mapValue(
+					editor.subdivisionChecker(this.tick),
+					0,
+					1,
+					0,
+					editor.channelToPixel(1) - this.w
+				); //channelToPixel(1) / 2 - w/2
+			},
+		}),
+		props
+	);
 
 	return (
-		<g style={{ transform: `translate(${x}px, ${y}px)` }}>
+		<g style={{ transform: `translate(${store.x}px, ${store.y}px)` }}>
 			<rect
-				width={w}
-				height={h}
-				fill={activeDivision ? "#ccc" : "#ccc9"}
-				x={shift} //channelToPixel(1) / 2 - w/2 +
+				width={store.w}
+				height={store.h}
+				fill={props.activeDivision ? "#ccc" : "#ccc9"}
+				x={store.shift} //channelToPixel(1) / 2 - w/2 +
 				rx={3}
-				onClick={click}
+				onClick={props.click}
 			/>
 		</g>
 	);
-}
+});
