@@ -1,7 +1,8 @@
-import { Program, VibraphoneChannel } from "vmmx-schema";
+import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
 import { vibraphoneChannelToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
 import { Transport, PluckSynth, Sampler, context } from "tone";
+import { Note } from "vmmx-schema/note_names";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
@@ -29,6 +30,13 @@ function createSynths(): MmxSynths<PluckSynth, PluckSynth, Sampler> {
 	};
 }
 
+const regularBassTuning: { [s in BassString]: Note } = {
+	4: "E1",
+	3: "A1",
+	2: "D2",
+	1: "G2",
+};
+
 export class VmmxPlayer {
 	program: Program;
 	parts: MmxParts;
@@ -52,6 +60,21 @@ export class VmmxPlayer {
 			);
 		};
 	}
+	bassStringToNote(bassString: BassString): string {
+		const regularTuning =
+			this.program.state.bass.tuning[bassString] ||
+			regularBassTuning[bassString];
+		return regularTuning;
+		// const noteVal =
+		// 	(NoteNames[regularTuning] as number) +
+		// 	(this.program.state.bass.capos[bassString] || 0);
+		// return NoteNames[noteVal];
+	}
+	createBassTrigger(channel: BassString): (time: number | string) => void {
+		return (time): void => {
+			this.synths.bass.triggerAttack(this.bassStringToNote(channel), time);
+		};
+	}
 	initializeTransport() {
 		Transport.bpm.value = this.program.state.machine.bpm;
 		Transport.PPQ = this.program.metadata.tpq;
@@ -60,6 +83,11 @@ export class VmmxPlayer {
 		for (const [channel, part] of Object.entries(this.parts.vibraphone)) {
 			part.callback = this.createVibraphoneTrigger(
 				(channel as unknown) as VibraphoneChannel
+			);
+		}
+		for (const [bassString, part] of Object.entries(this.parts.bass)) {
+			part.callback = this.createBassTrigger(
+				(bassString as unknown) as BassString
 			);
 		}
 	}
