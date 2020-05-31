@@ -1,67 +1,80 @@
-import * as Tone from "tone";
-import { Program } from "vmmx-schema";
+import { Program, VibraphoneChannel } from "vmmx-schema";
 import { vibraphoneChannelToNote } from "../helpers";
-import { ToneDropEvent } from "./events";
+import { MmxParts, MmxSynths } from "./types";
+import { Transport, PluckSynth, Sampler, context } from "tone";
+
+function createPartsFromProgram(program: Program): MmxParts {
+	const mmxParts = new MmxParts();
+	program.dropEvents.forEach((event) => {
+		if (event.kind === "vibraphone") {
+			mmxParts.vibraphone[event.channel].add(event.tick + "i");
+		} else if (event.kind === "bass") {
+			mmxParts.bass[event.string].add(event.tick + "i");
+		} else if (event.kind === "drum") {
+			mmxParts.drums[event.drum].add(event.tick + "i");
+		}
+	});
+	return mmxParts;
+}
+
+function createSynths(): MmxSynths<PluckSynth, PluckSynth, Sampler> {
+	return {
+		vibraphone: new PluckSynth().toDestination(),
+		bass: new PluckSynth().toDestination(),
+		drums: {
+			snare: new Sampler().toDestination(),
+			bassdrum: new Sampler().toDestination(),
+			hihat: new Sampler().toDestination(),
+		},
+	};
+}
 
 export class VmmxPlayer {
-	vibes: Tone.PluckSynth;
 	program: Program;
-	timeline: Tone.Timeline<ToneDropEvent>;
-	constructor(prog: Program) {
+	parts: MmxParts;
+	synths: MmxSynths<PluckSynth, PluckSynth, Sampler>;
+	constructor(program: Program) {
 		// create a new pluck synth that is routed to master
-		this.vibes = new Tone.PluckSynth().toDestination();
-		this.program = prog;
-		this.timeline = new Tone.Timeline();
+		this.program = program;
+		this.parts = createPartsFromProgram(this.program);
+		this.synths = createSynths();
 		this.initializeTransport();
 		this.loadProgram();
 		this.loadTransport();
 	}
-	createTrigger(note: number | string): (time: number | string) => void {
+	createVibraphoneTrigger(
+		channel: VibraphoneChannel
+	): (time: number | string) => void {
 		return (time): void => {
-			this.vibes.triggerAttack(note, time);
+			this.synths.vibraphone.triggerAttack(
+				vibraphoneChannelToNote(channel, this.program.state.vibraphone),
+				time
+			);
 		};
 	}
 	initializeTransport() {
-		Tone.Transport.bpm.value = this.program.state.machine.bpm;
-		Tone.Transport.PPQ = this.program.metadata.tpq;
-		Tone.Transport.loop = true;
-		Tone.Transport.loopStart = 0;
-		Tone.Transport.loopEnd = "16m";
+		Transport.bpm.value = this.program.state.machine.bpm;
+		Transport.PPQ = this.program.metadata.tpq;
 	}
 	loadProgram(): void {
-		this.program.dropEvents.forEach((evt) => {
-			if (evt.kind === "vibraphone") {
-				// add the events to the timeline
-				this.timeline.add(new ToneDropEvent(evt));
-			}
-		});
+		for (const [channel, part] of Object.entries(this.parts.vibraphone)) {
+			part.callback = this.createVibraphoneTrigger(
+				(channel as unknown) as VibraphoneChannel
+			);
+		}
 	}
 	loadTransport(): void {
-		this.timeline.forEach((timelineEvent) => {
-			if (timelineEvent.dropEvent.kind === "vibraphone") {
-				// schedule all vibraphone events
-				timelineEvent.setId(
-					Tone.Transport.schedule(
-						this.createTrigger(
-							vibraphoneChannelToNote(
-								timelineEvent.dropEvent.channel,
-								this.program.state.vibraphone
-							)
-						),
-						timelineEvent.time
-					)
-				);
-			}
-		});
+		// tell the parts to start right away
+		this.parts.start(0);
 	}
 	public play(): void {
-		if (Tone.context.state !== "running") {
-			Tone.context.resume();
+		if (context.state !== "running") {
+			context.resume();
 		}
-		Tone.Transport.start();
+		Transport.start();
 	}
 	public stop(): void {
-		Tone.Transport.stop();
-		Tone.Transport.position = 0;
+		Transport.stop();
+		Transport.position = 0;
 	}
 }
