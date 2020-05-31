@@ -2,21 +2,24 @@ import React from "react";
 import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
 
-interface RunningChannelProps {
-	note: string;
+interface WheelChannelProps {
+	descriptor: string;
 	channel: number;
 }
 
-export const RunningChannel = observer((props: RunningChannelProps) => {
-	const { editor } = useStores();
+export const WheelChannel = observer((props: WheelChannelProps) => {
+	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
 			get x() {
-				return editor.channelToPixel(source.channel);
+				return wheel.channelToPixel(source.channel);
+			},
+			get width() {
+				return wheel.tickToPixel(wheel.totalTicks);
 			},
 			get channelOne() {
 				// TODO move this away from this component
-				return editor.channelToPixel(1);
+				return wheel.channelToPixel(1);
 			},
 		}),
 		props
@@ -26,7 +29,7 @@ export const RunningChannel = observer((props: RunningChannelProps) => {
 		<g style={{ transform: `translateX(${store.x}px)` }}>
 			<rect
 				width={store.channelOne}
-				height={editor.programEditorHeight}
+				height={store.width}
 				fill="#262421"
 				stroke="#101010"
 			/>
@@ -38,7 +41,7 @@ export const RunningChannel = observer((props: RunningChannelProps) => {
 				dominantBaseline="middle"
 				fill="white"
 			>
-				{props.note}
+				{props.descriptor}
 			</text>
 		</g>
 	);

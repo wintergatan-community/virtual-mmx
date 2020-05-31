@@ -1,11 +1,11 @@
 import { createContext, useContext } from "react";
 import { GlobalStore } from "./globalStore";
-import { EditorStore } from "./editorStore";
+import { ProgrammingWheelStore } from "./wheelStore";
 
 const global = new GlobalStore();
-const editor = new EditorStore(global); // needs reference to global store
+const wheel = new ProgrammingWheelStore(global); // needs reference to global store
 
-export const storesContext = createContext({ global, editor });
+export const storesContext = createContext({ global, wheel });
 
 export const useStores = () => useContext(storesContext);
 

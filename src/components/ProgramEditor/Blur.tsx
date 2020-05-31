@@ -2,9 +2,9 @@ import React from "react";
 import { useStores } from "../../contexts/StoreContext";
 import { observer } from "mobx-react";
 
-export const WheelBlur = observer(() => {
+export const Blur = observer(() => {
 	// shadows not great rn
-	const { editor } = useStores();
+	const { wheel } = useStores();
 
 	return (
 		<>
@@ -18,14 +18,14 @@ export const WheelBlur = observer(() => {
 			<rect
 				x={0}
 				y={-70}
-				width={editor.programEditorWidth}
+				width={wheel.visiblePixelWidth}
 				height={70}
 				style={{ fill: "#ddd2", filter: "url(#wheelBlurTop)" }}
 			/>
 			<rect
 				x={0}
 				y={-470}
-				width={editor.programEditorWidth}
+				width={wheel.visiblePixelWidth}
 				height={70}
 				style={{
 					fill: "#000a",

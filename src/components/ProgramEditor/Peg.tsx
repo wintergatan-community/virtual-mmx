@@ -12,7 +12,7 @@ interface PegProps {
 }
 
 export const Peg = observer((props: PegProps) => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
 			get dropEvent() {
@@ -27,10 +27,10 @@ export const Peg = observer((props: PegProps) => {
 				return this.dropEvent.channel;
 			},
 			get x() {
-				return editor.channelToPixel(this.channel ?? -1); // oh god, im starting to see a problem
+				return wheel.channelToPixel(this.channel ?? -1); // oh god, im starting to see a problem
 			},
 			get y() {
-				return editor.tickToPixel(this.tick);
+				return wheel.tickToPixel(this.tick);
 			},
 			get w() {
 				return 10;
@@ -38,16 +38,16 @@ export const Peg = observer((props: PegProps) => {
 			get h() {
 				return Math.min(
 					20,
-					Math.max(editor.tickToPixel(editor.ticksPerNoteSubdivision) - 5, 5)
+					Math.max(wheel.tickToPixel(wheel.ticksPerNoteSubdivision) - 5, 5)
 				);
 			},
 			get shift() {
 				return mapValue(
-					editor.subdivisionChecker(this.tick),
+					wheel.pegOffsetFunction(this.tick),
 					0,
 					1,
 					0,
-					editor.channelToPixel(1) - this.w
+					wheel.channelToPixel(1) - this.w
 				); //channelToPixel(1) / 2 - w/2
 			},
 		}),

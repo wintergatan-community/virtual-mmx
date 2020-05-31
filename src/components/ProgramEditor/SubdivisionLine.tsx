@@ -7,17 +7,17 @@ interface SubdivisionLineProps {
 }
 
 export const SubdivisionLine = observer((props: SubdivisionLineProps) => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
 			get y() {
-				return editor.tickToPixel(source.tick);
+				return wheel.tickToPixel(source.tick);
 			},
 			get stroke() {
-				return editor.scoreDivisionChecker(source.tick).stroke;
+				return wheel.subdivisionLineFunction(source.tick).stroke;
 			},
 			get strokeWidth() {
-				return editor.scoreDivisionChecker(source.tick).strokeWidth;
+				return wheel.subdivisionLineFunction(source.tick).strokeWidth;
 			},
 		}),
 		props
@@ -27,7 +27,7 @@ export const SubdivisionLine = observer((props: SubdivisionLineProps) => {
 		<g style={{ transform: `translateY(${store.y}px)` }}>
 			<line
 				x1={0}
-				x2={editor.programEditorWidth}
+				x2={wheel.visiblePixelWidth}
 				stroke={store.stroke}
 				strokeWidth={store.strokeWidth}
 			/>

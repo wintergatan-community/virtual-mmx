@@ -4,11 +4,11 @@ import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
 
 export const SubdivisonChooser = observer(() => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 
 	return (
 		<g>
-			{Object.keys(editor.ticksPerNoteSubdivisions).map((division, i) => (
+			{Object.keys(wheel.ticksPerNoteSubdivisions).map((division, i) => (
 				<SubdivisonOption
 					type={division as NoteSubdivision}
 					y={i * 40}
@@ -25,16 +25,16 @@ interface SubdivisonOptionProps {
 }
 
 export const SubdivisonOption = observer((props: SubdivisonOptionProps) => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 	const store = useLocalStore(() => ({
 		handleClick() {
-			editor.setSubdivision(props.type);
+			wheel.setSubdivision(props.type);
 		},
 		get x() {
-			return editor.channelWidth - 40;
+			return wheel.channelWidth - 40;
 		},
 		get y() {
-			return editor.programEditorHeight - 40 - props.y;
+			return wheel.visiblePixelHeight - 40 - props.y;
 		},
 	}));
 

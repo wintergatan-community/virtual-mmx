@@ -4,22 +4,22 @@ import { ProgramGrid } from "./ProgramGrid";
 import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
 import { SubdivisonChooser } from "./SubdivisionChooser";
-import { WheelBlur } from "./WheelBlur";
+import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
 import { action } from "mobx";
 
-export interface EditorMousePos {
+export interface WheelMousePos {
 	mouseTick: number;
 	mouseChannel: number;
 }
 
-export const ProgramEditor = observer(() => {
-	const { editor } = useStores();
+export const ProgrammingWheel = observer(() => {
+	const { wheel } = useStores();
 	const store = useLocalStore(() => ({
 		svgRef: createRef<SVGSVGElement>(),
 
-		mousePos: undefined as EditorMousePos | undefined,
-		setMousePos: action((mousePos: EditorMousePos) => {
+		mousePos: undefined as WheelMousePos | undefined,
+		setMousePos: action((mousePos: WheelMousePos) => {
 			store.mousePos = mousePos;
 		}),
 
@@ -27,44 +27,45 @@ export const ProgramEditor = observer(() => {
 			if (!store.svgRef.current) return;
 			const svgBound = store.svgRef.current.getBoundingClientRect();
 			const x = e.clientX - svgBound.left;
-			const looseChannel = editor.pixelToChannel(x);
+			const looseChannel = wheel.pixelToChannel(x);
 			const mouseChannel = Math.floor(looseChannel);
 
 			const y = e.clientY - svgBound.top;
 			const looseTick =
-				(editor.pixelToTick(y) + editor.viewingEditorTick) %
-				editor.pixelToTick(editor.programEditorHeight);
+				(wheel.pixelToTick(y) + wheel.visibleTopTick) % wheel.totalTicks;
 			const mouseTick =
-				Math.floor(looseTick / editor.ticksPerNoteSubdivision) *
-				editor.ticksPerNoteSubdivision;
+				Math.floor(looseTick / wheel.ticksPerNoteSubdivision) *
+				wheel.ticksPerNoteSubdivision;
 			store.setMousePos({ mouseTick, mouseChannel });
 		},
-
 		handleScroll(e: React.WheelEvent<SVGSVGElement>) {
 			if (e.shiftKey) {
-				editor.zoom(e.deltaY / 20);
+				wheel.zoom(e.deltaY / 20);
 			} else {
-				editor.scroll(e.deltaY / 5);
+				wheel.scroll(e.deltaY / 5);
 			}
 		},
 		get y() {
-			return editor.tickToPixel(editor.viewingEditorTick);
+			return wheel.tickToPixel(wheel.visibleTopTick);
+		},
+		get seemlessWheelOffset() {
+			return wheel.tickToPixel(wheel.totalTicks);
 		},
 	}));
 
 	return (
 		<div
 			style={{
-				width: editor.programEditorWidth,
-				height: editor.programEditorVisibleHeight,
+				width: wheel.visiblePixelWidth,
+				height: wheel.visiblePixelHeight,
 				overflow: "hidden",
 			}}
 		>
 			<svg
-				viewBox={`0 0 ${editor.programEditorWidth} ${editor.programEditorHeight}`}
+				viewBox={`0 0 ${wheel.visiblePixelWidth} ${wheel.visiblePixelHeight}`}
 				style={{
-					width: editor.programEditorWidth,
-					height: editor.programEditorHeight,
+					width: wheel.visiblePixelWidth,
+					height: wheel.visiblePixelHeight,
 				}}
 				onMouseMove={store.handleMouseMove}
 				onWheel={store.handleScroll}
@@ -74,20 +75,20 @@ export const ProgramEditor = observer(() => {
 					<MovingWindow m={store.mousePos} />
 					<g
 						style={{
-							transform: `translateY(${editor.programEditorHeight}px)`,
+							transform: `translateY(${store.seemlessWheelOffset}px)`,
 						}}
 					>
 						<MovingWindow m={store.mousePos} />
 					</g>
 				</g>
-				<WheelBlur />
+				<Blur />
 			</svg>
 		</div>
 	);
 });
 
-function MovingWindow(props: { m: EditorMousePos | undefined }) {
-	const { editor } = useStores();
+function MovingWindow(props: { m: WheelMousePos | undefined }) {
+	const { wheel } = useStores();
 	return (
 		<>
 			<ProgramGrid />
@@ -95,11 +96,11 @@ function MovingWindow(props: { m: EditorMousePos | undefined }) {
 			<PegPlacer mousePos={props.m} />
 			<SubdivisonChooser />
 			{
-				editor.showEmpties ? null : null // TODO, add this thing
+				wheel.showEmpties ? null : null // TODO, add this thing
 			}
 			{/* <GearSide x={0} />
-			<GearSide x={editor.programEditorWidth - 20} /> */}
-			<line x1={0} y1={0} x2={editor.programEditorWidth} y2={0} stroke="red" />
+			<GearSide x={wheel.visiblePixelWidth - 20} /> */}
+			<line x1={0} y1={0} x2={wheel.visiblePixelWidth} y2={0} stroke="red" />
 		</>
 	);
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { RunningChannel } from "./RunningChannel";
+import { WheelChannel } from "./WheelChannel";
 import { SubdivisionLine } from "./SubdivisionLine";
 import { useStores } from "../../contexts/StoreContext";
 import { observer } from "mobx-react";
@@ -14,11 +14,11 @@ export const ProgramGrid = observer(() => {
 });
 
 const SubdivisionLines = observer(() => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 
 	return (
 		<g>
-			{editor.tickDivisions.map((tick) => (
+			{wheel.subdivisionLines.map((tick) => (
 				<SubdivisionLine tick={tick} key={tick} />
 			))}
 		</g>
@@ -26,13 +26,20 @@ const SubdivisionLines = observer(() => {
 });
 
 const RunningChannels = observer(() => {
-	const { editor } = useStores();
+	const { wheel } = useStores();
 
 	return (
 		<g>
-			{editor.channels.map((note, channel) => (
-				<RunningChannel note={note} channel={channel} key={channel} />
-			))}
+			{wheel.wheelChannelInfos.map((info, channel) => {
+				const { descriptor } = info;
+				return (
+					<WheelChannel
+						descriptor={descriptor}
+						channel={channel}
+						key={channel}
+					/>
+				);
+			})}
 		</g>
 	);
 });

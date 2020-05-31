@@ -5,25 +5,12 @@ import { Peg } from "./Peg";
 import { ToneDropEvent } from "../../core/playback/events";
 
 export const Pegs = observer(() => {
-	const { global, editor } = useStores();
-	const store = useLocalStore(() => ({
-		get visibleStartTick() {
-			return 0; // TODO correctly
-		},
-		get visibleEndTick() {
-			return editor.tickDivisions[editor.tickDivisions.length - 1]; // TODO out of bounds
-		},
-	}));
+	const { global } = useStores();
 
 	return (
 		<>
 			{global.dropEvents.map((event) => (
-				<MaybeRenderedPeg
-					event={event}
-					visibleStartTick={store.visibleStartTick}
-					visibleEndTick={store.visibleEndTick}
-					key={event.id}
-				/>
+				<MaybeRenderedPeg event={event} key={event.id} />
 			))}
 		</>
 	);
@@ -31,24 +18,21 @@ export const Pegs = observer(() => {
 
 interface MaybeRenderedPegProps {
 	event: ToneDropEvent;
-	visibleStartTick: number;
-	visibleEndTick: number;
 }
 
 export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
-	const { editor, global } = useStores();
+	const { wheel, global } = useStores();
 	const store = useLocalStore(
 		(source) => ({
 			// TODO fix for other instruments
-			// if (event.dropEvent.kind !== "vibraphone") return null;
 			get tick() {
 				return source.event.dropEvent.tick;
 			},
 			get visible() {
 				return (
-					store.tick < source.visibleEndTick ||
-					store.tick > source.visibleStartTick
-				); // TODO optimize / work correctly
+					store.tick > wheel.visibleTopTick ||
+					store.tick < wheel.visibleBottomTick
+				);
 			},
 			removePeg() {
 				global.removeDropEvent(source.event);
@@ -60,7 +44,7 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 	return store.visible ? (
 		<Peg
 			toneDropEvent={props.event}
-			activeDivision={store.tick % editor.ticksPerNoteSubdivision === 0}
+			activeDivision={store.tick % wheel.ticksPerNoteSubdivision === 0}
 			spawnsEvent={true}
 			click={store.removePeg}
 			key={props.event.id}

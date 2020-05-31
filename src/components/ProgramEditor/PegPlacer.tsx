@@ -1,5 +1,5 @@
 import React from "react";
-import { EditorMousePos } from "./ProgramEditor";
+import { WheelMousePos } from "./ProgrammingWheel";
 import { VibraphoneChannel } from "vmmx-schema";
 import { ToneDropEvent } from "../../core/playback/events";
 
@@ -7,11 +7,11 @@ import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
 
 interface PegPlacerProps {
-	mousePos?: EditorMousePos;
+	mousePos?: WheelMousePos;
 }
 
 export const PegPlacer = observer((props: PegPlacerProps) => {
-	const { global, editor } = useStores();
+	const { global, wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
 			// if (!mousePos) return null;
@@ -44,13 +44,13 @@ export const PegPlacer = observer((props: PegPlacerProps) => {
 			},
 
 			get x() {
-				return editor.channelToPixel(store.mouseChannel);
+				return wheel.channelToPixel(store.mouseChannel);
 			},
 			get y() {
-				return editor.tickToPixel(store.mouseTick);
+				return wheel.tickToPixel(store.mouseTick);
 			},
 			get height() {
-				return editor.tickToPixel(editor.ticksPerNoteSubdivision);
+				return wheel.tickToPixel(wheel.ticksPerNoteSubdivision);
 			},
 		}),
 		props
@@ -64,7 +64,7 @@ export const PegPlacer = observer((props: PegPlacerProps) => {
 				}}
 				onMouseDown={store.addPeg}
 				onMouseMove={(e) => e.buttons === 1 && store.addPeg()}
-				width={editor.channelToPixel(1)}
+				width={wheel.channelToPixel(1)}
 				height={store.height}
 				fill="#0004"
 			/>
