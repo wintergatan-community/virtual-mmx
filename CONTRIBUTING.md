@@ -4,7 +4,7 @@
 
 If you're unfamiliar with the GitHub flow, [this](https://guides.github.com/introduction/flow/) is a good, 5 minute long introduction. We're using the **Fork & Pull** model.
 
-**Issues** marked as feature are the base of our flow. These mark single bits of work (tasks, seatures) that can be done in parallel.  
+**Issues** marked as feature are the base of our flow. These mark single bits of work (tasks, features) that can be done in parallel.
 An overview of these can be found in [Development Tasks](https://github.com/wintergatan-community/virtual-mmx/projects/1).  
 Features further down the line can be found on the [Brainstorming board](https://github.com/orgs/wintergatan-community/projects/1).
 
@@ -37,6 +37,14 @@ To aid our eyes, we use [Prettier](https://prettier.io/docs/en/editors.html) wit
 Use [eslint](https://eslint.org/) to highlight code problems.
 
 > In the future, Prettier and eslint will be checked against before merging.
+
+### How to start
+
+To be able to build the project, you need to install [nodejs](https://nodejs.org/). Preferabily, you should use the latest LTS version, but you can also try the latest version if you want to.
+
+Now, install the projects' dependencies by opening an command line, changing to your local checkout of the projects' directory and running `npm install`.
+
+Afterwards, you can run the project with `npm start` and browsing to <http://localhost:3000/>. During development, your changes will directly be applied, so you only need to refresh the loaded page in your browser to get the latest updates.
 
 ## Introduce yourself
 
