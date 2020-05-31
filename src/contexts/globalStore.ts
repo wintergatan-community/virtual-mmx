@@ -63,12 +63,12 @@ export class GlobalStore implements GlobalStoreInterface {
 	@observable dropEvents: ToneDropEvent[] = []; // TODO sync with program
 
 	@action addDropEvent(newDropEvent: ToneDropEvent) {
-		console.log("created: " + newDropEvent.id);
+		// console.log("created: " + newDropEvent.id);
 		this.dropEvents = insertInOrder(newDropEvent, this.dropEvents);
 		this.player.addDropEvent(newDropEvent);
 	}
 	@action removeDropEvent(newDropEvent: ToneDropEvent) {
-		console.log("removed: " + newDropEvent.id);
+		// console.log("removed: " + newDropEvent.id);
 		this.dropEvents = this.dropEvents.filter((e) => e !== newDropEvent);
 		this.player.removeDropEvent(newDropEvent);
 	}

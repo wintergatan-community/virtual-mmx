@@ -49,6 +49,9 @@ export const PegPlacer = observer((props: PegPlacerProps) => {
 			get y() {
 				return editor.tickToPixel(store.mouseTick);
 			},
+			get height() {
+				return editor.tickToPixel(editor.ticksPerNoteSubdivision);
+			},
 		}),
 		props
 	);
@@ -62,7 +65,7 @@ export const PegPlacer = observer((props: PegPlacerProps) => {
 				onMouseDown={store.addPeg}
 				onMouseMove={(e) => e.buttons === 1 && store.addPeg()}
 				width={editor.channelToPixel(1)}
-				height={editor.tickToPixel(global.tpq)}
+				height={store.height}
 				fill="#0004"
 			/>
 			{/* <Peg

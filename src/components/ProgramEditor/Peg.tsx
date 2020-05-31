@@ -60,7 +60,7 @@ export const Peg = observer((props: PegProps) => {
 				width={store.w}
 				height={store.h}
 				fill={props.activeDivision ? "#ccc" : "#ccc9"}
-				x={store.shift} //channelToPixel(1) / 2 - w/2 +
+				x={store.shift}
 				rx={3}
 				onClick={props.click}
 			/>

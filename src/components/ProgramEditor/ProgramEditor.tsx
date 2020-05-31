@@ -4,7 +4,6 @@ import { ProgramGrid } from "./ProgramGrid";
 import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
 import { SubdivisonChooser } from "./SubdivisionChooser";
-import { GearSide } from "./GearSide";
 import { WheelBlur } from "./WheelBlur";
 import { observer, useLocalStore } from "mobx-react";
 import { action } from "mobx";
@@ -32,11 +31,12 @@ export const ProgramEditor = observer(() => {
 			const mouseChannel = Math.floor(looseChannel);
 
 			const y = e.clientY - svgBound.top;
-			const looseTick = editor.pixelToTick(y);
+			const looseTick =
+				(editor.pixelToTick(y) + editor.viewingEditorTick) %
+				editor.pixelToTick(editor.programEditorHeight);
 			const mouseTick =
 				Math.floor(looseTick / editor.ticksPerNoteSubdivision) *
 				editor.ticksPerNoteSubdivision;
-
 			store.setMousePos({ mouseTick, mouseChannel });
 		},
 
@@ -47,17 +47,19 @@ export const ProgramEditor = observer(() => {
 				editor.scroll(e.deltaY / 5);
 			}
 		},
+		get y() {
+			return editor.tickToPixel(editor.viewingEditorTick);
+		},
 	}));
 
 	return (
 		<div
 			style={{
 				width: editor.programEditorWidth,
-				height: 400,
+				height: editor.programEditorVisibleHeight,
 				overflow: "hidden",
 			}}
 		>
-			{/* overflow: "scroll" */}
 			<svg
 				viewBox={`0 0 ${editor.programEditorWidth} ${editor.programEditorHeight}`}
 				style={{
@@ -68,20 +70,36 @@ export const ProgramEditor = observer(() => {
 				onWheel={store.handleScroll}
 				ref={store.svgRef}
 			>
-				<g style={{ transform: `translateY(${-editor.viewingEditorTick}px)` }}>
-					{/* moving */}
-					<ProgramGrid />
-					<Pegs />
-					<PegPlacer mousePos={store.mousePos} />
-					<SubdivisonChooser />
-					{
-						editor.showEmpties ? null : null // TODO, add this thing
-					}
-					<GearSide x={0} />
-					<GearSide x={475} />
+				<g style={{ transform: `translateY(${-store.y}px)` }}>
+					<MovingWindow m={store.mousePos} />
+					<g
+						style={{
+							transform: `translateY(${editor.programEditorHeight}px)`,
+						}}
+					>
+						<MovingWindow m={store.mousePos} />
+					</g>
 				</g>
 				<WheelBlur />
 			</svg>
 		</div>
 	);
 });
+
+function MovingWindow(props: { m: EditorMousePos | undefined }) {
+	const { editor } = useStores();
+	return (
+		<>
+			<ProgramGrid />
+			<Pegs />
+			<PegPlacer mousePos={props.m} />
+			<SubdivisonChooser />
+			{
+				editor.showEmpties ? null : null // TODO, add this thing
+			}
+			{/* <GearSide x={0} />
+			<GearSide x={editor.programEditorWidth - 20} /> */}
+			<line x1={0} y1={0} x2={editor.programEditorWidth} y2={0} stroke="red" />
+		</>
+	);
+}

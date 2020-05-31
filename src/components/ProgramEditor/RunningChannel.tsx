@@ -24,21 +24,22 @@ export const RunningChannel = observer((props: RunningChannelProps) => {
 
 	return (
 		<g style={{ transform: `translateX(${store.x}px)` }}>
-			<text
-				x={store.channelOne}
-				y={20}
-				textAnchor="middle"
-				dominantBaseline="middle"
-				fill="gray"
-			>
-				{props.note}
-			</text>
 			<rect
 				width={store.channelOne}
 				height={editor.programEditorHeight}
 				fill="#262421"
 				stroke="#101010"
 			/>
+			<text
+				style={{ userSelect: "none" }}
+				x={store.channelOne / 2}
+				y={20}
+				textAnchor="middle"
+				dominantBaseline="middle"
+				fill="white"
+			>
+				{props.note}
+			</text>
 		</g>
 	);
 });

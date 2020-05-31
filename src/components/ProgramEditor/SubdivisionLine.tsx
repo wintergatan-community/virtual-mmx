@@ -13,13 +13,24 @@ export const SubdivisionLine = observer((props: SubdivisionLineProps) => {
 			get y() {
 				return editor.tickToPixel(source.tick);
 			},
+			get stroke() {
+				return editor.scoreDivisionChecker(source.tick).stroke;
+			},
+			get strokeWidth() {
+				return editor.scoreDivisionChecker(source.tick).strokeWidth;
+			},
 		}),
 		props
 	);
 
 	return (
 		<g style={{ transform: `translateY(${store.y}px)` }}>
-			<line x1={0} x2={editor.programEditorWidth} stroke="#201e1b" />
+			<line
+				x1={0}
+				x2={editor.programEditorWidth}
+				stroke={store.stroke}
+				strokeWidth={store.strokeWidth}
+			/>
 		</g>
 	);
 });

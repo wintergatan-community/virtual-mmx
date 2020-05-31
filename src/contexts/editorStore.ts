@@ -7,6 +7,11 @@ import { range } from "../core/helpers";
 type SubdivisionChecker = (tick: number) => number;
 type SubdivisionCheckerKey = "realistic"; // TODO more
 
+type ScoreDivisionChecker = (
+	tick: number
+) => { stroke: string; strokeWidth: number };
+type ScoreDivisionCheckerKey = "primary"; // TODO more
+
 export interface EditorStoreInterface {
 	// settable
 	pixelsPerQuarter: number;
@@ -16,20 +21,28 @@ export interface EditorStoreInterface {
 
 	// constants
 	subdivisionCheckers: { [key in SubdivisionCheckerKey]: SubdivisionChecker };
+	scoreDivisionCheckers: {
+		[key in ScoreDivisionCheckerKey]: ScoreDivisionChecker;
+	};
 	channelWidth: number;
 
 	// actionable
 	channels: Note[];
 	subdivisionChecker: SubdivisionChecker;
+	scoreDivisionChecker: ScoreDivisionChecker;
 
 	// other
 	programEditorWidth: number;
 	programEditorHeight: number;
+	programEditorVisibleWidth: number;
+	programEditorVisibleHeight: number;
+	visibleEndTick: number;
 
 	tickToPixel: (tick: number) => number;
 	pixelToTick: (x: number) => number;
 	channelToPixel: (channel: number) => number;
 	pixelToChannel: (channel: number) => number;
+	inVisibleRange: (tick: number) => boolean;
 
 	ticksPerNoteSubdivision: number;
 	ticksPerNoteSubdivisions: { [type in NoteSubdivision]: number };
@@ -42,10 +55,24 @@ export class EditorStore implements EditorStoreInterface {
 	@observable viewingEditorTick = 0;
 	@observable viewingEditorChannel = 0;
 	@observable showEmpties = false;
+	@observable programEditorVisibleHeight = 400;
+	@computed get programEditorVisibleWidth() {
+		return this.channels.length * this.channelWidth;
+	}
+	@computed get visibleEndTick() {
+		return (
+			this.viewingEditorTick + this.pixelToTick(this.programEditorVisibleHeight)
+		);
+	}
+	@computed get inVisibleRange() {
+		// TODO deal with cases where some items on top of screen don't render
+		return (tick: number) =>
+			tick >= this.viewingEditorTick && tick <= this.visibleEndTick;
+	}
 
 	// constants
 	@observable subdivisionCheckers = {
-		realistic: function (this: any, tick: number) {
+		realistic: function (this: EditorStore, tick: number) {
 			if (tick % this.ticksPerNoteSubdivisions.eighth === 0) {
 				return 0.5;
 			} else if (tick % this.ticksPerNoteSubdivisions.sixteenth === 0) {
@@ -56,7 +83,22 @@ export class EditorStore implements EditorStoreInterface {
 			return 0;
 		},
 	};
-	@observable channelWidth = 45;
+	@observable scoreDivisionCheckers = {
+		primary: function (this: EditorStore, tick: number) {
+			if (tick % this.ticksPerNoteSubdivisions.whole === 0) {
+				return { stroke: "rgb(115, 115, 115)", strokeWidth: 1 };
+			} else if (tick % this.ticksPerNoteSubdivisions.quarter === 0) {
+				return { stroke: "rgb(63, 63, 63)", strokeWidth: 1 };
+			} else if (tick % this.ticksPerNoteSubdivisions.eighth === 0) {
+				return { stroke: "rgb(43, 43, 43)", strokeWidth: 1 };
+			}
+			return { stroke: "rgb(33, 33, 33)", strokeWidth: 1 };
+		},
+	};
+	@computed get scoreDivisionChecker() {
+		return this.scoreDivisionCheckers.primary;
+	}
+	@observable channelWidth = 55;
 
 	// actionable
 	@computed get channels() {
@@ -70,7 +112,7 @@ export class EditorStore implements EditorStoreInterface {
 	@computed get programEditorWidth() {
 		return this.channels.length * this.channelWidth;
 	}
-	programEditorHeight = 1500;
+	@observable programEditorHeight = this.g.tpq * 3;
 
 	@computed get tickToPixel() {
 		return (tick: number) => (tick * this.pixelsPerQuarter) / this.g.tpq;
@@ -89,6 +131,7 @@ export class EditorStore implements EditorStoreInterface {
 
 	@computed get ticksPerNoteSubdivisions() {
 		return {
+			whole: this.g.tpq * 4,
 			quarter: this.g.tpq,
 			eighth: this.g.tpq / 2,
 			sixteenth: this.g.tpq / 4,
@@ -99,7 +142,7 @@ export class EditorStore implements EditorStoreInterface {
 	@computed get tickDivisions() {
 		return range(
 			0,
-			this.pixelToTick(this.programEditorWidth),
+			this.pixelToTick(this.programEditorHeight),
 			this.ticksPerNoteSubdivision
 		);
 	}
@@ -110,9 +153,12 @@ export class EditorStore implements EditorStoreInterface {
 		this.pixelsPerQuarter = newVal;
 	}
 	@action scroll(dy: number) {
-		let newVal = this.viewingEditorTick + dy;
-		if (newVal < 0) newVal = 0;
-		if (newVal > this.programEditorHeight) newVal = -this.programEditorHeight;
+		let newVal = this.viewingEditorTick + this.pixelToTick(dy);
+
+		const eh = this.pixelToTick(this.programEditorHeight);
+
+		if (newVal >= eh) newVal -= eh;
+		if (newVal < 0) newVal += eh;
 		this.viewingEditorTick = newVal;
 	}
 	@action setSubdivision(type: NoteSubdivision) {
