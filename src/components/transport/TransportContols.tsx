@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import { Program, VibraphoneChannel } from "vmmx-schema";
+import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
 import { VmmxPlayer } from "../../core/playback/player";
 
 let program: Program = {
@@ -58,6 +58,14 @@ class TransportControls extends React.Component {
 				kind: "vibraphone",
 				channel: i as VibraphoneChannel,
 				tick: (i - 1) * (program.metadata.tpq / 2),
+			});
+		}
+		for (let i = 1; i <= 4; i++) {
+			program.dropEvents.push({
+				kind: "bass",
+				string: i as BassString,
+				fret: 0,
+				tick: (i - 1 + 11) * (program.metadata.tpq / 2),
 			});
 		}
 		this.player = new VmmxPlayer(program);
