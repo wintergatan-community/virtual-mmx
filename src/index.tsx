@@ -5,8 +5,8 @@ import { App } from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mobx-react-lite/batchingForReactDom";
-// import { configure } from "mobx";
-// configure({ enforceActions: true });
+import { configure } from "mobx";
+configure({ enforceActions: "observed" });
 
 ReactDOM.render(
 	<React.StrictMode>

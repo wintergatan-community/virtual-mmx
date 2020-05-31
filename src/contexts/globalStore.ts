@@ -1,7 +1,8 @@
 import { Program } from "vmmx-schema";
 import { VmmxPlayer } from "../core/playback/player";
 import { ToneDropEvent } from "../core/playback/events";
-import { observable, computed } from "mobx";
+import { observable, computed, action } from "mobx";
+import { insertInOrder } from "../core/helpers";
 
 interface GlobalStoreInterface {
 	program: Program;
@@ -60,4 +61,15 @@ export class GlobalStore implements GlobalStoreInterface {
 		return this.program.metadata.tpq;
 	}
 	@observable dropEvents: ToneDropEvent[] = []; // TODO sync with program
+
+	@action addDropEvent(newDropEvent: ToneDropEvent) {
+		console.log("created: " + newDropEvent.id);
+		this.dropEvents = insertInOrder(newDropEvent, this.dropEvents);
+		this.player.addDropEvent(newDropEvent);
+	}
+	@action removeDropEvent(newDropEvent: ToneDropEvent) {
+		console.log("removed: " + newDropEvent.id);
+		this.dropEvents = this.dropEvents.filter((e) => e !== newDropEvent);
+		this.player.removeDropEvent(newDropEvent);
+	}
 }

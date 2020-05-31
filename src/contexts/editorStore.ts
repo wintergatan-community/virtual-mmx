@@ -1,7 +1,8 @@
 import { NoteSubdivision } from "../core/types";
 import { Note } from "vmmx-schema/note_names";
 import { GlobalStore } from "./globalStore";
-import { observable, computed } from "mobx";
+import { observable, computed, action } from "mobx";
+import { range } from "../core/helpers";
 
 type SubdivisionChecker = (tick: number) => number;
 type SubdivisionCheckerKey = "realistic"; // TODO more
@@ -84,7 +85,7 @@ export class EditorStore implements EditorStoreInterface {
 		return (y: number) => y / this.channelWidth;
 	}
 
-	@observable ticksPerNoteSubdivision = 240;
+	@observable ticksPerNoteSubdivision = 240; // TODO link this up
 
 	@computed get ticksPerNoteSubdivisions() {
 		return {
@@ -93,6 +94,29 @@ export class EditorStore implements EditorStoreInterface {
 			sixteenth: this.g.tpq / 4,
 			triplet: (this.g.tpq * 2) / 3,
 		};
+	}
+
+	@computed get tickDivisions() {
+		return range(
+			0,
+			this.pixelToTick(this.programEditorWidth),
+			this.ticksPerNoteSubdivision
+		);
+	}
+
+	@action zoom(change: number) {
+		let newVal = this.pixelsPerQuarter - change;
+		if (newVal < 10) newVal = 10;
+		this.pixelsPerQuarter = newVal;
+	}
+	@action scroll(dy: number) {
+		let newVal = this.viewingEditorTick + dy;
+		if (newVal < 0) newVal = 0;
+		if (newVal > this.programEditorHeight) newVal = -this.programEditorHeight;
+		this.viewingEditorTick = newVal;
+	}
+	@action setSubdivision(type: NoteSubdivision) {
+		this.ticksPerNoteSubdivision = this.ticksPerNoteSubdivisions[type]; // TODO use action
 	}
 
 	constructor(g: GlobalStore) {

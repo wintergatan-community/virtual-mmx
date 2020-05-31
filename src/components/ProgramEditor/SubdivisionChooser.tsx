@@ -28,8 +28,7 @@ export const SubdivisonOption = observer((props: SubdivisonOptionProps) => {
 	const { editor } = useStores();
 	const store = useLocalStore(() => ({
 		handleClick() {
-			editor.ticksPerNoteSubdivision =
-				editor.ticksPerNoteSubdivisions[props.type]; // TODO use action
+			editor.setSubdivision(props.type);
 		},
 		get x() {
 			return editor.channelWidth - 40;

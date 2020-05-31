@@ -16,9 +16,10 @@ export const SubdivisionLine = observer((props: SubdivisionLineProps) => {
 		}),
 		props
 	);
+
 	return (
 		<g style={{ transform: `translateY(${store.y}px)` }}>
-			<line x1={0} x2={editor.programEditorHeight} stroke="#201e1b" />
+			<line x1={0} x2={editor.programEditorWidth} stroke="#201e1b" />
 		</g>
 	);
 });

@@ -25,6 +25,13 @@ export function mapValue(
 	return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 }
 
+export function insertInOrder<T>(item: T, arr: T[]) {
+	let i;
+	for (i = 0; i < arr.length && arr[i] < item; i++);
+	arr.splice(i, 0, item);
+	return arr;
+}
+
 export function arrToPolyLine(points: number[][]) {
 	let res = "";
 	for (let point of points) {

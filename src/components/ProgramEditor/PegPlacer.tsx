@@ -40,12 +40,7 @@ export const PegPlacer = observer((props: PegPlacerProps) => {
 					channel: store.mouseChannel as VibraphoneChannel,
 					kind: "vibraphone",
 				});
-				const newDropEvents = global.dropEvents.concat(newDropEvent);
-				global.player.addDropEvent(newDropEvent);
-				console.log("created " + newDropEvent.id);
-				newDropEvents.sort((a, b) => a.dropEvent.tick - b.dropEvent.tick);
-				// TODO optimize
-				global.dropEvents = newDropEvents; // TODO should be action, use mutation
+				global.addDropEvent(newDropEvent);
 			},
 
 			get x() {

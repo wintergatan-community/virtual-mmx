@@ -4,23 +4,16 @@ import { observer, useLocalStore } from "mobx-react";
 import { Peg } from "./Peg";
 import { ToneDropEvent } from "../../core/playback/events";
 
-interface PegsProps {
-	tickDivisions: number[];
-}
-
-export const Pegs = observer((props: PegsProps) => {
-	const { global } = useStores();
-	const store = useLocalStore(
-		(source) => ({
-			get visibleStartTick() {
-				return 0; // TODO correctly
-			},
-			get visibleEndTick() {
-				return source.tickDivisions[source.tickDivisions.length - 1]; // TODO out of bounds
-			},
-		}),
-		props
-	);
+export const Pegs = observer(() => {
+	const { global, editor } = useStores();
+	const store = useLocalStore(() => ({
+		get visibleStartTick() {
+			return 0; // TODO correctly
+		},
+		get visibleEndTick() {
+			return editor.tickDivisions[editor.tickDivisions.length - 1]; // TODO out of bounds
+		},
+	}));
 
 	return (
 		<>
@@ -45,23 +38,20 @@ interface MaybeRenderedPegProps {
 export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 	const { editor, global } = useStores();
 	const store = useLocalStore(
-		(s) => ({
+		(source) => ({
 			// TODO fix for other instruments
 			// if (event.dropEvent.kind !== "vibraphone") return null;
 			get tick() {
-				return s.event.dropEvent.tick;
+				return source.event.dropEvent.tick;
 			},
 			get visible() {
-				return store.tick < s.visibleEndTick || store.tick > s.visibleStartTick; // TODO optimize / work correctly
+				return (
+					store.tick < source.visibleEndTick ||
+					store.tick > source.visibleStartTick
+				); // TODO optimize / work correctly
 			},
 			removePeg() {
-				// TODO optimize for mutability
-				let newTickedDropEvents = global.dropEvents.filter(
-					(e) => e !== s.event
-				);
-				global.player.removeDropEvent(s.event);
-				console.log("removed " + s.event.id);
-				global.dropEvents = newTickedDropEvents; // TODO should be action, use mutation
+				global.removeDropEvent(source.event);
 			},
 		}),
 		props

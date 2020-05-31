@@ -4,37 +4,35 @@ import { SubdivisionLine } from "./SubdivisionLine";
 import { useStores } from "../../contexts/StoreContext";
 import { observer } from "mobx-react";
 
-interface ProgramGridProps {
-	tickDivisions: number[];
-}
-
-export const ProgramGrid = observer(({ tickDivisions }: ProgramGridProps) => {
+export const ProgramGrid = observer(() => {
 	return (
 		<>
-			<SubdivisionLines tickDivisions={tickDivisions} />
 			<RunningChannels />
+			<SubdivisionLines />
 		</>
 	);
 });
 
-const SubdivisionLines = observer(({ tickDivisions }: ProgramGridProps) => {
-	// TODO maybe move tickDivisions or props name
+const SubdivisionLines = observer(() => {
+	const { editor } = useStores();
+
 	return (
-		<>
-			{tickDivisions.map((tick, i) => (
-				<SubdivisionLine tick={tick} key={i} />
+		<g>
+			{editor.tickDivisions.map((tick) => (
+				<SubdivisionLine tick={tick} key={tick} />
 			))}
-		</>
+		</g>
 	);
 });
 
 const RunningChannels = observer(() => {
 	const { editor } = useStores();
+
 	return (
-		<>
+		<g>
 			{editor.channels.map((note, channel) => (
 				<RunningChannel note={note} channel={channel} key={channel} />
 			))}
-		</>
+		</g>
 	);
 });

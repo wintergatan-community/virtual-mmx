@@ -1,6 +1,5 @@
 import { useStores } from "../../contexts/StoreContext";
 import React, { createRef } from "react";
-import { range } from "../../core/helpers";
 import { ProgramGrid } from "./ProgramGrid";
 import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
@@ -8,6 +7,7 @@ import { SubdivisonChooser } from "./SubdivisionChooser";
 import { GearSide } from "./GearSide";
 import { WheelBlur } from "./WheelBlur";
 import { observer, useLocalStore } from "mobx-react";
+import { action } from "mobx";
 
 export interface EditorMousePos {
 	mouseTick: number;
@@ -17,17 +17,12 @@ export interface EditorMousePos {
 export const ProgramEditor = observer(() => {
 	const { editor } = useStores();
 	const store = useLocalStore(() => ({
-		svgRef: createRef<SVGSVGElement>(), // TODO make sure this works, does this even work?
+		svgRef: createRef<SVGSVGElement>(),
 
-		get tickDivisions() {
-			return range(
-				0,
-				editor.pixelToTick(editor.programEditorWidth),
-				editor.ticksPerNoteSubdivision
-			);
-		},
-
-		mousePos: undefined as EditorMousePos | undefined, // TODO this doesn't seem right
+		mousePos: undefined as EditorMousePos | undefined,
+		setMousePos: action((mousePos: EditorMousePos) => {
+			store.mousePos = mousePos;
+		}),
 
 		handleMouseMove(e: React.MouseEvent<SVGSVGElement, MouseEvent>) {
 			if (!store.svgRef.current) return;
@@ -42,20 +37,14 @@ export const ProgramEditor = observer(() => {
 				Math.floor(looseTick / editor.ticksPerNoteSubdivision) *
 				editor.ticksPerNoteSubdivision;
 
-			store.mousePos = { mouseTick, mouseChannel };
+			store.setMousePos({ mouseTick, mouseChannel });
 		},
 
 		handleScroll(e: React.WheelEvent<SVGSVGElement>) {
 			if (e.shiftKey) {
-				// e.preventDefault();
-				let dy = editor.pixelsPerQuarter - e.deltaY / 20;
-				if (dy < 10) dy = 10;
-				editor.pixelsPerQuarter = dy; // TODO use action
+				editor.zoom(e.deltaY / 20);
 			} else {
-				let dy = editor.viewingEditorTick - e.deltaY / 5;
-				if (dy > 0) dy = 0;
-				if (dy < -editor.programEditorHeight) dy = -editor.programEditorHeight;
-				editor.viewingEditorTick = dy; // TODO use action
+				editor.scroll(e.deltaY / 5);
 			}
 		},
 	}));
@@ -79,10 +68,10 @@ export const ProgramEditor = observer(() => {
 				onWheel={store.handleScroll}
 				ref={store.svgRef}
 			>
-				<g style={{ transform: `translateY(${editor.viewingEditorTick}px)` }}>
+				<g style={{ transform: `translateY(${-editor.viewingEditorTick}px)` }}>
 					{/* moving */}
-					<ProgramGrid tickDivisions={store.tickDivisions} />
-					<Pegs tickDivisions={store.tickDivisions} />
+					<ProgramGrid />
+					<Pegs />
 					<PegPlacer mousePos={store.mousePos} />
 					<SubdivisonChooser />
 					{
