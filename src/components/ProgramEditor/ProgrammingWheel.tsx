@@ -6,8 +6,6 @@ import { PegPlacer } from "./PegPlacer";
 import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
 import { TranslateGrid } from "../TranslateGrid";
-import { SubdivisonChooser } from "./SubdivisionChooser";
-import { GearSide } from "./GearSide";
 
 export const ProgrammingWheel = observer(() => {
 	const { wheel } = useStores();

@@ -2,7 +2,6 @@ import React from "react";
 import { SomeReactChildren } from "../core/types";
 import { useLocalStore, observer } from "mobx-react";
 import { useStores } from "../contexts/StoreContext";
-import { Source } from "tone/build/esm/source/Source";
 
 interface TranslateProps {
 	children: SomeReactChildren;
