@@ -3,40 +3,22 @@ import React, { createRef } from "react";
 import { ProgramGrid } from "./ProgramGrid";
 import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
-import { SubdivisonChooser } from "./SubdivisionChooser";
 import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
-import { action } from "mobx";
-
-export interface WheelMousePos {
-	mouseTick: number;
-	mouseChannel: number;
-}
 
 export const ProgrammingWheel = observer(() => {
 	const { wheel } = useStores();
 	const store = useLocalStore(() => ({
 		svgRef: createRef<SVGSVGElement>(),
 
-		mousePos: undefined as WheelMousePos | undefined,
-		setMousePos: action((mousePos: WheelMousePos) => {
-			store.mousePos = mousePos;
-		}),
-
 		handleMouseMove(e: React.MouseEvent<SVGSVGElement, MouseEvent>) {
 			if (!store.svgRef.current) return;
 			const svgBound = store.svgRef.current.getBoundingClientRect();
 			const x = e.clientX - svgBound.left;
-			const looseChannel = wheel.pixelToChannel(x);
-			const mouseChannel = Math.floor(looseChannel);
-
+			const mouseChannel = wheel.pixelToChannel(x);
 			const y = e.clientY - svgBound.top;
-			const looseTick =
-				(wheel.pixelToTick(y) + wheel.visibleTopTick) % wheel.totalTicks;
-			const mouseTick =
-				Math.floor(looseTick / wheel.ticksPerNoteSubdivision) *
-				wheel.ticksPerNoteSubdivision;
-			store.setMousePos({ mouseTick, mouseChannel });
+			const mouseTick = wheel.pixelToTick(y) + wheel.visibleTopTick;
+			wheel.moveMouse(mouseTick, mouseChannel);
 		},
 		handleScroll(e: React.WheelEvent<SVGSVGElement>) {
 			if (e.shiftKey) {
@@ -72,13 +54,13 @@ export const ProgrammingWheel = observer(() => {
 				ref={store.svgRef}
 			>
 				<g style={{ transform: `translateY(${-store.y}px)` }}>
-					<MovingWindow m={store.mousePos} />
+					<MovingWindow />
 					<g
 						style={{
 							transform: `translateY(${store.seemlessWheelOffset}px)`,
 						}}
 					>
-						<MovingWindow m={store.mousePos} />
+						<MovingWindow />
 					</g>
 				</g>
 				<Blur />
@@ -87,14 +69,14 @@ export const ProgrammingWheel = observer(() => {
 	);
 });
 
-function MovingWindow(props: { m: WheelMousePos | undefined }) {
+function MovingWindow() {
 	const { wheel } = useStores();
 	return (
 		<>
 			<ProgramGrid />
 			<Pegs />
-			<PegPlacer mousePos={props.m} />
-			<SubdivisonChooser />
+			<PegPlacer />
+			{/* <SubdivisonChooser /> */}
 			{
 				wheel.showEmpties ? null : null // TODO, add this thing
 			}

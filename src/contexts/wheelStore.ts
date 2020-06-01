@@ -4,6 +4,11 @@ import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
 import { range } from "../core/helpers";
 
+interface WheelMousePos {
+	mouseTick: number;
+	mouseChannel: number;
+}
+
 interface WheelChannelInfo {
 	descriptor: string;
 	instrument: string;
@@ -18,7 +23,7 @@ type SubdivisionLineFunction = (
 ) => { stroke: string; strokeWidth: number };
 type SubdivisionLineFunctionKey = "primary"; // TODO more
 
-export interface ProgrammingWheelInterface {
+interface ProgrammingWheelInterface {
 	/** The total number of ticks in the wheel */
 	totalTicks: number;
 	/** The total number of channels in the wheel */
@@ -37,6 +42,10 @@ export interface ProgrammingWheelInterface {
 	/** The rightmost channel of the visible wheel */
 	visibleRightChannel: number;
 
+	/** The position of the mouse on the wheel in ticks and channels */
+	mousePos: WheelMousePos | undefined;
+	/** The position of the mouse on the wheel snapped to the nearest tick and channel*/
+	gridSnappedMousePos: WheelMousePos | undefined;
 	/** The number of pixels between quarter notes */
 	pixelsPerQuarter: number;
 	/** The width of a channel in pixels */
@@ -76,7 +85,7 @@ export interface ProgrammingWheelInterface {
 export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	g: GlobalStore;
 
-	@observable totalTicks = this.g.tpq * 20;
+	@observable totalTicks = this.g.tpq * 40;
 	@computed get totalChannels() {
 		return this.wheelChannelInfos.length;
 	}
@@ -95,6 +104,16 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return -1;
 	}
 
+	@observable mousePos: WheelMousePos | undefined;
+	@computed get gridSnappedMousePos() {
+		if (!this.mousePos) return undefined;
+
+		const div = this.ticksPerNoteSubdivision;
+		const modded = this.mousePos.mouseTick % this.totalTicks;
+		const mouseTick = Math.floor(modded / div) * div;
+		const mouseChannel = Math.floor(this.mousePos.mouseChannel);
+		return { mouseTick, mouseChannel };
+	}
 	@observable pixelsPerQuarter = 20;
 	@observable channelWidth = 55;
 	@observable showEmpties = false;
@@ -188,19 +207,36 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	// actions
 
 	@action zoom(change: number) {
-		let newZoom = this.pixelsPerQuarter - change;
-		if (newZoom < 10) newZoom = 10;
-		this.pixelsPerQuarter = newZoom;
+		if (!this.mousePos) return;
+
+		let oldPerQuarter = this.pixelsPerQuarter;
+		let newPerQuarter = oldPerQuarter - change;
+
+		const minPerQuarter =
+			this.visiblePixelHeight / (this.totalTicks / this.g.tpq);
+		if (newPerQuarter < minPerQuarter) return; // already fully zoomed out
+
+		let m = this.mousePos.mouseTick;
+		let t = this.visibleTopTick;
+		let r = oldPerQuarter / newPerQuarter;
+		let x = m - t - r * (m - t);
+		let newTop = x + this.visibleTopTick;
+		if (newTop < 0) newTop += this.totalTicks; // too far above
+
+		this.pixelsPerQuarter = newPerQuarter;
+		this.visibleTopTick = newTop;
 	}
 	@action scroll(dy: number) {
 		let newTick = this.visibleTopTick + this.pixelToTick(dy);
-
 		if (newTick >= this.totalTicks) newTick -= this.totalTicks;
 		if (newTick < 0) newTick += this.totalTicks;
 		this.visibleTopTick = newTick;
 	}
 	@action setSubdivision(type: NoteSubdivision) {
 		this.ticksPerNoteSubdivision = this.ticksPerNoteSubdivisions[type]; // TODO use action
+	}
+	@action moveMouse(mouseTick: number, mouseChannel: number) {
+		this.mousePos = { mouseTick, mouseChannel };
 	}
 
 	constructor(g: GlobalStore) {
