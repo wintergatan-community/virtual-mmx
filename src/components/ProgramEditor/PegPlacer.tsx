@@ -4,6 +4,7 @@ import { ToneDropEvent } from "../../core/playback/events";
 
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
+import { TranslateGrid } from "../TranslateGrid";
 
 export const PegPlacer = observer(() => {
 	const { global, wheel } = useStores();
@@ -30,36 +31,23 @@ export const PegPlacer = observer(() => {
 			});
 			global.addDropEvent(newDropEvent);
 		},
-
-		get x() {
-			return wheel.channelToPixel(store.mouse.mouseChannel);
-		},
-		get y() {
-			return wheel.tickToPixel(store.mouse.mouseTick);
-		},
 		get height() {
 			return wheel.tickToPixel(wheel.ticksPerNoteSubdivision);
 		},
 	}));
 
 	return store.alreadyPlaced ? null : (
-		<g>
+		<TranslateGrid
+			tick={store.mouse.mouseTick}
+			channel={store.mouse.mouseChannel}
+		>
 			<rect
-				style={{
-					transform: `translate(${store.x}px, ${store.y}px)`,
-				}}
 				onMouseDown={store.addPeg}
 				onMouseMove={(e) => e.buttons === 1 && store.addPeg()}
 				width={wheel.channelToPixel(1)}
 				height={store.height}
 				fill="#0004"
 			/>
-			{/* <Peg
-				tick={mouseTick}
-				channel={mouseChannel}
-				spawnsEvent={false}
-				activeDivision={mouseTick % noteSubdivision === 0}
-			/> */}
-		</g>
+		</TranslateGrid>
 	);
 });

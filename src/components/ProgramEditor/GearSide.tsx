@@ -1,6 +1,7 @@
 import React from "react";
 import { range, arrToPolyLine } from "../../core/helpers";
 import { observer, useLocalStore } from "mobx-react";
+import { TranslateGrid } from "../TranslateGrid";
 
 interface GearSideProps {
 	x: number;
@@ -65,7 +66,7 @@ export const GearSideSegment = observer((props: GearSideSegmentProps) => {
 	);
 
 	return (
-		<g style={{ transform: `translateY(${store.y}px)` }}>
+		<TranslateGrid tick={0} channel={0}>
 			<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
 			<rect
 				x={3}
@@ -82,6 +83,6 @@ export const GearSideSegment = observer((props: GearSideSegmentProps) => {
 				stroke="hsl(38, 49%, 69%)"
 				points={store.points4}
 			/>
-		</g>
+		</TranslateGrid>
 	);
 });

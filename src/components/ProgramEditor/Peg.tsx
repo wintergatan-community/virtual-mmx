@@ -3,6 +3,7 @@ import { mapValue } from "../../core/helpers";
 import { ToneDropEvent } from "../../core/playback/events";
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
+import { TranslateGrid } from "../TranslateGrid";
 
 interface PegProps {
 	toneDropEvent: ToneDropEvent;
@@ -23,14 +24,8 @@ export const Peg = observer((props: PegProps) => {
 				return this.dropEvent.tick;
 			},
 			get channel() {
-				if (this.dropEvent.kind !== "vibraphone") return null; // TODO other instrument support
+				if (this.dropEvent.kind !== "vibraphone") return -1; // TODO other instrument support
 				return this.dropEvent.channel;
-			},
-			get x() {
-				return wheel.channelToPixel(this.channel ?? -1); // oh god, im starting to see a problem
-			},
-			get y() {
-				return wheel.tickToPixel(this.tick);
 			},
 			get w() {
 				return 10;
@@ -55,7 +50,7 @@ export const Peg = observer((props: PegProps) => {
 	);
 
 	return (
-		<g style={{ transform: `translate(${store.x}px, ${store.y}px)` }}>
+		<TranslateGrid tick={store.tick} channel={store.channel}>
 			<rect
 				width={store.w}
 				height={store.h}
@@ -64,6 +59,6 @@ export const Peg = observer((props: PegProps) => {
 				rx={3}
 				onClick={props.click}
 			/>
-		</g>
+		</TranslateGrid>
 	);
 });

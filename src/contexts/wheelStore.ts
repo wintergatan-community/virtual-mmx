@@ -3,6 +3,7 @@ import { Note } from "vmmx-schema/note_names";
 import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
 import { range } from "../core/helpers";
+import { computedFn } from "mobx-utils";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -165,9 +166,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 			} else if (tick % this.ticksPerNoteSubdivisions.quarter === 0) {
 				return { stroke: "rgb(63, 63, 63)", strokeWidth: 1 };
 			} else if (tick % this.ticksPerNoteSubdivisions.eighth === 0) {
-				return { stroke: "rgb(43, 43, 43)", strokeWidth: 1 };
+				return { stroke: "rgb(50, 50, 42)", strokeWidth: 1 };
 			}
-			return { stroke: "rgb(33, 33, 33)", strokeWidth: 1 };
+			return { stroke: "rgb(45, 45, 35)", strokeWidth: 1 };
 		},
 	};
 
@@ -182,23 +183,25 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		};
 	}
 
-	@computed get tickToPixel() {
-		return (tick: number) => (tick * this.pixelsPerQuarter) / this.g.tpq;
+	tickToPixel = computedFn(function (
+		this: ProgrammingWheelStore,
+		tick: number
+	) {
+		return (tick * this.pixelsPerQuarter) / this.g.tpq;
+	});
+	pixelToTick(x: number) {
+		return (x / this.pixelsPerQuarter) * this.g.tpq;
 	}
-	@computed get pixelToTick() {
-		return (x: number) => (x / this.pixelsPerQuarter) * this.g.tpq;
+	channelToPixel(channel: number) {
+		return channel * this.channelWidth;
 	}
-	@computed get channelToPixel() {
-		return (channel: number) => channel * this.channelWidth;
-	}
-	@computed get pixelToChannel() {
-		return (y: number) => y / this.channelWidth;
+	pixelToChannel(y: number) {
+		return y / this.channelWidth;
 	}
 
-	@computed get inVisibleRange() {
+	inVisibleRange(tick: number) {
 		// TODO deal with cases where some items on top of screen don't render
-		return (tick: number) =>
-			tick >= this.visibleTopTick && tick <= this.visibleBottomTick;
+		return tick >= this.visibleTopTick && tick <= this.visibleBottomTick;
 	}
 	@computed get subdivisionLines() {
 		return range(0, this.totalTicks, this.ticksPerNoteSubdivision);
@@ -207,6 +210,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	// actions
 
 	@action zoom(change: number) {
+		// TODO still a little buggy
 		if (!this.mousePos) return;
 
 		let oldPerQuarter = this.pixelsPerQuarter;
@@ -219,7 +223,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		let m = this.mousePos.mouseTick;
 		let t = this.visibleTopTick;
 		let r = oldPerQuarter / newPerQuarter;
-		let x = m - t - r * (m - t);
+		let x = m - t - r * (m - t); // mmm... algebra's
 		let newTop = x + this.visibleTopTick;
 		if (newTop < 0) newTop += this.totalTicks; // too far above
 

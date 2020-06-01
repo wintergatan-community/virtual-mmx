@@ -5,6 +5,9 @@ import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
 import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
+import { TranslateGrid } from "../TranslateGrid";
+import { SubdivisonChooser } from "./SubdivisionChooser";
+import { GearSide } from "./GearSide";
 
 export const ProgrammingWheel = observer(() => {
 	const { wheel } = useStores();
@@ -27,45 +30,32 @@ export const ProgrammingWheel = observer(() => {
 				wheel.scroll(e.deltaY / 5);
 			}
 		},
-		get y() {
-			return wheel.tickToPixel(wheel.visibleTopTick);
-		},
 		get seemlessWheelOffset() {
 			return wheel.tickToPixel(wheel.totalTicks);
 		},
 	}));
 
 	return (
-		<div
+		<svg
+			viewBox={`0 0 ${wheel.visiblePixelWidth} ${wheel.visiblePixelHeight}`}
 			style={{
 				width: wheel.visiblePixelWidth,
 				height: wheel.visiblePixelHeight,
-				overflow: "hidden",
 			}}
+			onMouseMove={store.handleMouseMove}
+			onWheel={store.handleScroll}
+			ref={store.svgRef}
 		>
-			<svg
-				viewBox={`0 0 ${wheel.visiblePixelWidth} ${wheel.visiblePixelHeight}`}
-				style={{
-					width: wheel.visiblePixelWidth,
-					height: wheel.visiblePixelHeight,
-				}}
-				onMouseMove={store.handleMouseMove}
-				onWheel={store.handleScroll}
-				ref={store.svgRef}
-			>
-				<g style={{ transform: `translateY(${-store.y}px)` }}>
+			<TranslateGrid tick={-wheel.visibleTopTick}>
+				<MovingWindow />
+				<TranslateGrid tick={wheel.totalTicks}>
+					{/* <g> */}
 					<MovingWindow />
-					<g
-						style={{
-							transform: `translateY(${store.seemlessWheelOffset}px)`,
-						}}
-					>
-						<MovingWindow />
-					</g>
-				</g>
-				<Blur />
-			</svg>
-		</div>
+					{/* </g> */}
+				</TranslateGrid>
+			</TranslateGrid>
+			<Blur />
+		</svg>
 	);
 });
 
