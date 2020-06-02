@@ -52,6 +52,8 @@ interface ProgrammingWheelInterface {
 	partData: PartData[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
+	/** The current tick of the playback head */
+	playbackHeadTick: number;
 
 	/** Returns a value from 0 to 1 representing where a peg should be rendered horizontally on its channel based on its subdivision  */
 	pegOffsetFunction: PegOffsetFunction;
@@ -194,6 +196,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@computed get subdivisionLines() {
 		return range(0, this.totalTicks, this.ticksPerNoteSubdivision);
 	}
+	@observable playbackHeadTick = 0;
 
 	// actions
 
@@ -229,6 +232,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	}
 	@action moveMouse(mouseTick: number, mouseChannel: number) {
 		this.mousePos = { mouseTick, mouseChannel };
+	}
+	@action setPlaybackHeadTick(tick: number) {
+		this.playbackHeadTick = tick;
 	}
 
 	constructor(g: GlobalStore) {

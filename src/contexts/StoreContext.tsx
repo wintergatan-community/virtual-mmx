@@ -6,6 +6,7 @@ import { BassString, VibraphoneChannel } from "vmmx-schema";
 const global = new GlobalStore();
 export { global };
 const wheel = new ProgrammingWheelStore(global); // needs reference to global store
+export { wheel };
 
 export const storesContext = createContext({ global, wheel });
 

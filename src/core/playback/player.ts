@@ -4,6 +4,7 @@ import { MmxParts, MmxSynths } from "./types";
 import { Transport, PluckSynth, Sampler, context } from "tone";
 import { Note } from "vmmx-schema/note_names";
 import { observable } from "mobx";
+import { wheel } from "../../contexts/StoreContext";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
@@ -101,7 +102,6 @@ export class VmmxPlayer {
 	}
 
 	public play(): void {
-		console.log("sfsf");
 		if (context.state !== "running") {
 			context.resume();
 		}
@@ -113,3 +113,7 @@ export class VmmxPlayer {
 		Transport.position = 0;
 	}
 }
+
+setInterval(() => {
+	wheel.setPlaybackHeadTick(Transport.ticks);
+}, 10);
