@@ -2,7 +2,7 @@ import React from "react";
 import { mapValue } from "../../core/helpers";
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
-import { TranslateGrid } from "../TranslateGrid";
+import { TranslateGrid } from "./TranslateGrid";
 import { PegInPart } from "../../core/playback/partData";
 
 interface PegProps {

@@ -1,6 +1,6 @@
 import React from "react";
-import { useStores } from "../../contexts/StoreContext";
 import { observer } from "mobx-react";
+import { useStores } from "../../contexts/StoreContext";
 
 export const Blur = observer(() => {
 	// shadows not great rn
@@ -24,7 +24,7 @@ export const Blur = observer(() => {
 			/>
 			<rect
 				x={0}
-				y={-470}
+				y={-70 - wheel.visiblePixelHeight}
 				width={wheel.visiblePixelWidth}
 				height={70}
 				style={{

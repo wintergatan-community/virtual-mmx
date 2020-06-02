@@ -1,8 +1,8 @@
 import React from "react";
-import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
-import { Peg } from "./Peg";
 import { PegInPart } from "../../core/playback/partData";
+import { useStores } from "../../contexts/StoreContext";
+import { Peg } from "./Peg";
 
 interface PegsProps {
 	pegs: PegInPart[];

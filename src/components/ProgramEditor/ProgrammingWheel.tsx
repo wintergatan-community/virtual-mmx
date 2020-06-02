@@ -1,12 +1,12 @@
+import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
 import React, { createRef } from "react";
+import { TranslateGrid } from "./TranslateGrid";
+import { SubdivisonChooser } from "./SubdivisionChooser";
+import { Blur } from "./Blur";
 import { ProgramGrid } from "./ProgramGrid";
 import { PegPlacer } from "./PegPlacer";
-import { Blur } from "./Blur";
-import { observer, useLocalStore } from "mobx-react";
-import { TranslateGrid } from "../TranslateGrid";
 import { PlaybackHead } from "./PlaybackHead";
-import { SubdivisonChooser } from "./SubdivisionChooser";
 import { GearSide } from "./GearSide";
 
 export const ProgrammingWheel = observer(() => {
@@ -57,7 +57,7 @@ export const ProgrammingWheel = observer(() => {
 			</TranslateGrid>
 			<g style={{ transform: `translateX(${wheel.gearWidth}px)` }}>
 				{wheel.partDatas.map((part, channel) => (
-					<TranslateGrid channel={channel}>
+					<TranslateGrid channel={channel} key={channel}>
 						<TextThing descriptor={part.descriptor} />
 					</TranslateGrid>
 				))}

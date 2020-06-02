@@ -98,7 +98,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
 	}
-	@observable visiblePixelHeight = 400;
+	@observable visiblePixelHeight = 482;
 
 	@observable visibleTopTick = 0;
 	@computed get visibleBottomTick() {
@@ -121,7 +121,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return { mouseTick, mouseChannel };
 	}
 	@observable pixelsPerQuarter = 20;
-	@observable channelWidth = 45;
+	@observable channelWidth = 43.2;
 	@observable showEmpties = false;
 	@observable partDatas = (() => {
 		// TODO move out of IIEF
@@ -216,7 +216,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	}
 	@observable playbackHeadTick = 0;
 
-	@observable gearWidth = 40;
+	@observable gearWidth = 42;
 
 	// actions
 
@@ -257,6 +257,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	}
 	@action setPlaybackHeadTick(tick: number) {
 		this.playbackHeadTick = tick;
+	}
+	@action setVisibleTopTick(tick: number) {
+		this.visibleTopTick = tick;
 	}
 
 	constructor(g: GlobalStore) {

@@ -1,7 +1,7 @@
 import React from "react";
-import { SomeReactChildren } from "../core/types";
+import { SomeReactChildren } from "../../core/types";
 import { useLocalStore, observer } from "mobx-react";
-import { useStores } from "../contexts/StoreContext";
+import { useStores } from "../../contexts/StoreContext";
 
 interface TranslateProps {
 	children: SomeReactChildren;

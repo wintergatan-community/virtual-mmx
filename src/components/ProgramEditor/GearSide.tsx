@@ -1,7 +1,7 @@
 import React from "react";
 import { range, arrToPolyLine } from "../../core/helpers";
 import { observer, useLocalStore } from "mobx-react";
-import { TranslateGrid } from "../TranslateGrid";
+import { TranslateGrid } from "./TranslateGrid";
 import { useStores } from "../../contexts/StoreContext";
 
 interface GearSideProps {
@@ -35,8 +35,8 @@ export const GearSide = observer((props: GearSideProps) => {
 			return arrToPolyLine(
 				store.scaledPoints([
 					[0, 0],
-					[0.15, 0.3],
-					[0.85, 0.3],
+					[0.1, 0.3],
+					[0.9, 0.3],
 					[1, 0],
 				])
 			);
@@ -44,10 +44,10 @@ export const GearSide = observer((props: GearSideProps) => {
 		get points2() {
 			return arrToPolyLine(
 				store.scaledPoints([
-					[0.15, 0.7],
+					[0.1, 0.7],
 					[0, 1],
 					[1, 1],
-					[0.85, 0.7],
+					[0.9, 0.7],
 				])
 			);
 		},
@@ -56,8 +56,8 @@ export const GearSide = observer((props: GearSideProps) => {
 				store.scaledPoints([
 					[0, 0],
 					[0, 1],
-					[0.15, 0.7],
-					[0.15, 0.3],
+					[0.1, 0.7],
+					[0.1, 0.3],
 				])
 			);
 		},
@@ -66,15 +66,15 @@ export const GearSide = observer((props: GearSideProps) => {
 				store.scaledPoints([
 					[1, 0],
 					[1, 1],
-					[0.85, 0.7],
-					[0.85, 0.3],
+					[0.9, 0.7],
+					[0.9, 0.3],
 				])
 			);
 		},
 		get rectBits() {
 			return store.scaledPoints([
-				[0.15, 0.3],
-				[0.7, 0.5],
+				[0.1, 0.3],
+				[0.8, 0.5],
 			]);
 		},
 	}));

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
-import { TranslateGrid } from "../TranslateGrid";
+import { TranslateGrid } from "./TranslateGrid";
 
 export const PegPlacer = observer(() => {
 	const { wheel } = useStores();

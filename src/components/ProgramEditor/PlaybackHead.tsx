@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
-import { TranslateGrid } from "../TranslateGrid";
+import { TranslateGrid } from "./TranslateGrid";
 
 export const PlaybackHead = observer(() => {
 	const { wheel } = useStores();
