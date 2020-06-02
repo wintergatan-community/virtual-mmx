@@ -1,9 +1,4 @@
-import {
-	VibraphoneChannel,
-	VibraphoneState,
-	BassState,
-	BassString,
-} from "vmmx-schema";
+import { VibraphoneChannel, VibraphoneState, BassString } from "vmmx-schema";
 import { Note } from "vmmx-schema/note_names";
 
 export function range(start: number, stop: number, step?: number) {

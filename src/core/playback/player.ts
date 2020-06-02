@@ -2,7 +2,6 @@ import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
 import { vibraphoneChannelToNote, bassStringToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
 import { Transport, PluckSynth, Sampler, context } from "tone";
-import { Note } from "vmmx-schema/note_names";
 import { observable } from "mobx";
 import { wheel } from "../../contexts/StoreContext";
 
