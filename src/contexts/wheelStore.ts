@@ -58,6 +58,8 @@ interface ProgrammingWheelInterface {
 	subdivisionLines: number[];
 	/** The current tick of the playback head */
 	playbackHeadTick: number;
+	/** The gear width on both sides of the wheel */
+	gearWidth: number;
 
 	/** Returns a value from 0 to 1 representing where a peg should be rendered horizontally on its channel based on its subdivision  */
 	pegOffsetFunction: PegOffsetFunction;
@@ -87,7 +89,9 @@ interface ProgrammingWheelInterface {
 export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	g: GlobalStore;
 
-	@observable totalTicks = this.g.tpq * 40;
+	@computed get totalTicks() {
+		return this.g.tpq * 40;
+	}
 	@computed get totalChannels() {
 		return this.partDatas.length;
 	}
@@ -117,7 +121,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return { mouseTick, mouseChannel };
 	}
 	@observable pixelsPerQuarter = 20;
-	@observable channelWidth = 55;
+	@observable channelWidth = 45;
 	@observable showEmpties = false;
 	@observable partDatas = (() => {
 		// TODO move out of IIEF
@@ -141,7 +145,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 			res.push(new PartData(part, note, string + ":Str"));
 		}
 
-		// TODO drums
+		// TODO drums and bass
 		return res;
 	})();
 
@@ -212,6 +216,8 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	}
 	@observable playbackHeadTick = 0;
 
+	@observable gearWidth = 40;
+
 	// actions
 
 	@action zoom(change: number) {
@@ -223,7 +229,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 
 		const minPerQuarter =
 			this.visiblePixelHeight / (this.totalTicks / this.g.tpq);
-		if (newPerQuarter < minPerQuarter) return; // already fully zoomed out
+		if (newPerQuarter < minPerQuarter) {
+			newPerQuarter = minPerQuarter;
+		}
 
 		let m = this.mousePos.mouseTick;
 		let t = this.visibleTopTick;

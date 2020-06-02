@@ -7,6 +7,7 @@ import { observer, useLocalStore } from "mobx-react";
 import { TranslateGrid } from "../TranslateGrid";
 import { PlaybackHead } from "./PlaybackHead";
 import { SubdivisonChooser } from "./SubdivisionChooser";
+import { GearSide } from "./GearSide";
 
 export const ProgrammingWheel = observer(() => {
 	const { wheel } = useStores();
@@ -16,7 +17,7 @@ export const ProgrammingWheel = observer(() => {
 		handleMouseMove(e: React.MouseEvent<SVGSVGElement, MouseEvent>) {
 			if (!store.svgRef.current) return;
 			const svgBound = store.svgRef.current.getBoundingClientRect();
-			const x = e.clientX - svgBound.left;
+			const x = e.clientX - svgBound.left - wheel.gearWidth;
 			const mouseChannel = wheel.pixelToChannel(x);
 			const y = e.clientY - svgBound.top;
 			const mouseTick = wheel.pixelToTick(y) + wheel.visibleTopTick;
@@ -36,9 +37,11 @@ export const ProgrammingWheel = observer(() => {
 
 	return (
 		<svg
-			viewBox={`0 0 ${wheel.visiblePixelWidth} ${wheel.visiblePixelHeight}`}
+			viewBox={`0 0 ${wheel.visiblePixelWidth + wheel.gearWidth * 2} ${
+				wheel.visiblePixelHeight
+			}`}
 			style={{
-				width: wheel.visiblePixelWidth,
+				width: wheel.visiblePixelWidth + wheel.gearWidth * 2,
 				height: wheel.visiblePixelHeight,
 			}}
 			onMouseMove={store.handleMouseMove}
@@ -52,6 +55,7 @@ export const ProgrammingWheel = observer(() => {
 					<MovingWindow />
 				</TranslateGrid>
 			</TranslateGrid>
+			<SubdivisonChooser />
 			<Blur />
 		</svg>
 	);
@@ -61,16 +65,17 @@ function MovingWindow() {
 	const { wheel } = useStores();
 	return (
 		<>
-			<ProgramGrid />
-			<PegPlacer />
-			<PlaybackHead />
-			<SubdivisonChooser />
-			{
-				wheel.showEmpties ? null : null // TODO, add this thing
-			}
-			{/* <GearSide x={0} />
-			<GearSide x={wheel.visiblePixelWidth - 20} /> */}
-			<line x1={0} y1={0} x2={wheel.visiblePixelWidth} y2={0} stroke="red" />
+			<g style={{ transform: `translateX(${wheel.gearWidth}px)` }}>
+				<ProgramGrid />
+				<PegPlacer />
+				<PlaybackHead />
+				{
+					wheel.showEmpties ? null : null // TODO, add this thing
+				}
+				<line x1={0} y1={0} x2={wheel.visiblePixelWidth} y2={0} stroke="red" />
+			</g>
+			<GearSide x={0} />
+			<GearSide x={wheel.visiblePixelWidth + wheel.gearWidth} />
 		</>
 	);
 }

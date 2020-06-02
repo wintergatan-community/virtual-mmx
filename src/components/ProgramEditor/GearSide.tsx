@@ -2,87 +2,128 @@ import React from "react";
 import { range, arrToPolyLine } from "../../core/helpers";
 import { observer, useLocalStore } from "mobx-react";
 import { TranslateGrid } from "../TranslateGrid";
+import { useStores } from "../../contexts/StoreContext";
 
 interface GearSideProps {
 	x: number;
 }
 
-export const GearSide = observer(({ x }: GearSideProps) => {
-	const segs = range(0, 30, 1);
+// TODO needs major optimization and better structure
+export const GearSide = observer((props: GearSideProps) => {
+	const { wheel, global } = useStores();
+
+	const store = useLocalStore(() => ({
+		get repeat() {
+			return global.tpq * 2;
+		},
+		get segments() {
+			return range(0, wheel.totalTicks, store.repeat);
+		},
+		get scale() {
+			return wheel.tickToPixel(store.repeat);
+		},
+		w(n: number) {
+			return n * wheel.gearWidth;
+		},
+		h(n: number) {
+			return n * store.scale;
+		},
+		scaledPoints(arr: number[][]) {
+			return arr.map((a) => [store.w(a[0]), store.h(a[1])]);
+		},
+		get points1() {
+			return arrToPolyLine(
+				store.scaledPoints([
+					[0, 0],
+					[0.15, 0.3],
+					[0.85, 0.3],
+					[1, 0],
+				])
+			);
+		},
+		get points2() {
+			return arrToPolyLine(
+				store.scaledPoints([
+					[0.15, 0.7],
+					[0, 1],
+					[1, 1],
+					[0.85, 0.7],
+				])
+			);
+		},
+		get points3() {
+			return arrToPolyLine(
+				store.scaledPoints([
+					[0, 0],
+					[0, 1],
+					[0.15, 0.7],
+					[0.15, 0.3],
+				])
+			);
+		},
+		get points4() {
+			return arrToPolyLine(
+				store.scaledPoints([
+					[1, 0],
+					[1, 1],
+					[0.85, 0.7],
+					[0.85, 0.3],
+				])
+			);
+		},
+		get rectBits() {
+			return store.scaledPoints([
+				[0.15, 0.3],
+				[0.7, 0.5],
+			]);
+		},
+	}));
+
 	return (
-		<g style={{ transform: `translateX(${x}px)` }}>
-			{segs.map((s, i) => (
-				<GearSideSegment n={s} key={i} />
+		<g style={{ transform: `translateX(${props.x}px)` }}>
+			{store.segments.map((tick, i) => (
+				<TranslateGrid tick={tick} key={i}>
+					<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
+					<rect
+						x={store.rectBits[0][0]}
+						y={store.rectBits[0][1]}
+						width={store.rectBits[1][0]}
+						height={store.rectBits[1][1]}
+						fill="#c9af83"
+						stroke="#c9af83"
+					/>
+					<polyline fill="#bfa982" stroke="#bfa982" points={store.points2} />
+					<polyline fill="#b09c78" stroke="#b09c78" points={store.points3} />
+					<polyline
+						fill="hsl(38, 49%, 69%)"
+						stroke="hsl(38, 49%, 69%)"
+						points={store.points4}
+					/>
+				</TranslateGrid>
 			))}
 		</g>
 	);
 });
 
-interface GearSideSegmentProps {
-	n: number;
-}
-
-// TODO MobXify, too lazy rn
-export const GearSideSegment = observer((props: GearSideSegmentProps) => {
-	const store = useLocalStore(
-		(source) => ({
-			get y() {
-				return source.n * 35;
-			},
-			get points1() {
-				return arrToPolyLine([
-					[0, 0],
-					[3, 10],
-					[17, 10],
-					[20, 0],
-				]);
-			},
-			get points2() {
-				return arrToPolyLine([
-					[3, 25],
-					[0, 35],
-					[20, 35],
-					[17, 25],
-				]);
-			},
-			get points3() {
-				return arrToPolyLine([
-					[0, 0],
-					[0, 35],
-					[3, 25],
-					[3, 10],
-				]);
-			},
-			get points4() {
-				return arrToPolyLine([
-					[20, 0],
-					[20, 35],
-					[17, 25],
-					[17, 10],
-				]);
-			},
-		}),
-		props
-	);
-
-	return (
-		<TranslateGrid tick={0} channel={0}>
-			<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
-			<rect
-				x={3}
-				y={10}
-				width={14}
-				height={15}
-				fill="#c9af83"
-				stroke="#c9af83"
-			/>
-			<polyline fill="#bfa982" stroke="#bfa982" points={store.points2} />
-			<polyline fill="#b09c78" stroke="#b09c78" points={store.points3} />
-			<polyline
-				fill="hsl(38, 49%, 69%)"
-				stroke="hsl(38, 49%, 69%)"
-				points={store.points4}
-			/>
-		</TranslateGrid>
-	);
-});
+// export const GearSideSegment = observer(() => {
+// 	return (
+// 		<g>
+// 			<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
+// 			<rect
+// 				x={3}
+// 				y={10}
+// 				width={14}
+// 				height={15}
+// 				fill="#c9af83"
+// 				stroke="#c9af83"
+// 			/>
+// 			<polyline fill="#bfa982" stroke="#bfa982" points={store.points2} />
+// 			<polyline fill="#b09c78" stroke="#b09c78" points={store.points3} />
+// 			<polyline
+// 				fill="hsl(38, 49%, 69%)"
+// 				stroke="hsl(38, 49%, 69%)"
+// 				points={store.points4}
+// 			/>
+// 		</g>
+// 	);
+// });
