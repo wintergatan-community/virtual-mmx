@@ -13,7 +13,7 @@ export default class PartData {
 	readonly tuning: Note;
 	readonly descriptor: string;
 	@observable readonly pegs: PegInPart[];
-	readonly possibleNotes?: Note[];
+	// readonly possibleNotes?: Note[];
 
 	constructor(tonePart: Part, tuning: Note, descriptor: string) {
 		this.tonePart = tonePart;

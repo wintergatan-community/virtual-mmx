@@ -30,7 +30,7 @@ const RunningChannels = observer(() => {
 
 	return (
 		<g>
-			{wheel.partData.map((data, channel) => {
+			{wheel.partDatas.map((data, channel) => {
 				return <WheelChannel data={data} channel={channel} key={channel} />;
 			})}
 		</g>

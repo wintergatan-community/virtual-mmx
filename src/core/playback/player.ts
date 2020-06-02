@@ -1,5 +1,5 @@
 import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
-import { vibraphoneChannelToNote } from "../helpers";
+import { vibraphoneChannelToNote, bassStringToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
 import { Transport, PluckSynth, Sampler, context } from "tone";
 import { Note } from "vmmx-schema/note_names";
@@ -32,13 +32,6 @@ function createSynths(): MmxSynths<PluckSynth, PluckSynth, Sampler> {
 	};
 }
 
-const regularBassTuning: { [s in BassString]: Note } = {
-	4: "E1",
-	3: "A1",
-	2: "D2",
-	1: "G2",
-};
-
 export class VmmxPlayer {
 	program: Program;
 	@observable parts: MmxParts;
@@ -62,19 +55,12 @@ export class VmmxPlayer {
 			);
 		};
 	}
-	bassStringToNote(bassString: BassString): string {
-		const regularTuning =
-			this.program.state.bass.tuning[bassString] ||
-			regularBassTuning[bassString];
-		return regularTuning;
-		// const noteVal =
-		// 	(NoteNames[regularTuning] as number) +
-		// 	(this.program.state.bass.capos[bassString] || 0);
-		// return NoteNames[noteVal];
-	}
 	createBassTrigger(channel: BassString): (time: number | string) => void {
 		return (time): void => {
-			this.synths.bass.triggerAttack(this.bassStringToNote(channel), time);
+			this.synths.bass.triggerAttack(
+				bassStringToNote(channel, this.program.state.bass.tuning),
+				time
+			);
 		};
 	}
 

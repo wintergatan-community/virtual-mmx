@@ -14,7 +14,7 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 	const store = useLocalStore(
 		(source) => ({
 			get partData() {
-				return wheel.partData[source.channel];
+				return wheel.partDatas[source.channel];
 			},
 			get x() {
 				return wheel.channelToPixel(source.channel);

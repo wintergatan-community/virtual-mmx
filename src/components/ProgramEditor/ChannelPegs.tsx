@@ -29,7 +29,7 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 	const store = useLocalStore(
 		(source) => ({
 			get partData() {
-				return wheel.partData[source.channel];
+				return wheel.partDatas[source.channel];
 			},
 			get tick() {
 				return source.peg.tick;

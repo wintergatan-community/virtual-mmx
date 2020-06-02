@@ -1,4 +1,9 @@
-import { VibraphoneChannel, VibraphoneState } from "vmmx-schema";
+import {
+	VibraphoneChannel,
+	VibraphoneState,
+	BassState,
+	BassString,
+} from "vmmx-schema";
 import { Note } from "vmmx-schema/note_names";
 
 export function range(start: number, stop: number, step?: number) {
@@ -51,4 +56,23 @@ export function vibraphoneChannelToNote(
 ): Note {
 	const note = vibraphoneState.notes[channel];
 	return note;
+}
+
+const regularBassTuning: { [s in BassString]: Note } = {
+	4: "E1",
+	3: "A1",
+	2: "D2",
+	1: "G2",
+};
+
+export function bassStringToNote(
+	bassString: BassString,
+	bassTuning: { [S in BassString]?: Note }
+): Note {
+	const regularTuning = bassTuning[bassString] || regularBassTuning[bassString];
+	return regularTuning;
+	// const noteVal =
+	// 	(NoteNames[regularTuning] as number) +
+	// 	(this.program.state.bass.capos[bassString] || 0);
+	// return NoteNames[noteVal];
 }

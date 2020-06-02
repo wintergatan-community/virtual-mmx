@@ -9,7 +9,7 @@ export const PegPlacer = observer(() => {
 		get partData() {
 			const channel = wheel.gridSnappedMousePos?.mouseChannel;
 			if (!channel) return null;
-			return wheel.partData[channel];
+			return wheel.partDatas[channel];
 		},
 		get mouse() {
 			// TODO this doesn't seem right but MobX is being lame

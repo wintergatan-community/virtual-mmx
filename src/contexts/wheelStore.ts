@@ -1,10 +1,14 @@
 import { NoteSubdivision } from "../core/types";
 import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
-import { range, vibraphoneChannelToNote } from "../core/helpers";
+import {
+	range,
+	vibraphoneChannelToNote,
+	bassStringToNote,
+} from "../core/helpers";
 import { computedFn } from "mobx-utils";
 import PartData from "../core/playback/partData";
-import { VibraphoneChannel } from "vmmx-schema";
+import { VibraphoneChannel, BassString } from "vmmx-schema";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -48,8 +52,8 @@ interface ProgrammingWheelInterface {
 	channelWidth: number;
 	/** Whether or not translucent pegs should be rendered for the current subdivision in the absence of a drop event */
 	showEmpties: boolean;
-	/** An array of WheelChannelData used for channel column headers and instrument identification*/
-	partData: PartData[];
+	/** An array of PartData used for channel column headers and instrument identification*/
+	partDatas: PartData[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
 	/** The current tick of the playback head */
@@ -85,7 +89,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 
 	@observable totalTicks = this.g.tpq * 40;
 	@computed get totalChannels() {
-		return this.partData.length;
+		return this.partDatas.length;
 	}
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
@@ -115,9 +119,10 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable pixelsPerQuarter = 20;
 	@observable channelWidth = 55;
 	@observable showEmpties = false;
-	@observable partData = (() => {
-		// TODO
+	@observable partDatas = (() => {
+		// TODO move out of IIEF
 		const res: PartData[] = [];
+
 		for (let [channel, part] of Object.entries(
 			this.g.player.parts.vibraphone
 		)) {
@@ -127,7 +132,15 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 			);
 			res.push(new PartData(part, note, note));
 		}
-		// TODO drums
+
+		for (let [string, part] of Object.entries(this.g.player.parts.bass)) {
+			const note = bassStringToNote(
+				(string as unknown) as BassString,
+				this.g.program.state.bass.tuning
+			);
+			res.push(new PartData(part, note, string + ":Str"));
+		}
+		// TODO drums and bass
 		return res;
 	})();
 
