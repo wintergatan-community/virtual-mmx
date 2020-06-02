@@ -214,7 +214,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		let m = this.mousePos.mouseTick;
 		let t = this.visibleTopTick;
 		let r = oldPerQuarter / newPerQuarter;
-		let x = m - t - r * (m - t); // mmm... algebra's
+		let x = m - t - r * (m - t); // mmm... algebra's hard
 		let newTop = x + this.visibleTopTick;
 		if (newTop < 0) newTop += this.totalTicks; // too far above
 

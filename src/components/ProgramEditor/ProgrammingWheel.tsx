@@ -6,6 +6,7 @@ import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
 import { TranslateGrid } from "../TranslateGrid";
 import { PlaybackHead } from "./PlaybackHead";
+import { SubdivisonChooser } from "./SubdivisionChooser";
 
 export const ProgrammingWheel = observer(() => {
 	const { wheel } = useStores();
@@ -63,7 +64,7 @@ function MovingWindow() {
 			<ProgramGrid />
 			<PegPlacer />
 			<PlaybackHead />
-			{/* <SubdivisonChooser /> */}
+			<SubdivisonChooser />
 			{
 				wheel.showEmpties ? null : null // TODO, add this thing
 			}
