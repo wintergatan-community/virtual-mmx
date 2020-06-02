@@ -38,16 +38,6 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 				fill="#262421"
 				stroke="#101010"
 			/>
-			<text
-				style={{ userSelect: "none" }}
-				x={store.channelOne / 2}
-				y={20}
-				textAnchor="middle"
-				dominantBaseline="middle"
-				fill="white"
-			>
-				{props.data.descriptor}
-			</text>
 			<ChannelPegs pegs={store.partData.pegs} channel={props.channel} />
 		</g>
 	);

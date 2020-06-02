@@ -55,6 +55,13 @@ export const ProgrammingWheel = observer(() => {
 					<MovingWindow />
 				</TranslateGrid>
 			</TranslateGrid>
+			<g style={{ transform: `translateX(${wheel.gearWidth}px)` }}>
+				{wheel.partDatas.map((part, channel) => (
+					<TranslateGrid channel={channel}>
+						<TextThing descriptor={part.descriptor} />
+					</TranslateGrid>
+				))}
+			</g>
 			<SubdivisonChooser />
 			<Blur />
 		</svg>
@@ -76,6 +83,30 @@ function MovingWindow() {
 			</g>
 			<GearSide x={0} />
 			<GearSide x={wheel.visiblePixelWidth + wheel.gearWidth} />
+		</>
+	);
+}
+
+interface TextThingProps {
+	descriptor: string;
+}
+
+function TextThing(props: TextThingProps) {
+	return (
+		<>
+			<TranslateGrid channel={0.5}>
+				<rect x={-17.5} y={7} width={35} height={22} fill="#444" rx={7} />
+				<text
+					style={{ userSelect: "none" }}
+					x={0}
+					y={20}
+					textAnchor="middle"
+					dominantBaseline="middle"
+					fill="white"
+				>
+					{props.descriptor}
+				</text>
+			</TranslateGrid>
 		</>
 	);
 }
