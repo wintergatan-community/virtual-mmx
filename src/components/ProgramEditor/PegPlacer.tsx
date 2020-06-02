@@ -8,7 +8,7 @@ export const PegPlacer = observer(() => {
 	const store = useLocalStore(() => ({
 		get partData() {
 			const channel = wheel.gridSnappedMousePos?.mouseChannel;
-			if (!channel) return null;
+			if (channel === undefined) return null;
 			return wheel.partDatas[channel];
 		},
 		get mouse() {

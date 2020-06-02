@@ -20,13 +20,13 @@ export class MmxParts {
 	readonly bass: { readonly [s in BassString]: Part };
 	readonly drums: { readonly [d in DrumType]: Part };
 	*getGenerator() {
-		for (const [, part] of Object.entries(this.vibraphone)) {
+		for (const part of Object.values(this.vibraphone)) {
 			yield part;
 		}
-		for (const [, part] of Object.entries(this.bass)) {
+		for (const part of Object.values(this.bass)) {
 			yield part;
 		}
-		for (const [, part] of Object.entries(this.drums)) {
+		for (const part of Object.values(this.drums)) {
 			yield part;
 		}
 	}
@@ -76,11 +76,3 @@ export interface MmxSynths<TVibes, TBass, TDrums> {
 	bass: TBass;
 	drums: { [d in DrumType]: TDrums };
 }
-
-// for(let channel of vibraphoneChannels) {
-// 	this.vibraphone[channel] = new PartData(
-// 		tonePart: new Part(partOptions),
-// 		tuning: vibraphoneChannelToNote(channel),
-// 		descriptor: vibraphoneChannelToNote(channel)
-// 	)
-// }

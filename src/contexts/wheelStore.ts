@@ -140,7 +140,8 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 			);
 			res.push(new PartData(part, note, string + ":Str"));
 		}
-		// TODO drums and bass
+
+		// TODO drums
 		return res;
 	})();
 
