@@ -11,8 +11,7 @@ A WebApp to program songs on a virtual Marble Machine X. Songs can be exported a
 
 To view the future plans we have for this WebApp, please visit our [planning board](https://github.com/orgs/wintergatan-community/projects/1).
 
-Exported data is using the structure described in the [vmmx schema](https://github.com/wintergatan-community/vmmx-schema) github repository.
-This repository also contains the definition for our internal data structure.
+The internal data structure used by the tool can be found in the [vmmx schema](https://github.com/wintergatan-community/vmmx-schema) github repository.
 
 ## Contributing
 
