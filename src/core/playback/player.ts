@@ -3,7 +3,7 @@ import { vibraphoneChannelToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
 import { Transport, PluckSynth, Sampler, context } from "tone";
 import { Note } from "vmmx-schema/note_names";
-import { ToneDropEvent } from "./events";
+import { observable } from "mobx";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
@@ -40,7 +40,7 @@ const regularBassTuning: { [s in BassString]: Note } = {
 
 export class VmmxPlayer {
 	program: Program;
-	parts: MmxParts;
+	@observable parts: MmxParts;
 	synths: MmxSynths<PluckSynth, PluckSynth, Sampler>;
 	constructor(program: Program) {
 		// create a new pluck synth that is routed to master
@@ -101,6 +101,7 @@ export class VmmxPlayer {
 	}
 
 	public play(): void {
+		console.log("sfsf");
 		if (context.state !== "running") {
 			context.resume();
 		}

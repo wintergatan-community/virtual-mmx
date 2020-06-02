@@ -76,3 +76,11 @@ export interface MmxSynths<TVibes, TBass, TDrums> {
 	bass: TBass;
 	drums: { [d in DrumType]: TDrums };
 }
+
+// for(let channel of vibraphoneChannels) {
+// 	this.vibraphone[channel] = new PartData(
+// 		tonePart: new Part(partOptions),
+// 		tuning: vibraphoneChannelToNote(channel),
+// 		descriptor: vibraphoneChannelToNote(channel)
+// 	)
+// }

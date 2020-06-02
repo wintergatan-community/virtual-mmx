@@ -1,13 +1,33 @@
 import { createContext, useContext } from "react";
 import { GlobalStore } from "./globalStore";
 import { ProgrammingWheelStore } from "./wheelStore";
+import { BassString, VibraphoneChannel } from "vmmx-schema";
 
 const global = new GlobalStore();
+export { global };
 const wheel = new ProgrammingWheelStore(global); // needs reference to global store
 
 export const storesContext = createContext({ global, wheel });
 
 export const useStores = () => useContext(storesContext);
+
+// TODO move this garbage out of here
+for (let i = 1; i <= 11; i++) {
+	global.program.dropEvents.push({
+		kind: "vibraphone",
+		channel: i as VibraphoneChannel,
+		tick: (i - 1) * (global.program.metadata.tpq / 2),
+	});
+}
+for (let i = 1; i <= 4; i++) {
+	global.program.dropEvents.push({
+		kind: "bass",
+		string: i as BassString,
+		fret: 0,
+		tick: (i - 1 + 11) * (global.program.metadata.tpq / 2),
+	});
+}
+// global.player.tempLoad();
 
 // just a handy template
 /*

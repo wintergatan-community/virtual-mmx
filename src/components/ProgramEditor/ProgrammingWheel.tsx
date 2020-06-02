@@ -1,7 +1,6 @@
 import { useStores } from "../../contexts/StoreContext";
 import React, { createRef } from "react";
 import { ProgramGrid } from "./ProgramGrid";
-import { Pegs } from "./Pegs";
 import { PegPlacer } from "./PegPlacer";
 import { Blur } from "./Blur";
 import { observer, useLocalStore } from "mobx-react";
@@ -47,9 +46,8 @@ export const ProgrammingWheel = observer(() => {
 			<TranslateGrid tick={-wheel.visibleTopTick}>
 				<MovingWindow />
 				<TranslateGrid tick={wheel.totalTicks}>
-					{/* <g> */}
+					{/* second MovingWindow for seemless scroll */}
 					<MovingWindow />
-					{/* </g> */}
 				</TranslateGrid>
 			</TranslateGrid>
 			<Blur />
@@ -62,7 +60,6 @@ function MovingWindow() {
 	return (
 		<>
 			<ProgramGrid />
-			<Pegs />
 			<PegPlacer />
 			{/* <SubdivisonChooser /> */}
 			{

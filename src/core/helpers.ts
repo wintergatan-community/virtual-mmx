@@ -1,4 +1,5 @@
 import { VibraphoneChannel, VibraphoneState } from "vmmx-schema";
+import { Note } from "vmmx-schema/note_names";
 
 export function range(start: number, stop: number, step?: number) {
 	if (step === undefined) step = 1;
@@ -29,7 +30,11 @@ export function insertInOrder<T>(item: T, arr: T[]) {
 	let i;
 	for (i = 0; i < arr.length && arr[i] < item; i++);
 	arr.splice(i, 0, item);
-	return arr;
+}
+export function removeInOrder<T>(testFunc: (item: T) => boolean, arr: T[]) {
+	let i;
+	for (i = 0; i < arr.length && !testFunc(arr[i]); i++);
+	arr.splice(i, 1);
 }
 
 export function arrToPolyLine(points: number[][]) {
@@ -43,7 +48,7 @@ export function arrToPolyLine(points: number[][]) {
 export function vibraphoneChannelToNote(
 	channel: VibraphoneChannel,
 	vibraphoneState: VibraphoneState
-): string {
+): Note {
 	const note = vibraphoneState.notes[channel];
 	return note;
 }

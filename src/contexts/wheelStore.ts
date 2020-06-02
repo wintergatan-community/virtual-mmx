@@ -1,19 +1,14 @@
 import { NoteSubdivision } from "../core/types";
-import { Note } from "vmmx-schema/note_names";
 import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
-import { range } from "../core/helpers";
+import { range, vibraphoneChannelToNote } from "../core/helpers";
 import { computedFn } from "mobx-utils";
+import PartData from "../core/playback/partData";
+import { VibraphoneChannel } from "vmmx-schema";
 
 interface WheelMousePos {
 	mouseTick: number;
 	mouseChannel: number;
-}
-
-interface WheelChannelInfo {
-	descriptor: string;
-	instrument: string;
-	tuning: Note;
 }
 
 type PegOffsetFunction = (tick: number) => number;
@@ -53,8 +48,8 @@ interface ProgrammingWheelInterface {
 	channelWidth: number;
 	/** Whether or not translucent pegs should be rendered for the current subdivision in the absence of a drop event */
 	showEmpties: boolean;
-	/** An array of WheelChannelInfo used for channel column headers and instrument identification*/
-	wheelChannelInfos: WheelChannelInfo[];
+	/** An array of WheelChannelData used for channel column headers and instrument identification*/
+	partData: PartData[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
 
@@ -88,7 +83,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 
 	@observable totalTicks = this.g.tpq * 40;
 	@computed get totalChannels() {
-		return this.wheelChannelInfos.length;
+		return this.partData.length;
 	}
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
@@ -118,28 +113,21 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable pixelsPerQuarter = 20;
 	@observable channelWidth = 55;
 	@observable showEmpties = false;
-	@computed get wheelChannelInfos() {
+	@observable partData = (() => {
 		// TODO
-		const res: WheelChannelInfo[] = [];
-		const vibra = Object.values(this.g.program.state.vibraphone.notes);
-		for (let tuning of vibra) {
-			res.push({
-				descriptor: tuning,
-				instrument: "vibraphone",
-				tuning,
-			});
-		}
-		const bass = Object.entries(this.g.program.state.bass.tuning);
-		for (let [string, tuning] of bass) {
-			res.push({
-				descriptor: "String " + string,
-				instrument: "bass",
-				tuning: tuning ?? "A_1", // TODO handle undefined case
-			});
+		const res: PartData[] = [];
+		for (let [channel, part] of Object.entries(
+			this.g.player.parts.vibraphone
+		)) {
+			const note = vibraphoneChannelToNote(
+				(channel as unknown) as VibraphoneChannel,
+				this.g.program.state.vibraphone
+			);
+			res.push(new PartData(part, note, note));
 		}
 		// TODO drums
 		return res;
-	}
+	})();
 
 	@computed get pegOffsetFunction() {
 		return this.pegOffsetFunctions.realistic;

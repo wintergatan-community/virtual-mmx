@@ -2,31 +2,37 @@ import React from "react";
 import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
 import { Peg } from "./Peg";
-import { ToneDropEvent } from "../../core/playback/events";
+import { PegInPart } from "../../core/playback/partData";
 
-export const Pegs = observer(() => {
-	const { global } = useStores();
+interface PegsProps {
+	pegs: PegInPart[];
+	channel: number;
+}
 
+export const ChannelPegs = observer((props: PegsProps) => {
 	return (
 		<>
-			{global.dropEvents.map((event) => (
-				<MaybeRenderedPeg event={event} key={event.id} />
+			{props.pegs.map((peg) => (
+				<MaybeRenderedPeg peg={peg} channel={props.channel} key={peg.tick} />
 			))}
 		</>
 	);
 });
 
 interface MaybeRenderedPegProps {
-	event: ToneDropEvent;
+	peg: PegInPart;
+	channel: number;
 }
 
 export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
-	const { wheel, global } = useStores();
+	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
-			// TODO fix for other instruments
+			get partData() {
+				return wheel.partData[source.channel];
+			},
 			get tick() {
-				return source.event.dropEvent.tick;
+				return source.peg.tick;
 			},
 			get visible() {
 				return (
@@ -35,7 +41,7 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 				);
 			},
 			removePeg() {
-				global.removeDropEvent(source.event);
+				store.partData?.remove(store.tick);
 			},
 		}),
 		props
@@ -43,11 +49,12 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 
 	return store.visible ? (
 		<Peg
-			toneDropEvent={props.event}
-			activeDivision={store.tick % wheel.ticksPerNoteSubdivision === 0}
+			peg={props.peg}
+			channel={props.channel}
+			activeDivision={props.peg.tick % wheel.ticksPerNoteSubdivision === 0}
 			spawnsEvent={true}
 			click={store.removePeg}
-			key={props.event.id}
+			key={store.tick}
 		/>
 	) : null;
 });

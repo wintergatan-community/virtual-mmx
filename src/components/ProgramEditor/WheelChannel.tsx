@@ -1,9 +1,11 @@
 import React from "react";
 import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
+import PartData from "../../core/playback/partData";
+import { ChannelPegs } from "./ChannelPegs";
 
 interface WheelChannelProps {
-	descriptor: string;
+	data: PartData;
 	channel: number;
 }
 
@@ -11,6 +13,9 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
+			get partData() {
+				return wheel.partData[source.channel];
+			},
 			get x() {
 				return wheel.channelToPixel(source.channel);
 			},
@@ -41,8 +46,9 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 				dominantBaseline="middle"
 				fill="white"
 			>
-				{props.descriptor}
+				{props.data.descriptor}
 			</text>
+			<ChannelPegs pegs={store.partData.pegs} channel={props.channel} />
 		</g>
 	);
 });

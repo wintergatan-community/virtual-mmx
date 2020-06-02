@@ -1,12 +1,13 @@
 import React from "react";
 import { mapValue } from "../../core/helpers";
-import { ToneDropEvent } from "../../core/playback/events";
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "../TranslateGrid";
+import { PegInPart } from "../../core/playback/partData";
 
 interface PegProps {
-	toneDropEvent: ToneDropEvent;
+	peg: PegInPart;
+	channel: number;
 	activeDivision: boolean;
 	spawnsEvent: boolean;
 	click?: () => void;
@@ -16,16 +17,8 @@ export const Peg = observer((props: PegProps) => {
 	const { wheel } = useStores();
 	const store = useLocalStore(
 		(source) => ({
-			get dropEvent() {
-				return source.toneDropEvent.dropEvent;
-			},
-
 			get tick() {
-				return this.dropEvent.tick;
-			},
-			get channel() {
-				if (this.dropEvent.kind !== "vibraphone") return -1; // TODO other instrument support
-				return this.dropEvent.channel;
+				return source.peg.tick;
 			},
 			get w() {
 				return 10;
@@ -43,14 +36,14 @@ export const Peg = observer((props: PegProps) => {
 					1,
 					0,
 					wheel.channelToPixel(1) - this.w
-				); //channelToPixel(1) / 2 - w/2
+				);
 			},
 		}),
 		props
 	);
 
 	return (
-		<TranslateGrid tick={store.tick} channel={store.channel}>
+		<TranslateGrid tick={store.tick}>
 			<rect
 				width={store.w}
 				height={store.h}

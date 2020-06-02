@@ -1,19 +1,16 @@
 import { Program } from "vmmx-schema";
 import { VmmxPlayer } from "../core/playback/player";
-import { ToneDropEvent } from "../core/playback/events";
-import { observable, computed, action } from "mobx";
-import { insertInOrder } from "../core/helpers";
+import { observable, computed } from "mobx";
 
 interface GlobalStoreInterface {
 	program: Program;
 	player: VmmxPlayer;
 	tpq: number;
-	dropEvents: ToneDropEvent[];
 }
 
 export class GlobalStore implements GlobalStoreInterface {
-	@observable player = new VmmxPlayer();
 	@observable program: Program = {
+		dropEvents: [],
 		metadata: {
 			author: "Martin Mollin",
 			title: "Marble Machine (Piano Version)",
@@ -55,21 +52,11 @@ export class GlobalStore implements GlobalStoreInterface {
 				},
 			},
 		},
-		dropEvents: [],
 	};
+
+	@observable player = new VmmxPlayer(this.program);
+
 	@computed get tpq() {
 		return this.program.metadata.tpq;
-	}
-	@observable dropEvents: ToneDropEvent[] = []; // TODO sync with program
-
-	@action addDropEvent(newDropEvent: ToneDropEvent) {
-		// console.log("created: " + newDropEvent.id);
-		this.dropEvents = insertInOrder(newDropEvent, this.dropEvents);
-		this.player.addDropEvent(newDropEvent);
-	}
-	@action removeDropEvent(newDropEvent: ToneDropEvent) {
-		// console.log("removed: " + newDropEvent.id);
-		this.dropEvents = this.dropEvents.filter((e) => e !== newDropEvent);
-		this.player.removeDropEvent(newDropEvent);
 	}
 }
