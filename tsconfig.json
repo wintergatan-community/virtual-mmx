@@ -1,5 +1,10 @@
 {
+	"compileOnSave": false,
 	"compilerOptions": {
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"outDir": "./dist/",
 		"target": "es5",
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
