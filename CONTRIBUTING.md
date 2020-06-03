@@ -48,25 +48,7 @@ Afterwards, you can run the project with `npm start` and browsing to <http://loc
 
 ### Using Docker
 
-It's also possible to develop and build in [Docker](https://docs.docker.com/desktop/) and [docker-compose](https://docs.docker.com/compose/install/). The included `docker-compose.yaml` file provides two services: `web` and `build`.
-
-```bash
-# Build the dev environment
-docker-compose build dev
-
-# Install Node Dependencies
-docker-compose run --rm dev npm install
-
-# Run the development environment at http://localhost:3000
-docker-compose up dev
-
-# Bild and run a distribution at http://localhost:8000
-docker-compose build web
-docker-compose up web
-
-# Clean up
-docker-compose down
-```
+A Dockerfile is made available for CI/CD purposes, but does not impact day-to-day development of this project. `docker build -t vmmx . && docker run --rm -p 8000:80 vmmx`
 
 ## Introduce yourself
 
