@@ -46,6 +46,28 @@ Now, install the projects' dependencies by opening an command line, changing to 
 
 Afterwards, you can run the project with `npm start` and browsing to <http://localhost:3000/>. During development, your changes will directly be applied, so you only need to refresh the loaded page in your browser to get the latest updates.
 
+### Using Docker
+
+It's also possible to develop and build in [Docker](https://docs.docker.com/desktop/) and [docker-compose](https://docs.docker.com/compose/install/). The included `docker-compose.yaml` file provides two services: `web` and `build`.
+
+```bash
+# Build the dev environment
+docker-compose build dev
+
+# Install Node Dependencies
+docker-compose run --rm dev npm install
+
+# Run the development environment at http://localhost:3000
+docker-compose up dev
+
+# Bild and run a distribution at http://localhost:8000
+docker-compose build web
+docker-compose up web
+
+# Clean up
+docker-compose down
+```
+
 ## Introduce yourself
 
 Feel free to introduce yourself in [issue #15](https://github.com/wintergatan-community/virtual-mmx/issues/15)!
