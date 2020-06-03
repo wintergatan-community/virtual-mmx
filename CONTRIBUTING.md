@@ -46,6 +46,10 @@ Now, install the projects' dependencies by opening an command line, changing to 
 
 Afterwards, you can run the project with `npm start` and browsing to <http://localhost:3000/>. During development, your changes will directly be applied, so you only need to refresh the loaded page in your browser to get the latest updates.
 
+### Using Docker
+
+A Dockerfile is made available for CI/CD purposes, but does not impact day-to-day development of this project. `docker build -t vmmx . && docker run --rm -p 8000:80 vmmx`
+
 ## Introduce yourself
 
 Feel free to introduce yourself in [issue #15](https://github.com/wintergatan-community/virtual-mmx/issues/15)!
