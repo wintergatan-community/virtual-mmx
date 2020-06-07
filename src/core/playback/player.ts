@@ -1,5 +1,5 @@
-import { Program, VibraphoneChannel, BassString, Note } from "vmmx-schema";
-import { vibraphoneChannelToNote } from "../helpers";
+import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
+import { vibraphoneChannelToNote, bassStringToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
 import {
 	Transport,
@@ -9,16 +9,17 @@ import {
 	PolySynth,
 	Synth,
 } from "tone";
+import { wheel } from "../../contexts/StoreContext";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
 	program.dropEvents.forEach((event) => {
 		if (event.kind === "vibraphone") {
-			mmxParts.vibraphone[event.channel].add(event.tick + "i");
+			mmxParts.vibraphone[event.channel].add(event.tick);
 		} else if (event.kind === "bass") {
-			mmxParts.bass[event.string].add(event.tick + "i");
+			mmxParts.bass[event.string].add(event.tick);
 		} else if (event.kind === "drum") {
-			mmxParts.drums[event.drum].add(event.tick + "i");
+			mmxParts.drums[event.drum].add(event.tick);
 		}
 	});
 	return mmxParts;
@@ -76,12 +77,12 @@ export class VmmxPlayer {
 
 	loadProgram(): void {
 		for (const [channel, part] of Object.entries(this.parts.vibraphone)) {
-			part.callback = this.createVibraphoneTrigger(
+			part.tonePart.callback = this.createVibraphoneTrigger(
 				(channel as unknown) as VibraphoneChannel
 			);
 		}
 		for (const [bassString, part] of Object.entries(this.parts.bass)) {
-			part.callback = this.createBassTrigger(
+			part.tonePart.callback = this.createBassTrigger(
 				(bassString as unknown) as BassString
 			);
 		}

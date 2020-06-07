@@ -1,5 +1,8 @@
 import { Part } from "tone";
 import { VibraphoneChannel, DrumType, BassString } from "vmmx-schema";
+import PartData from "./partData";
+import { global } from "../../contexts/StoreContext";
+import { bassStringToNote } from "../helpers";
 
 const partOptions = {
 	loop: true,
@@ -17,9 +20,9 @@ const newPart = () => new Part(partOptions);
  * @class MmxParts
  */
 export class MmxParts {
-	readonly vibraphone: { readonly [c in VibraphoneChannel]: Part };
-	readonly bass: { readonly [s in BassString]: Part };
-	readonly drums: { readonly [d in DrumType]: Part };
+	readonly vibraphone: { readonly [c in VibraphoneChannel]: PartData };
+	readonly bass: { readonly [s in BassString]: PartData };
+	readonly drums: { readonly [d in DrumType]: PartData };
 	*getGenerator() {
 		for (const part of Object.values(this.vibraphone)) {
 			yield part;
@@ -31,44 +34,49 @@ export class MmxParts {
 			yield part;
 		}
 	}
-	forEach(func: (part: Part) => void): void {
+	forEach(func: (part: PartData) => void): void {
 		const gen = this.getGenerator();
-		let part: IteratorResult<Part, void>;
+		let part: IteratorResult<PartData, void>;
 		while (((part = gen.next()), !part.done)) {
 			func(part.value);
 		}
 	}
 	constructor() {
-		this.vibraphone = {
-			1: newPart(),
-			2: newPart(),
-			3: newPart(),
-			4: newPart(),
-			5: newPart(),
-			6: newPart(),
-			7: newPart(),
-			8: newPart(),
-			9: newPart(),
-			10: newPart(),
-			11: newPart(),
-		};
-		this.bass = {
-			1: newPart(),
-			2: newPart(),
-			3: newPart(),
-			4: newPart(),
-		};
-		this.drums = {
-			bassdrum: newPart(),
-			hihat: newPart(),
-			snare: newPart(),
-		};
+		// vibraphone
+		const vibraphoneTuning = global.program.state.vibraphone.notes;
+		this.vibraphone = Object.fromEntries(
+			Object.entries(vibraphoneTuning).map(([channel, note]) => [
+				channel, // key
+				new PartData(newPart(), note, note), // value
+			])
+		) as { readonly [c in VibraphoneChannel]: PartData };
+
+		// bass
+		const bassTuning = global.program.state.bass.tuning;
+		this.bass = Object.fromEntries(
+			Object.entries(bassTuning).map(([string]) => [
+				string, // key
+				new PartData(
+					newPart(),
+					bassStringToNote((string as unknown) as BassString, bassTuning),
+					"Str" + string
+				), // value
+			])
+		) as { readonly [c in BassString]: PartData };
+
+		// drums
+		this.drums = Object.fromEntries(
+			["bassdrum", "hihat", "snare"].map((drum) => [
+				drum, // key
+				new PartData(newPart(), "A#0", drum), // value
+			])
+		) as { readonly [c in DrumType]: PartData };
 	}
 	start(time: number | string) {
-		this.forEach((part) => part.start(time));
+		this.forEach((part) => part.tonePart.start(time));
 	}
 	stop(time: number | string) {
-		this.forEach((part) => part.stop(time));
+		this.forEach((part) => part.tonePart.stop(time));
 	}
 }
 

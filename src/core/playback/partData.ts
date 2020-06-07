@@ -1,7 +1,7 @@
 import { Part } from "tone";
-import { Note } from "vmmx-schema/note_names";
 import { insertInOrder, removeInOrder } from "../helpers";
 import { observable, action } from "mobx";
+import { Note } from "vmmx-schema/note_names";
 
 export interface PegInPart {
 	tick: number;

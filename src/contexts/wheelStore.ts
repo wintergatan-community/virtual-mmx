@@ -1,14 +1,9 @@
 import { NoteSubdivision } from "../core/types";
 import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
-import {
-	range,
-	vibraphoneChannelToNote,
-	bassStringToNote,
-} from "../core/helpers";
+import { range } from "../core/helpers";
 import { computedFn } from "mobx-utils";
 import PartData from "../core/playback/partData";
-import { VibraphoneChannel, BassString } from "vmmx-schema";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -90,7 +85,8 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	g: GlobalStore;
 
 	@computed get totalTicks() {
-		return this.g.tpq * 40;
+		// return this.g.program.metadata.length;
+		return 64 * 240;
 	}
 	@computed get totalChannels() {
 		return this.partDatas.length;
@@ -123,31 +119,11 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable pixelsPerQuarter = 20;
 	@observable channelWidth = 43.2;
 	@observable showEmpties = false;
-	@observable partDatas = (() => {
-		// TODO move out of IIEF
-		const res: PartData[] = [];
-
-		for (let [channel, part] of Object.entries(
-			this.g.player.parts.vibraphone
-		)) {
-			const note = vibraphoneChannelToNote(
-				(channel as unknown) as VibraphoneChannel,
-				this.g.program.state.vibraphone
-			);
-			res.push(new PartData(part, note, note));
-		}
-
-		for (let [string, part] of Object.entries(this.g.player.parts.bass)) {
-			const note = bassStringToNote(
-				(string as unknown) as BassString,
-				this.g.program.state.bass.tuning
-			);
-			res.push(new PartData(part, note, string + ":Str"));
-		}
-
-		// TODO drums and bass
-		return res;
-	})();
+	@computed get partDatas() {
+		let allParts: PartData[] = [];
+		this.g.player.parts.forEach((part) => allParts.push(part));
+		return allParts;
+	}
 
 	@computed get pegOffsetFunction() {
 		return this.pegOffsetFunctions.realistic;
