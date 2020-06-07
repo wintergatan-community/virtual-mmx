@@ -4,7 +4,8 @@ import { VibraphoneChannel, DrumType, BassString } from "vmmx-schema";
 const partOptions = {
 	loop: true,
 	loopStart: 0,
-	loopEnd: "16m",
+	// for some reason this only seems to work with ticks
+	loopEnd: 240 * 4 * 16 + "i",
 };
 
 const newPart = () => new Part(partOptions);
