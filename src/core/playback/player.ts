@@ -1,8 +1,14 @@
-import { Program, VibraphoneChannel, BassString } from "vmmx-schema";
+import { Program, VibraphoneChannel, BassString, Note } from "vmmx-schema";
 import { vibraphoneChannelToNote } from "../helpers";
 import { MmxParts, MmxSynths } from "./types";
-import { Transport, PluckSynth, Sampler, context } from "tone";
-import { Note } from "vmmx-schema/note_names";
+import {
+	Transport,
+	PluckSynth,
+	Sampler,
+	context,
+	PolySynth,
+	Synth,
+} from "tone";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
@@ -18,9 +24,9 @@ function createPartsFromProgram(program: Program): MmxParts {
 	return mmxParts;
 }
 
-function createSynths(): MmxSynths<PluckSynth, PluckSynth, Sampler> {
+function createSynths(): MmxSynths<PolySynth, PluckSynth, Sampler> {
 	return {
-		vibraphone: new PluckSynth().toDestination(),
+		vibraphone: new PolySynth(Synth).toDestination(),
 		bass: new PluckSynth().toDestination(),
 		drums: {
 			snare: new Sampler().toDestination(),
@@ -40,7 +46,7 @@ const regularBassTuning: { [s in BassString]: Note } = {
 export class VmmxPlayer {
 	program: Program;
 	parts: MmxParts;
-	synths: MmxSynths<PluckSynth, PluckSynth, Sampler>;
+	synths: MmxSynths<PolySynth, PluckSynth, Sampler>;
 	constructor(program: Program) {
 		// create a new pluck synth that is routed to master
 		this.program = program;
@@ -54,8 +60,9 @@ export class VmmxPlayer {
 		channel: VibraphoneChannel
 	): (time: number | string) => void {
 		return (time): void => {
-			this.synths.vibraphone.triggerAttack(
+			this.synths.vibraphone.triggerAttackRelease(
 				vibraphoneChannelToNote(channel, this.program.state.vibraphone),
+				0.2,
 				time
 			);
 		};
