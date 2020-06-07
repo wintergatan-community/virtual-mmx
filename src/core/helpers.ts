@@ -1,5 +1,11 @@
-import { VibraphoneChannel, VibraphoneState, BassString } from "vmmx-schema";
-import { Note } from "vmmx-schema/note_names";
+import { VibraphoneChannel, BassString } from "vmmx-schema";
+
+import { global } from "../contexts/StoreContext";
+import { Note } from "vmmx-schema";
+import {
+	defaultVibraphoneTuning,
+	defaultBassTuning,
+} from "./playback/constants";
 
 export function range(start: number, stop: number, step?: number) {
 	if (step === undefined) step = 1;
@@ -45,27 +51,18 @@ export function arrToPolyLine(points: number[][]) {
 	return res;
 }
 
-export function vibraphoneChannelToNote(
-	channel: VibraphoneChannel,
-	vibraphoneState: VibraphoneState
-): Note {
-	const note = vibraphoneState.notes[channel];
-	return note;
+export function vibraphoneChannelToNote(channel: VibraphoneChannel): Note {
+	return (
+		global.program.state.vibraphone.notes[channel] ||
+		defaultVibraphoneTuning[channel]
+	);
 }
 
-const regularBassTuning: { [s in BassString]: Note } = {
-	4: "E1",
-	3: "A1",
-	2: "D2",
-	1: "G2",
-};
-
-export function bassStringToNote(
-	bassString: BassString,
-	bassTuning: { [S in BassString]?: Note }
-): Note {
-	const regularTuning = bassTuning[bassString] || regularBassTuning[bassString];
-	return regularTuning;
+export function bassStringToNote(bassString: BassString): Note {
+	return (
+		global.program.state.bass.tuning[bassString] ||
+		defaultBassTuning[bassString]
+	);
 	// const noteVal =
 	// 	(NoteNames[regularTuning] as number) +
 	// 	(this.program.state.bass.capos[bassString] || 0);

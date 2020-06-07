@@ -1,7 +1,7 @@
 import { Part } from "tone";
 import { insertInOrder, removeInOrder } from "../helpers";
 import { observable, action } from "mobx";
-import { Note } from "vmmx-schema/note_names";
+import { Note } from "vmmx-schema";
 
 export interface PegInPart {
 	tick: number;
@@ -29,7 +29,6 @@ export default class PartData {
 	}
 
 	@action remove(tick: number) {
-		// TODO optimize
 		this.tonePart.remove(tick + "i");
 		removeInOrder((p) => p.tick === tick, this.pegs);
 	}

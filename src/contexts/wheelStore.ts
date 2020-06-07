@@ -232,7 +232,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		this.mousePos = { mouseTick, mouseChannel };
 	}
 	@action setPlaybackHeadTick(tick: number) {
-		this.playbackHeadTick = tick;
+		this.playbackHeadTick = tick % this.totalTicks;
 	}
 	@action setVisibleTopTick(tick: number) {
 		this.visibleTopTick = tick;

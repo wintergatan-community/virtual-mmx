@@ -1,8 +1,8 @@
 import { Part } from "tone";
-import { VibraphoneChannel, DrumType, BassString } from "vmmx-schema";
+import { VibraphoneChannel, DrumType, BassString, Note } from "vmmx-schema";
 import PartData from "./partData";
-import { global } from "../../contexts/StoreContext";
-import { bassStringToNote } from "../helpers";
+import { bassStringToNote, vibraphoneChannelToNote } from "../helpers";
+import { vibraphoneChannels, bassStrings, drumTypes } from "./constants";
 
 const partOptions = {
 	loop: true,
@@ -42,35 +42,23 @@ export class MmxParts {
 		}
 	}
 	constructor() {
-		// vibraphone
-		const vibraphoneTuning = global.program.state.vibraphone.notes;
-		this.vibraphone = Object.fromEntries(
-			Object.entries(vibraphoneTuning).map(([channel, note]) => [
-				channel, // key
-				new PartData(newPart(), note, note), // value
-			])
-		) as { readonly [c in VibraphoneChannel]: PartData };
+		this.vibraphone = buildPart(
+			vibraphoneChannels,
+			vibraphoneChannelToNote,
+			(_, note) => note
+		);
 
-		// bass
-		const bassTuning = global.program.state.bass.tuning;
-		this.bass = Object.fromEntries(
-			Object.entries(bassTuning).map(([string]) => [
-				string, // key
-				new PartData(
-					newPart(),
-					bassStringToNote((string as unknown) as BassString, bassTuning),
-					"Str" + string
-				), // value
-			])
-		) as { readonly [c in BassString]: PartData };
+		this.bass = buildPart(
+			bassStrings,
+			bassStringToNote,
+			(string) => "Str" + string
+		);
 
-		// drums
-		this.drums = Object.fromEntries(
-			["bassdrum", "hihat", "snare"].map((drum) => [
-				drum, // key
-				new PartData(newPart(), "A#0", drum), // value
-			])
-		) as { readonly [c in DrumType]: PartData };
+		this.drums = buildPart(
+			drumTypes,
+			() => "A#1", // TODO handle non-note instruments better
+			(drum) => drum[0].toUpperCase()
+		);
 	}
 	start(time: number | string) {
 		this.forEach((part) => part.tonePart.start(time));
@@ -84,4 +72,17 @@ export interface MmxSynths<TVibes, TBass, TDrums> {
 	vibraphone: TVibes;
 	bass: TBass;
 	drums: { [d in DrumType]: TDrums };
+}
+
+function buildPart<T>(
+	keys: T[], // i.e. channels, strings
+	keyToNoteFunc: (key: T) => Note,
+	descriptorFunc: (key: T, note: Note) => string // return column header string
+) {
+	return Object.fromEntries(
+		keys.map((key) => {
+			const note = keyToNoteFunc(key);
+			return [key, new PartData(newPart(), note, descriptorFunc(key, note))];
+		})
+	);
 }

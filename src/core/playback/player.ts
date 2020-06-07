@@ -55,7 +55,7 @@ export class VmmxPlayer {
 	): (time: number | string) => void {
 		return (time): void => {
 			this.synths.vibraphone.triggerAttackRelease(
-				vibraphoneChannelToNote(channel, this.program.state.vibraphone),
+				vibraphoneChannelToNote(channel),
 				0.2,
 				time
 			);
@@ -63,10 +63,7 @@ export class VmmxPlayer {
 	}
 	createBassTrigger(channel: BassString): (time: number | string) => void {
 		return (time): void => {
-			this.synths.bass.triggerAttack(
-				bassStringToNote(channel, this.program.state.bass.tuning),
-				time
-			);
+			this.synths.bass.triggerAttack(bassStringToNote(channel), time);
 		};
 	}
 
