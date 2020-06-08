@@ -46,11 +46,17 @@ export class VmmxPlayer {
 		this.parts = createPartsFromProgram(this.program);
 		this.synths = createSynths();
 		this.initializeTransport();
+		this.loadTransport();
 	}
 
 	initializeTransport() {
 		Transport.bpm.value = this.program.state.machine.bpm;
 		Transport.PPQ = this.program.metadata.tpq;
+	}
+
+	loadTransport(): void {
+		// tell the parts to start right away
+		this.parts.start(0);
 	}
 
 	public play(): void {
