@@ -15,11 +15,17 @@ export default class PartData {
 	@observable readonly pegs: PegInPart[];
 	// readonly possibleNotes?: Note[];
 
-	constructor(tonePart: Part, tuning: Note, descriptor: string) {
+	constructor(
+		tonePart: Part,
+		tuning: Note,
+		descriptor: string,
+		trigger: (time: number) => void
+	) {
 		this.tonePart = tonePart;
 		this.tuning = tuning;
 		this.descriptor = descriptor;
 		this.pegs = [];
+		this.tonePart.callback = trigger;
 	}
 
 	@action add(tick: number, note?: Note) {

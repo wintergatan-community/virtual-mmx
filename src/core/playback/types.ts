@@ -1,17 +1,15 @@
 import { Part } from "tone";
 import { VibraphoneChannel, DrumType, BassString, Note } from "vmmx-schema";
 import PartData from "./partData";
-import { bassStringToNote, vibraphoneChannelToNote } from "../helpers";
-import { vibraphoneChannels, bassStrings, drumTypes } from "./constants";
-
-const partOptions = {
-	loop: true,
-	loopStart: 0,
-	// for some reason this only seems to work with ticks
-	loopEnd: 240 * 4 * 16 + "i",
-};
-
-const newPart = () => new Part(partOptions);
+import {
+	vibraphoneChannels,
+	bassStrings,
+	drumTypes,
+	createVibraphoneTrigger,
+	createBassTrigger,
+	vibraphoneChannelToNote,
+	bassStringToNote,
+} from "./instruments";
 
 /**
  * Represents the [[Tone.Part]]s corresponding to each instrument channel.
@@ -42,21 +40,24 @@ export class MmxParts {
 		}
 	}
 	constructor() {
-		this.vibraphone = buildPart(
+		this.vibraphone = buildParts(
 			vibraphoneChannels,
 			vibraphoneChannelToNote,
+			createVibraphoneTrigger,
 			(_, note) => note
 		);
 
-		this.bass = buildPart(
+		this.bass = buildParts(
 			bassStrings,
 			bassStringToNote,
+			createBassTrigger,
 			(string) => "Str" + string
 		);
 
-		this.drums = buildPart(
+		this.drums = buildParts(
 			drumTypes,
 			() => "A#1", // TODO handle non-note instruments better
+			() => () => {},
 			(drum) => drum[0].toUpperCase()
 		);
 	}
@@ -74,15 +75,31 @@ export interface MmxSynths<TVibes, TBass, TDrums> {
 	drums: { [d in DrumType]: TDrums };
 }
 
-function buildPart<T>(
+function buildParts<T>(
 	keys: T[], // i.e. channels, strings
 	keyToNoteFunc: (key: T) => Note,
+	triggerFunc: (note: Note) => (time: number) => void,
 	descriptorFunc: (key: T, note: Note) => string // return column header string
 ) {
 	return Object.fromEntries(
 		keys.map((key) => {
 			const note = keyToNoteFunc(key);
-			return [key, new PartData(newPart(), note, descriptorFunc(key, note))];
+			return [
+				key,
+				new PartData(
+					new Part(partOptions),
+					note,
+					descriptorFunc(key, note),
+					triggerFunc(note)
+				),
+			];
 		})
 	);
 }
+
+const partOptions = {
+	loop: true,
+	loopStart: 0,
+	// for some reason this only seems to work with ticks
+	loopEnd: 240 * 4 * 16 + "i",
+};
