@@ -15,7 +15,7 @@ export const App = observer(() => {
 	return (
 		<>
 			<MockupLayout />
-			<div style={{ transform: "translate(103px, 103px)" }}>
+			<div style={{ transform: "translate(78px, 82px)" }}>
 				<ProgrammingWheel />
 				<TransportControls />
 			</div>

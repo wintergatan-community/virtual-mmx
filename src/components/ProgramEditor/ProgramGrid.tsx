@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 export const ProgramGrid = observer(() => {
 	return (
 		<>
-			<RunningChannels />
+			<WheelChannels />
 			<SubdivisionLines />
 		</>
 	);
@@ -18,14 +18,14 @@ const SubdivisionLines = observer(() => {
 
 	return (
 		<g>
-			{wheel.subdivisionLines.map((tick) => (
+			{wheel.subdivisionLines.map((tick, i) => (
 				<SubdivisionLine tick={tick} key={tick} />
 			))}
 		</g>
 	);
 });
 
-const RunningChannels = observer(() => {
+const WheelChannels = observer(() => {
 	const { wheel } = useStores();
 
 	return (

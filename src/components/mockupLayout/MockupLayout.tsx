@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import layout from "./layoutCropped.jpg";
+import layout from "./layoutDigital.png";
 
 export const MockupLayout = observer(() => {
 	return (

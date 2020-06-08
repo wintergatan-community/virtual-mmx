@@ -3,6 +3,7 @@ import { useStores } from "../../contexts/StoreContext";
 import { observer, useLocalStore } from "mobx-react";
 import PartData from "../../core/playback/partData";
 import { ChannelPegs } from "./ChannelPegs";
+import { TranslateGrid } from "./TranslateGrid";
 
 interface WheelChannelProps {
 	data: PartData;
@@ -16,9 +17,6 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 			get partData() {
 				return wheel.partDatas[source.channel];
 			},
-			get x() {
-				return wheel.channelToPixel(source.channel);
-			},
 			get width() {
 				return wheel.tickToPixel(wheel.totalTicks);
 			},
@@ -31,14 +29,14 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 	);
 
 	return (
-		<g style={{ transform: `translateX(${store.x}px)` }}>
+		<TranslateGrid channel={props.channel}>
 			<rect
 				width={store.channelOne}
 				height={store.width}
-				fill="#262421"
-				stroke="#101010"
+				fill="rgb(39, 39, 39)"
+				stroke="rgb(47, 47, 47)"
 			/>
 			<ChannelPegs pegs={store.partData.pegs} channel={props.channel} />
-		</g>
+		</TranslateGrid>
 	);
 });

@@ -76,9 +76,6 @@ function MovingWindow() {
 				<ProgramGrid />
 				<PegPlacer />
 				<PlaybackHead />
-				{
-					wheel.showEmpties ? null : null // TODO, add this thing
-				}
 				<line x1={0} y1={0} x2={wheel.visiblePixelWidth} y2={0} stroke="red" />
 			</g>
 			<GearSide x={0} />

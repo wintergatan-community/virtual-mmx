@@ -94,7 +94,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
 	}
-	@observable visiblePixelHeight = 482;
+	@observable visiblePixelHeight = 455;
 
 	@observable visibleTopTick = 0;
 	@computed get visibleBottomTick() {
@@ -116,8 +116,8 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		const mouseChannel = Math.floor(this.mousePos.mouseChannel);
 		return { mouseTick, mouseChannel };
 	}
-	@observable pixelsPerQuarter = 20;
-	@observable channelWidth = 43.2;
+	@observable pixelsPerQuarter = 35;
+	@observable channelWidth = 36;
 	@observable showEmpties = false;
 	@computed get partDatas() {
 		let allParts: PartData[] = [];
@@ -150,9 +150,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 			} else if (tick % this.ticksPerNoteSubdivisions.quarter === 0) {
 				return { stroke: "rgb(63, 63, 63)", strokeWidth: 1 };
 			} else if (tick % this.ticksPerNoteSubdivisions.eighth === 0) {
-				return { stroke: "rgb(50, 50, 42)", strokeWidth: 1 };
+				return { stroke: "rgb(47, 47, 47)", strokeWidth: 1 };
 			}
-			return { stroke: "rgb(45, 45, 35)", strokeWidth: 1 };
+			return { stroke: "rgb(44, 44, 44)", strokeWidth: 1 };
 		},
 	};
 
@@ -188,11 +188,11 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return tick >= this.visibleTopTick && tick <= this.visibleBottomTick;
 	}
 	@computed get subdivisionLines() {
-		return range(0, this.totalTicks, this.ticksPerNoteSubdivision);
+		return range(0, this.totalTicks, this.ticksPerNoteSubdivision / 2);
 	}
 	@observable playbackHeadTick = 0;
 
-	@observable gearWidth = 42;
+	@observable gearWidth = 24;
 
 	// actions
 

@@ -67,3 +67,10 @@ export function bassStringToNote(bassString: BassString): Note {
 	// 	(this.program.state.bass.capos[bassString] || 0);
 	// return NoteNames[noteVal];
 }
+
+// interface Instrument<ChannelType> {
+// 	channels: ChannelType
+// 	defaultTuning: { [c in ChannelType]: Note }
+// 	createTrigger(note: Note): (time: number) => void
+// 	channelToNote(channel: ChannelType): Note
+// }

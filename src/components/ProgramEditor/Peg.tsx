@@ -4,6 +4,8 @@ import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "./TranslateGrid";
 import { PegInPart } from "../../core/playback/partData";
+import { autorun, runInAction } from "mobx";
+import "./Peg.css";
 
 interface PegProps {
 	peg: PegInPart;
@@ -38,6 +40,13 @@ export const Peg = observer((props: PegProps) => {
 					wheel.channelToPixel(1) - this.w
 				);
 			},
+			playing: false,
+			highlightOnPlay: autorun(() => {
+				// TODO this shouldn't be a seperate autorun for each peg
+				if (Math.abs(source.peg.tick - wheel.playbackHeadTick) < 10) {
+					runInAction(() => (store.playing = true));
+				}
+			}),
 		}),
 		props
 	);
@@ -51,6 +60,8 @@ export const Peg = observer((props: PegProps) => {
 				x={store.shift}
 				rx={3}
 				onClick={props.click}
+				className={store.playing ? "pegPlaying" : ""}
+				onAnimationEnd={() => runInAction(() => (store.playing = false))}
 			/>
 		</TranslateGrid>
 	);
