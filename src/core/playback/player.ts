@@ -4,11 +4,12 @@ import {
 	Transport,
 	PluckSynth,
 	Sampler,
-	context,
 	PolySynth,
 	Synth,
+	context,
 } from "tone";
 import { wheel } from "../../contexts/StoreContext";
+import { observable, action } from "mobx";
 
 function createPartsFromProgram(program: Program): MmxParts {
 	const mmxParts = new MmxParts();
@@ -40,6 +41,8 @@ export class VmmxPlayer {
 	program: Program;
 	parts: MmxParts;
 	synths: MmxSynths<PolySynth, PluckSynth, Sampler>;
+	@observable running = false;
+
 	constructor(program: Program) {
 		// create a new pluck synth that is routed to master
 		this.program = program;
@@ -54,20 +57,25 @@ export class VmmxPlayer {
 		Transport.PPQ = this.program.metadata.tpq;
 	}
 
-	loadTransport(): void {
+	loadTransport() {
 		// tell the parts to start right away
 		this.parts.start(0);
 	}
 
-	public play(): void {
+	@action play() {
+		this.running = true;
 		if (context.state !== "running") {
 			context.resume();
 		}
 		Transport.start();
 	}
 
-	public stop(): void {
-		Transport.stop();
+	@action pause() {
+		this.running = false;
+		Transport.pause();
+	}
+
+	@action restart() {
 		Transport.position = 0;
 	}
 }
