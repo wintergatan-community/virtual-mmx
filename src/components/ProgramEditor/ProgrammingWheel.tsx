@@ -56,9 +56,9 @@ export const ProgrammingWheel = observer(() => {
 				</TranslateGrid>
 			</TranslateGrid>
 			<g style={{ transform: `translateX(${wheel.gearWidth}px)` }}>
-				{wheel.partDatas.map((part, channel) => (
+				{wheel.partDatas.map((partData, channel) => (
 					<TranslateGrid channel={channel} key={channel}>
-						<TextThing descriptor={part.descriptor} />
+						<TextThing tuning={partData.tuning} />
 					</TranslateGrid>
 				))}
 			</g>
@@ -85,7 +85,7 @@ function MovingWindow() {
 }
 
 interface TextThingProps {
-	descriptor: string;
+	tuning: string;
 }
 
 function TextThing(props: TextThingProps) {
@@ -101,7 +101,7 @@ function TextThing(props: TextThingProps) {
 					dominantBaseline="middle"
 					fill="white"
 				>
-					{props.descriptor}
+					{props.tuning}
 				</text>
 			</TranslateGrid>
 		</>

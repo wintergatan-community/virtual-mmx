@@ -121,7 +121,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable showEmpties = false;
 	@computed get partDatas() {
 		let allParts: PartData[] = [];
-		this.g.player.parts.forEach((part) => allParts.push(part));
+		this.g.player.forEachPart((part) => allParts.push(part));
 		return allParts;
 	}
 

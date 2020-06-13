@@ -1,10 +1,10 @@
 import { Program } from "vmmx-schema";
-import { VmmxPlayer } from "../core/playback/player";
+import { VMMXPlayer } from "../core/playback/player";
 import { observable, computed } from "mobx";
 
 interface GlobalStoreInterface {
 	program: Program;
-	player: VmmxPlayer;
+	player: VMMXPlayer;
 	tpq: number;
 }
 
@@ -183,7 +183,7 @@ export class GlobalStore implements GlobalStoreInterface {
 		},
 	};
 
-	@observable player = new VmmxPlayer(this.program);
+	@observable player = new VMMXPlayer();
 
 	@computed get tpq() {
 		return this.program.metadata.tpq;

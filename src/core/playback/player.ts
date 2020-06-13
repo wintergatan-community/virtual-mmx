@@ -1,65 +1,53 @@
-import { Program } from "vmmx-schema";
-import { MmxParts, MmxSynths } from "./types";
-import {
-	Transport,
-	PluckSynth,
-	Sampler,
-	PolySynth,
-	Synth,
-	context,
-} from "tone";
+import { Program, TickedDropEvent } from "vmmx-schema";
+import { Transport, context } from "tone";
 import { wheel } from "../../contexts/StoreContext";
 import { observable, action } from "mobx";
+import { Vibraphone, Bass, Drums, VMMXInstrument } from "./instruments";
+import PartData from "./partData";
 
-function createPartsFromProgram(program: Program): MmxParts {
-	const mmxParts = new MmxParts();
-	program.dropEvents.forEach((event) => {
-		if (event.kind === "vibraphone") {
-			mmxParts.vibraphone[event.channel].add(event.tick);
-		} else if (event.kind === "bass") {
-			mmxParts.bass[event.string].add(event.tick);
-		} else if (event.kind === "drum") {
-			mmxParts.drums[event.drum].add(event.tick);
-		}
-	});
-	return mmxParts;
-}
+type InstrumentKey = Pick<TickedDropEvent, "kind">["kind"];
 
-function createSynths(): MmxSynths<PolySynth, PluckSynth, Sampler> {
-	return {
-		vibraphone: new PolySynth(Synth).toDestination(),
-		bass: new PluckSynth().toDestination(),
-		drums: {
-			snare: new Sampler().toDestination(),
-			bassdrum: new Sampler().toDestination(),
-			hihat: new Sampler().toDestination(),
-		},
+export class VMMXPlayer {
+	@observable instruments: Record<InstrumentKey, VMMXInstrument<any>> = {
+		vibraphone: new Vibraphone(),
+		bass: new Bass(),
+		drum: new Drums(),
 	};
-}
-
-export class VmmxPlayer {
-	program: Program;
-	parts: MmxParts;
-	synths: MmxSynths<PolySynth, PluckSynth, Sampler>;
 	@observable running = false;
 
-	constructor(program: Program) {
-		// create a new pluck synth that is routed to master
-		this.program = program;
-		this.parts = createPartsFromProgram(this.program);
-		this.synths = createSynths();
+	constructor() {
 		this.initializeTransport();
-		this.loadTransport();
 	}
 
 	initializeTransport() {
-		Transport.bpm.value = this.program.state.machine.bpm;
-		Transport.PPQ = this.program.metadata.tpq;
+		// tell the parts to start right away
+		this.forEachPart((part) => part.tonePart.start());
 	}
 
-	loadTransport() {
-		// tell the parts to start right away
-		this.parts.start(0);
+	@action loadProgram(program: Program) {
+		program.dropEvents.forEach((event) => {
+			const instrument = this.instruments[event.kind];
+			const key = {
+				vibraphone: "channel",
+				bass: "string",
+				drum: "drum",
+			}[event.kind];
+
+			const part = instrument.parts[event[key as keyof TickedDropEvent]];
+			part.add(event.tick);
+		});
+		console.log(this.instruments);
+
+		Transport.bpm.value = program.state.machine.bpm;
+		Transport.PPQ = program.metadata.tpq;
+
+		// if (event.kind === "vibraphone") {
+		// 	this.allParts.vibraphone[event.channel].add(event.tick);
+		// } else if (event.kind === "bass") {
+		// 	this.allParts.bass[event.string].add(event.tick);
+		// } else if (event.kind === "drum") {
+		// 	this.allParts.drums[event.drum].add(event.tick);
+		// }
 	}
 
 	@action play() {
@@ -77,6 +65,18 @@ export class VmmxPlayer {
 
 	@action restart() {
 		Transport.position = 0;
+	}
+
+	forEachPart(func: (p: PartData) => void) {
+		for (const i of Object.values(this.instruments)) {
+			for (const p of Object.values(i.parts)) {
+				func(p);
+			}
+		}
+		// const entries = Object.entries(this.instruments);
+		// return Object.fromEntries(
+		// 	entries.map(([key, instrument]) => [key, instrument.parts])
+		// ) as Record<InstrumentKey, Record<any, PartData>>;
 	}
 }
 

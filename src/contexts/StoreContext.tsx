@@ -11,6 +11,8 @@ export const storesContext = createContext({ global, wheel });
 
 export const useStores = () => useContext(storesContext);
 
+global.player.loadProgram(global.program);
+
 // global.player.tempLoad();
 
 // just a handy template

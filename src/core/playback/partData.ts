@@ -10,20 +10,12 @@ export interface PegInPart {
 
 export default class PartData {
 	readonly tonePart: Part;
-	readonly tuning: Note;
-	readonly descriptor: string;
+	@observable readonly tuning: Note;
 	@observable readonly pegs: PegInPart[];
-	// readonly possibleNotes?: Note[];
 
-	constructor(
-		tonePart: Part,
-		tuning: Note,
-		descriptor: string,
-		trigger: (time: number) => void
-	) {
+	constructor(tonePart: Part, tuning: Note, trigger: (time: number) => void) {
 		this.tonePart = tonePart;
 		this.tuning = tuning;
-		this.descriptor = descriptor;
 		this.pegs = [];
 		this.tonePart.callback = trigger;
 	}
