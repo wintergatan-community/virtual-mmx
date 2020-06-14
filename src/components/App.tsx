@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { SomeReactChildren } from "../core/types";
+import { Bass } from "./bass/Bass";
 // import { SpringTesting } from "./testing/SpringTesting";
 // import { TimingTesting } from "./timingTesting/TimingTesting";
 
@@ -25,6 +26,10 @@ export const App = observer(() => {
 
 			<Move x={517} y={600}>
 				<Drums />
+			</Move>
+
+			<Move x={755} y={30}>
+				<Bass />
 			</Move>
 		</>
 	);
