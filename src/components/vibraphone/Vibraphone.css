@@ -1,0 +1,10 @@
+@keyframes vibraphoneHitPulse {
+	from {
+		transform: translateY(10px);
+		fill: rgb(230, 230, 230);
+	}
+}
+
+.vibraphoneHit > * {
+	animation: vibraphoneHitPulse 0.4s 1 ease-out;
+}

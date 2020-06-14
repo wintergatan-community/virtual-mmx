@@ -122,6 +122,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@computed get partDatas() {
 		let allParts: PartData[] = [];
 		this.g.player.forEachPart((part) => allParts.push(part));
+		allParts.pop(); // TODO add sideways scroll
 		return allParts;
 	}
 
