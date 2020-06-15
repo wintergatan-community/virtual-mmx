@@ -28,7 +28,7 @@ export const App = observer(() => {
 				<Drums />
 			</Move>
 
-			<Move x={755} y={30}>
+			<Move x={768} y={80}>
 				<Bass />
 			</Move>
 		</>

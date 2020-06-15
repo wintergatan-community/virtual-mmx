@@ -36,7 +36,6 @@ export class VMMXPlayer {
 			const part = instrument.parts[event[key as keyof TickedDropEvent]];
 			part.add(event.tick);
 		});
-		console.log(this.instruments);
 
 		Transport.bpm.value = program.state.machine.bpm;
 		Transport.PPQ = program.metadata.tpq;
