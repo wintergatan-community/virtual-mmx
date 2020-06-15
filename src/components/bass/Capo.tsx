@@ -18,7 +18,7 @@ export class Capo extends Component<CapoProps> {
 		return global.program.state.bass.capos[this.props.string] ?? 0;
 	}
 
-	@action.bound moveCapo(e: DraggableEvent, data: DraggableData) {
+	@action.bound moveCapo(_: DraggableEvent, data: DraggableData) {
 		// console.log(this.thing);
 		let fret = Math.ceil((data.y / bass.viewHeight) * bass.totalFrets);
 		if (this.capoPos === fret) return;
@@ -43,7 +43,7 @@ export class Capo extends Component<CapoProps> {
 				bounds={{ top: 0, bottom: bass.viewHeight }}
 				scale={this.scale(1)}
 				onDrag={this.moveCapo}
-				nodeRef={(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>} // TODO stupid react, typescript, library nothing works shut up do your job beans
+				nodeRef={(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>} // TODO stupid react, typescript, library nothing works shut up do your job
 			>
 				<g>
 					<rect

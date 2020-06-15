@@ -13,24 +13,6 @@ export const useStores = () => useContext(storesContext);
 
 global.player.loadProgram(global.program);
 
-// global.player.tempLoad();
-
-// just a handy template
-/*
-export const  = observer((props: ) => {
-	const { editor } = useStores();
-	const store = useLocalStore(
-		(s) => ({
-
-		}),
-		props
-	);
-	return (
-
-	);
-});
-*/
-
 // probably dont need any of this... it'll stay just to be safe. for now
 
 // const [GlobalContext, GlobalContextProvider, globalStore] = makeContext(
