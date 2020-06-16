@@ -1,7 +1,7 @@
 import { VibraphoneChannel, BassString, DrumType, Note } from "vmmx-schema";
 import { global } from "../../contexts/StoreContext";
 import PartData from "./partData";
-import { Part, NoiseSynth, PolySynth, Synth, Sampler } from "tone";
+import { Part, NoiseSynth, Sampler } from "tone";
 
 const partOptions = {
 	loop: true,

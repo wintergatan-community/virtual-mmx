@@ -50,7 +50,7 @@ export class Bass extends Component {
 						ry={6}
 						width={bass.viewWidth}
 						height={bass.viewHeight}
-						fill="rgb(241, 221, 189, 0.02)"
+						fill="rgb(241, 221, 189, 1)"
 					/>
 					{this.fretDatas.map((fretData) => (
 						<Fret {...fretData} key={fretData.fret} />

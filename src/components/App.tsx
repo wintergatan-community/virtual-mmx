@@ -7,6 +7,7 @@ import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { SomeReactChildren } from "../core/types";
 import { Bass } from "./bass/Bass";
+import { Spinny } from "./Spinny";
 // import { SpringTesting } from "./testing/SpringTesting";
 // import { TimingTesting } from "./timingTesting/TimingTesting";
 
@@ -30,6 +31,9 @@ export const App = observer(() => {
 
 			<Move x={768} y={80}>
 				<Bass />
+			</Move>
+			<Move x={860} y={60}>
+				<Spinny />
 			</Move>
 		</>
 	);
