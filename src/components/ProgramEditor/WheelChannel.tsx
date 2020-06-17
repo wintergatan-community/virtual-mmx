@@ -15,7 +15,7 @@ export const WheelChannel = observer((props: WheelChannelProps) => {
 	const store = useLocalStore(
 		(source) => ({
 			get partData() {
-				return wheel.partDatas[source.channel];
+				return wheel.pegChannelDatas[source.channel].partData;
 			},
 			get width() {
 				return wheel.tickToPixel(wheel.totalTicks);

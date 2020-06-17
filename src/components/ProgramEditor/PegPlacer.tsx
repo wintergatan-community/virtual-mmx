@@ -9,7 +9,7 @@ export const PegPlacer = observer(() => {
 		get partData() {
 			const channel = wheel.gridSnappedMousePos?.mouseChannel;
 			if (channel === undefined) return null;
-			return wheel.partDatas[channel];
+			return wheel.pegChannelDatas[channel].partData;
 		},
 		get mouse() {
 			// TODO this doesn't seem right but MobX is being lame
@@ -17,7 +17,7 @@ export const PegPlacer = observer(() => {
 		},
 		get alreadyPlaced() {
 			if (!store.partData) return true;
-			return store.partData.pegs.some((p) => p.tick === store.mouse.mouseTick);
+			return store.partData.pegs.some((t) => t === store.mouse.mouseTick);
 		},
 		addPeg() {
 			if (!store.mouse) return;

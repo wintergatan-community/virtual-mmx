@@ -1,38 +1,36 @@
 import { Part } from "tone";
 import { insertInOrder, removeInOrder } from "../helpers";
 import { observable, action } from "mobx";
-import { Note } from "vmmx-schema";
 
-export interface PegInPart {
-	tick: number;
-	note: Note;
-}
+const partOptions = {
+	loop: true,
+	loopStart: 0,
+	// for some reason this only seems to work with ticks
+	loopEnd: 240 * 4 * 16 + "i",
+};
 
 export default class PartData {
-	readonly tonePart: Part;
-	@observable readonly tuning: Note;
-	@observable readonly pegs: PegInPart[];
+	readonly tonePart = new Part(partOptions);
+	@observable readonly pegs: number[];
 	listeners: (() => void)[] = [];
 
-	constructor(tonePart: Part, tuning: Note, trigger: (time: number) => void) {
-		this.tonePart = tonePart;
-		this.tuning = tuning;
+	constructor(trigger: (tick: number) => void) {
 		this.pegs = [];
-		this.tonePart.callback = (time) => {
+		this.tonePart.callback = (tick) => {
 			this.listeners.forEach((l) => l());
-			trigger(time);
+			trigger(tick);
 		};
+		this.tonePart.start(0);
 	}
 
-	@action add(tick: number, note?: Note) {
-		note = note ?? this.tuning;
-		this.tonePart.add(tick + "i", note);
-		insertInOrder({ tick, note }, this.pegs);
+	@action add(tick: number) {
+		this.tonePart.add(tick + "i");
+		insertInOrder(tick, this.pegs);
 	}
 
 	@action remove(tick: number) {
 		this.tonePart.remove(tick + "i");
-		removeInOrder((p) => p.tick === tick, this.pegs);
+		removeInOrder((searchTick) => searchTick === tick, this.pegs);
 	}
 
 	@action runOnNote(callback: () => void) {

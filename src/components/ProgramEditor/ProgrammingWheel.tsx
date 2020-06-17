@@ -21,6 +21,8 @@ export const ProgrammingWheel = observer(() => {
 			const mouseChannel = wheel.pixelToChannel(x);
 			const y = e.clientY - svgBound.top;
 			const mouseTick = wheel.pixelToTick(y) + wheel.visibleTopTick;
+			if (mouseChannel < 0 || mouseChannel >= wheel.pegChannelDatas.length)
+				return;
 			wheel.moveMouse(mouseTick, mouseChannel);
 		},
 		handleScroll(e: React.WheelEvent<SVGSVGElement>) {
@@ -56,9 +58,9 @@ export const ProgrammingWheel = observer(() => {
 				</TranslateGrid>
 			</TranslateGrid>
 			<g style={{ transform: `translateX(${wheel.gearWidth}px)` }}>
-				{wheel.partDatas.map((partData, channel) => (
+				{wheel.pegChannelDatas.map((pegChannel, channel) => (
 					<TranslateGrid channel={channel} key={channel}>
-						<TextThing tuning={partData.tuning} />
+						<TextThing tuning={pegChannel.note} />
 					</TranslateGrid>
 				))}
 			</g>

@@ -30,8 +30,10 @@ const WheelChannels = observer(() => {
 
 	return (
 		<g>
-			{wheel.partDatas.map((data, channel) => {
-				return <WheelChannel data={data} channel={channel} key={channel} />;
+			{wheel.pegChannelDatas.map((data, channel) => {
+				return (
+					<WheelChannel data={data.partData} channel={channel} key={channel} />
+				);
 			})}
 		</g>
 	);

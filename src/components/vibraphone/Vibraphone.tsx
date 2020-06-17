@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { computed } from "mobx";
-import { global } from "../../contexts/StoreContext";
 import { VibraphoneNote } from "./VibraphoneNote";
 import "./Vibraphone.css";
+import { vibraphoneChannels } from "../../core/playback/instruments";
 
 const wholeWidth = 400;
 const noteWidth = wholeWidth / 11;
@@ -12,10 +11,6 @@ export const vibra = { wholeWidth, noteWidth, noteWidthPadded };
 
 export class Vibraphone extends Component {
 	height = 160;
-
-	@computed get parts() {
-		return Object.entries(global.player.instruments.vibraphone.parts);
-	}
 
 	render() {
 		return (
@@ -28,12 +23,8 @@ export class Vibraphone extends Component {
 				}}
 			>
 				<g style={{ transform: `translateY(${this.height / 2}px)` }}>
-					{this.parts.map(([channel, part]) => (
-						<VibraphoneNote
-							part={part}
-							channel={parseInt(channel)}
-							key={channel}
-						/>
+					{vibraphoneChannels.map((channel) => (
+						<VibraphoneNote channel={channel} key={channel} />
 					))}
 				</g>
 			</svg>

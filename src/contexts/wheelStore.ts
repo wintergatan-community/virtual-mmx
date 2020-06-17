@@ -3,7 +3,7 @@ import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
 import { range } from "../core/helpers";
 import { computedFn } from "mobx-utils";
-import PartData from "../core/playback/partData";
+import { PegChannelData } from "../core/playback/instruments";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -47,8 +47,8 @@ interface ProgrammingWheelInterface {
 	channelWidth: number;
 	/** Whether or not translucent pegs should be rendered for the current subdivision in the absence of a drop event */
 	showEmpties: boolean;
-	/** An array of PartData used for channel column headers and instrument identification*/
-	partDatas: PartData[];
+	/** An array of PegChannelData used for channel column headers and instrument identification*/
+	pegChannelDatas: PegChannelData[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
 	/** The current tick of the playback head */
@@ -89,7 +89,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return 64 * 240;
 	}
 	@computed get totalChannels() {
-		return this.partDatas.length;
+		return this.pegChannelDatas.length;
 	}
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
@@ -119,11 +119,19 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable pixelsPerQuarter = 35;
 	@observable channelWidth = 36;
 	@observable showEmpties = false;
-	@computed get partDatas() {
-		let allParts: PartData[] = [];
-		this.g.player.forEachPart((part) => allParts.push(part));
-		allParts.pop(); // TODO add sideways scroll
-		return allParts;
+	@computed get pegChannelDatas() {
+		let channelDatas: PegChannelData[] = [];
+		const instruments = this.g.player.instruments;
+
+		for (let channelData of Object.values(instruments.vibraphone.channels)) {
+			channelDatas.push(channelData);
+		}
+
+		for (let stringData of Object.values(instruments.bass.strings)) {
+			channelDatas.push(stringData);
+		}
+
+		return channelDatas;
 	}
 
 	@computed get pegOffsetFunction() {

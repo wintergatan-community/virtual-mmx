@@ -1,26 +1,30 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import PartData from "../../core/playback/partData";
 import { noteToVibraphoneLength } from "../../core/helpers";
 import "./Vibraphone.css";
 import { computed, observable, action } from "mobx";
 import { vibra } from "./Vibraphone";
+import { global } from "../../contexts/StoreContext";
+import { VibraphoneChannel } from "vmmx-schema";
 
 interface VibraphoneNoteProps {
-	part: PartData;
-	channel: number;
+	channel: VibraphoneChannel;
 }
 
 @observer
 export class VibraphoneNote extends Component<VibraphoneNoteProps> {
 	componentDidMount() {
-		this.props.part.runOnNote(this.strike);
+		this.channelData.partData.runOnNote(this.strike);
+	}
+
+	@computed get channelData() {
+		return global.player.instruments.vibraphone.channels[this.props.channel];
 	}
 	@computed get x() {
 		return vibra.noteWidth * (this.props.channel - 1);
 	}
 	@computed get height() {
-		return noteToVibraphoneLength(this.props.part.tuning);
+		return noteToVibraphoneLength(this.channelData.note);
 	}
 	@observable hit = false;
 
@@ -59,7 +63,7 @@ export class VibraphoneNote extends Component<VibraphoneNoteProps> {
 					alignmentBaseline="central"
 					style={{ userSelect: "none" }}
 				>
-					{this.props.part.tuning}
+					{this.channelData.note}
 				</text>
 			</g>
 		);

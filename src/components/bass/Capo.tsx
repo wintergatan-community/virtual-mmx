@@ -22,7 +22,7 @@ export class Capo extends Component<CapoProps> {
 		// console.log(this.thing);
 		let fret = Math.ceil((data.y / bass.viewHeight) * bass.totalFrets);
 		if (this.capoPos === fret) return;
-		console.log(this.props.string + ": " + fret);
+		// console.log(this.props.string + ": " + fret);
 		this.setCapoFret(fret);
 	}
 

@@ -1,26 +1,29 @@
 import React from "react";
 import { observer, useLocalStore } from "mobx-react";
-import { PegInPart } from "../../core/playback/partData";
 import { useStores } from "../../contexts/StoreContext";
 import { Peg } from "./Peg";
 
 interface PegsProps {
-	pegs: PegInPart[];
+	pegs: number[];
 	channel: number;
 }
 
 export const ChannelPegs = observer((props: PegsProps) => {
 	return (
 		<>
-			{props.pegs.map((peg) => (
-				<MaybeRenderedPeg peg={peg} channel={props.channel} key={peg.tick} />
+			{props.pegs.map((pegTick) => (
+				<MaybeRenderedPeg
+					pegTick={pegTick}
+					channel={props.channel}
+					key={pegTick}
+				/>
 			))}
 		</>
 	);
 });
 
 interface MaybeRenderedPegProps {
-	peg: PegInPart;
+	pegTick: number;
 	channel: number;
 }
 
@@ -29,10 +32,10 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 	const store = useLocalStore(
 		(source) => ({
 			get partData() {
-				return wheel.partDatas[source.channel];
+				return wheel.pegChannelDatas[source.channel].partData;
 			},
 			get tick() {
-				return source.peg.tick;
+				return source.pegTick;
 			},
 			get visible() {
 				return (
@@ -49,9 +52,9 @@ export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
 
 	return store.visible ? (
 		<Peg
-			peg={props.peg}
+			pegTick={props.pegTick}
 			channel={props.channel}
-			activeDivision={props.peg.tick % wheel.ticksPerNoteSubdivision === 0}
+			activeDivision={props.pegTick % wheel.ticksPerNoteSubdivision === 0}
 			spawnsEvent={true}
 			click={store.removePeg}
 			key={store.tick}

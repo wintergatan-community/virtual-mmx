@@ -22,7 +22,7 @@ export class Bass extends Component {
 
 	fretDatas = range(1, bass.totalFrets + 1).map((n) => {
 		let markings: number[] = [];
-		if (n === 12) markings = [0.25, 0.75];
+		if (n === 12) markings = [0.23, 0.77];
 		else if (n % 2 === 1 && ![11, 13, 1].includes(n)) markings = [0.5];
 		return {
 			fret: n,

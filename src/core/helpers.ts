@@ -180,3 +180,24 @@ const notesArray = [
 	"F#9",
 	"G9",
 ];
+
+type ObjectKey = string | number | symbol;
+
+// Object.fromEntries doesn't play well with typescript normally
+export function fromEntries<Key extends ObjectKey, Value>(
+	entries: [Key, Value][]
+) {
+	return Object.fromEntries(entries) as Record<Key, Value>;
+}
+
+export function mapToObject<Key extends ObjectKey, InValue, OutValue>(
+	objectToMap: Record<Key, InValue>,
+	func: (key: Key, value: InValue) => OutValue
+) {
+	return fromEntries(
+		Object.entries(objectToMap).map(([key, value]) => [
+			key as Key,
+			func(key as Key, value as InValue),
+		])
+	);
+}
