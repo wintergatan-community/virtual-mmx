@@ -3,7 +3,7 @@ import { GlobalStore } from "./globalStore";
 import { observable, computed, action } from "mobx";
 import { range } from "../core/helpers";
 import { computedFn } from "mobx-utils";
-import { PegChannelData } from "../core/playback/instruments";
+import { PegChannelData } from "../core/playback/instruments/instruments";
 
 interface WheelMousePos {
 	mouseTick: number;

@@ -19,7 +19,6 @@ export class Capo extends Component<CapoProps> {
 	}
 
 	@action.bound moveCapo(_: DraggableEvent, data: DraggableData) {
-		// console.log(this.thing);
 		let fret = Math.ceil((data.y / bass.viewHeight) * bass.totalFrets);
 		if (this.capoPos === fret) return;
 		// console.log(this.props.string + ": " + fret);

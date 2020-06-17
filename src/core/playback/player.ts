@@ -2,7 +2,9 @@ import { Program } from "vmmx-schema";
 import { Transport, context } from "tone";
 import { wheel } from "../../contexts/StoreContext";
 import { observable, action } from "mobx";
-import { Vibraphone, Bass, Drums } from "./instruments";
+import { Vibraphone } from "./instruments/vibraphone";
+import { Bass } from "./instruments/bass";
+import { Drums } from "./instruments/drums";
 
 // type InstrumentKey = Pick<TickedDropEvent, "kind">["kind"];
 

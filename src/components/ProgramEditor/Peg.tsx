@@ -3,7 +3,7 @@ import { mapValue } from "../../core/helpers";
 import { observer, useLocalStore } from "mobx-react";
 import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "./TranslateGrid";
-import { autorun, runInAction } from "mobx";
+import { runInAction } from "mobx";
 import "./Peg.css";
 
 interface PegProps {
@@ -40,12 +40,6 @@ export const Peg = observer((props: PegProps) => {
 				);
 			},
 			playing: false,
-			highlightOnPlay: autorun(() => {
-				// TODO this shouldn't be a seperate autorun for each peg
-				if (Math.abs(source.pegTick - wheel.playbackHeadTick) < 10) {
-					runInAction(() => (store.playing = true));
-				}
-			}),
 		}),
 		props
 	);

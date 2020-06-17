@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { VibraphoneNote } from "./VibraphoneNote";
 import "./Vibraphone.css";
-import { vibraphoneChannels } from "../../core/playback/instruments";
+import { vibraphoneChannels } from "../../core/playback/instruments/instruments";
 
 const wholeWidth = 400;
 const noteWidth = wholeWidth / 11;
