@@ -20,7 +20,7 @@ export default class PartData {
 			this.listeners.forEach((l) => l());
 			trigger(tick);
 		};
-		this.tonePart.start(0);
+		this.tonePart.start();
 	}
 
 	@action add(tick: number) {

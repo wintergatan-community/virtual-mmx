@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import { observer } from "mobx-react";
 import { range } from "../../core/helpers";
-import { BassString } from "vmmx-schema";
 import { Fret } from "./Fret";
 import { String } from "./String";
+import { bassStrings } from "../../core/playback/instruments/instruments";
+import { computed, action, observable } from "mobx";
 
 // TODO move these somewhere better (local context)
 export const bass = {
@@ -17,8 +18,8 @@ export const bass = {
 export class Bass extends Component {
 	width = 73;
 	height = 511;
-
-	strings: BassString[] = [1, 2, 3, 4]; // TODO this should be in schema
+	fretBoardRef = createRef<SVGSVGElement>();
+	@observable mousePos: { x: number; y: number } | undefined;
 
 	fretDatas = range(1, bass.totalFrets + 1).map((n) => {
 		let markings: number[] = [];
@@ -29,6 +30,14 @@ export class Bass extends Component {
 			markings,
 		};
 	});
+
+	@action.bound moveMouse(e: React.MouseEvent<SVGSVGElement, MouseEvent>) {
+		if (!this.fretBoardRef.current) return;
+		const svgBound = this.fretBoardRef.current.getBoundingClientRect();
+		const x = (e.clientX - svgBound.left) * (bass.viewWidth / this.width);
+		const y = (e.clientY - svgBound.top) * (bass.viewHeight / this.height);
+		this.mousePos = { x, y };
+	}
 
 	render() {
 		return (
@@ -44,6 +53,8 @@ export class Bass extends Component {
 						width: this.width,
 						height: this.height,
 					}}
+					ref={this.fretBoardRef}
+					onMouseMove={this.moveMouse}
 				>
 					<rect
 						rx={20}
@@ -55,9 +66,15 @@ export class Bass extends Component {
 					{this.fretDatas.map((fretData) => (
 						<Fret {...fretData} key={fretData.fret} />
 					))}
-					{this.strings.map((string) => (
+					{bassStrings.map((string) => (
 						<String string={string} key={string} />
 					))}
+					<rect
+						x={this.mousePos?.x}
+						y={this.mousePos?.y}
+						width={20}
+						height={20}
+					/>
 				</svg>
 			</div>
 		);
