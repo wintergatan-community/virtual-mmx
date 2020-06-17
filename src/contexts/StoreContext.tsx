@@ -11,7 +11,7 @@ export const storesContext = createContext({ global, wheel });
 
 export const useStores = () => useContext(storesContext);
 
-global.player.loadProgram(global.program);
+// global.player.loadProgram(global.program);
 
 // probably dont need any of this... it'll stay just to be safe. for now
 

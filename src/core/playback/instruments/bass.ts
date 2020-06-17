@@ -1,8 +1,8 @@
 import { BassString, Note, BassDropEvent, TickedDropEvent } from "vmmx-schema";
 import { fromEntries } from "../../helpers";
-import { Sampler, Volume, Destination } from "tone";
+import { Sampler, Volume, Destination, PitchShift } from "tone";
 import PartData from "../partData";
-import { computed } from "mobx";
+import { computed, autorun } from "mobx";
 import { global } from "../../../contexts/StoreContext";
 import { bassStrings, PegChannelData } from "./instruments";
 
@@ -50,21 +50,22 @@ class BassStringData implements PegChannelData {
 	constructor(string: BassString) {
 		this.string = string;
 		const volume = new Volume(-10);
-		this.bassSynth.chain(volume, Destination);
-	}
-
-	toNote(string: BassString) {
-		return (
-			global.program.state.bass.tuning[string] ?? Bass.defaultTuning[string]
-		);
+		const pitchShifter = new PitchShift();
+		autorun(() => {
+			pitchShifter.pitch = global.program.state.bass.capos[this.string] ?? 0;
+		});
+		this.bassSynth.chain(volume, pitchShifter, Destination);
 	}
 
 	@computed get note() {
-		return this.toNote(this.string);
+		return (
+			global.program.state.bass.tuning[this.string] ??
+			Bass.defaultTuning[this.string]
+		);
 	}
 
 	triggerStrike(time?: number) {
-		this.bassSynth.triggerAttack(this.toNote(this.string), time);
+		this.bassSynth.triggerAttack(this.note, time);
 	}
 
 	moveCapo(fret: number) {}

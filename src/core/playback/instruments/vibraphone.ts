@@ -58,18 +58,14 @@ class VibraphoneChannelData implements PegChannelData {
 		this.channelSynth = synth;
 	}
 
-	toNote(channel: VibraphoneChannel) {
+	@computed get note() {
 		return (
-			global.program.state.vibraphone.notes[channel] ??
-			Vibraphone.defaultTuning[channel]
+			global.program.state.vibraphone.notes[this.channel] ??
+			Vibraphone.defaultTuning[this.channel]
 		);
 	}
 
-	@computed get note() {
-		return this.toNote(this.channel);
-	}
-
 	triggerStrike(time?: number) {
-		this.channelSynth.triggerAttack(this.toNote(this.channel), time);
+		this.channelSynth.triggerAttack(this.note, time);
 	}
 }
