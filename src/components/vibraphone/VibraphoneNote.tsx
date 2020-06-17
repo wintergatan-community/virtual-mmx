@@ -35,7 +35,12 @@ export class VibraphoneNote extends Component<VibraphoneNoteProps> {
 		this.hit = false;
 	}
 	handlePress = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
-		if (e.buttons === 1) this.strike();
+		if (e.buttons === 1 && !this.hit) {
+			global.player.instruments.vibraphone.channels[
+				this.props.channel
+			].triggerStrike();
+			this.strike();
+		}
 	};
 
 	render() {
@@ -44,8 +49,8 @@ export class VibraphoneNote extends Component<VibraphoneNoteProps> {
 				style={{ transform: `translate(${this.x}px, ${-this.height / 2}px)` }}
 				className={this.hit ? "vibraphoneHit" : ""}
 				onAnimationEnd={this.endStrike}
-				onMouseOver={this.handlePress}
 				onMouseDown={this.handlePress}
+				onMouseOver={this.handlePress}
 			>
 				<rect
 					width={vibra.noteWidthPadded}

@@ -7,8 +7,7 @@ import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { SomeReactChildren } from "../core/types";
 import { Bass } from "./bass/Bass";
-// import { SpringTesting } from "./testing/SpringTesting";
-// import { TimingTesting } from "./timingTesting/TimingTesting";
+import { Spinny } from "./Spinny";
 
 export const App = observer(() => {
 	return (
@@ -31,8 +30,8 @@ export const App = observer(() => {
 			<Move x={768} y={80}>
 				<Bass />
 			</Move>
-			<Move x={860} y={60}>
-				{/* <Spinny /> */}
+			<Move x={860} y={460}>
+				<Spinny />
 			</Move>
 			{/* <Move x={500} y={60}>
 				<svg
