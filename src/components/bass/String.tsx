@@ -36,14 +36,14 @@ export class String extends Component<StringProps> {
 					x2={0}
 					stroke="rgb(195, 195, 195)"
 				/>
-				<rect
+				{/* <rect
 					x={-this.width / 2}
 					y={0}
 					width={this.width}
 					height={bass.viewHeight}
 					fill="#0003"
 					onWheel={this.handleScroll}
-				/>
+				/> */}
 				<Capo string={this.props.string} />
 			</g>
 		);

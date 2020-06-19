@@ -69,12 +69,12 @@ export class Bass extends Component {
 					{bassStrings.map((string) => (
 						<String string={string} key={string} />
 					))}
-					<rect
+					{/* <rect
 						x={this.mousePos?.x}
 						y={this.mousePos?.y}
 						width={20}
 						height={20}
-					/>
+					/> */}
 				</svg>
 			</div>
 		);
