@@ -4,7 +4,7 @@ import { range } from "../../core/helpers";
 import { Fret } from "./Fret";
 import { String } from "./String";
 import { bassStrings } from "../../core/playback/instruments/instruments";
-import { computed, action, observable } from "mobx";
+import { action, observable } from "mobx";
 
 // TODO move these somewhere better (local context)
 export const bass = {

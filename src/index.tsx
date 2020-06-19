@@ -6,7 +6,11 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mobx-react-lite/batchingForReactDom";
 import { configure } from "mobx";
+import { start } from "tone";
+
 configure({ enforceActions: "observed" });
+
+start();
 
 ReactDOM.render(
 	<React.StrictMode>
