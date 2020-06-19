@@ -1,0 +1,24 @@
+{
+    "presets": [
+        "@babel/preset-env",
+        "@babel/preset-typescript",
+        "@babel/preset-react"
+    ],
+    "plugins": [
+        // Note: need the flags due to this: https://babeljs.io/docs/en/babel-plugin-proposal-decorators#legacy
+        [
+            "@babel/plugin-proposal-decorators",
+            {
+                "legacy": true
+            }
+        ],
+        ["@babel/proposal-class-properties",
+            {
+                "loose": true
+            }
+        ],
+        "@babel/proposal-object-rest-spread",
+        "@babel/plugin-proposal-optional-chaining",
+        "@babel/plugin-proposal-nullish-coalescing-operator"
+    ]
+}
