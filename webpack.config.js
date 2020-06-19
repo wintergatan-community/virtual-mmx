@@ -6,16 +6,18 @@ module.exports = {
 
     // and output it into /dist as bundle.js
     output: {
-        path: path.join(__dirname, '/dist'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.[hash].js',
-        publicPath: path.join(__dirname, 'public')
+        publicPath: '/'
     },
 
     devServer:{
         // This serves the static content not from webpack i.e. from given directory
-        contentBase: path.join(__dirname, 'public')
+        contentBase: path.resolve(__dirname, 'public')
     },
     
+    devtool: "inline-source-map",
+
     // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -47,6 +49,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
+            inject: true,
+
         }),
     ],
 };
