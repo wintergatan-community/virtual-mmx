@@ -1,0 +1,9 @@
+@keyframes pulse {
+	from {
+		fill: yellow;
+	}
+}
+
+.pegPlaying {
+	animation: pulse 0.4s 1 ease-out;
+}
