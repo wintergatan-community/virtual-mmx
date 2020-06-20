@@ -21,7 +21,10 @@ export const ProgrammingWheel = observer(() => {
 			const mouseChannel = wheel.pixelToChannel(x);
 			const y = e.clientY - svgBound.top;
 			const mouseTick = wheel.pixelToTick(y) + wheel.visibleTopTick;
-			if (mouseChannel < 0 || mouseChannel >= wheel.pegChannelDatas.length)
+			if (
+				mouseChannel < 0 ||
+				mouseChannel >= wheel.pegChannelDatas.length
+			)
 				return;
 			wheel.moveMouse(mouseTick, mouseChannel);
 		},
@@ -78,7 +81,13 @@ function MovingWindow() {
 				<ProgramGrid />
 				<PegPlacer />
 				<PlaybackHead />
-				<line x1={0} y1={0} x2={wheel.visiblePixelWidth} y2={0} stroke="red" />
+				<line
+					x1={0}
+					y1={0}
+					x2={wheel.visiblePixelWidth}
+					y2={0}
+					stroke="red"
+				/>
 			</g>
 			<GearSide x={0} />
 			<GearSide x={wheel.visiblePixelWidth + wheel.gearWidth} />
@@ -94,7 +103,14 @@ function TextThing(props: TextThingProps) {
 	return (
 		<>
 			<TranslateGrid channel={0.5}>
-				<rect x={-17.5} y={7} width={35} height={22} fill="#444" rx={7} />
+				<rect
+					x={-17.5}
+					y={7}
+					width={35}
+					height={22}
+					fill="#444"
+					rx={7}
+				/>
 				<text
 					style={{ userSelect: "none" }}
 					x={0}

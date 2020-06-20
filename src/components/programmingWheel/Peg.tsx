@@ -27,7 +27,10 @@ export const Peg = observer((props: PegProps) => {
 			get h() {
 				return Math.min(
 					20,
-					Math.max(wheel.tickToPixel(wheel.ticksPerNoteSubdivision) - 5, 5)
+					Math.max(
+						wheel.tickToPixel(wheel.ticksPerNoteSubdivision) - 5,
+						5
+					)
 				);
 			},
 			get shift() {
@@ -54,7 +57,9 @@ export const Peg = observer((props: PegProps) => {
 				rx={3}
 				onClick={props.click}
 				className={store.playing ? "pegPlaying" : ""}
-				onAnimationEnd={() => runInAction(() => (store.playing = false))}
+				onAnimationEnd={() =>
+					runInAction(() => (store.playing = false))
+				}
 			/>
 		</TranslateGrid>
 	);

@@ -83,7 +83,11 @@ export const GearSide = observer((props: GearSideProps) => {
 		<g style={{ transform: `translateX(${props.x}px)` }}>
 			{store.segments.map((tick, i) => (
 				<TranslateGrid tick={tick} key={i}>
-					<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
+					<polyline
+						fill="#d7ba89"
+						stroke="#d7ba89"
+						points={store.points1}
+					/>
 					<rect
 						x={store.rectBits[0][0]}
 						y={store.rectBits[0][1]}
@@ -92,8 +96,16 @@ export const GearSide = observer((props: GearSideProps) => {
 						fill="#c9af83"
 						stroke="#c9af83"
 					/>
-					<polyline fill="#bfa982" stroke="#bfa982" points={store.points2} />
-					<polyline fill="#b09c78" stroke="#b09c78" points={store.points3} />
+					<polyline
+						fill="#bfa982"
+						stroke="#bfa982"
+						points={store.points2}
+					/>
+					<polyline
+						fill="#b09c78"
+						stroke="#b09c78"
+						points={store.points3}
+					/>
 					<polyline
 						fill="hsl(38, 49%, 69%)"
 						stroke="hsl(38, 49%, 69%)"

@@ -1,5 +1,5 @@
 import React from "react";
-import { ProgrammingWheel } from "./programEditor/ProgrammingWheel";
+import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
 import { TransportControls } from "./transport/TransportContols";
 import { MockupLayout } from "./mockupLayout/MockupLayout";
 import { observer } from "mobx-react";

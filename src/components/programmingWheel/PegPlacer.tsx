@@ -13,7 +13,9 @@ export const PegPlacer = observer(() => {
 		},
 		get mouse() {
 			// TODO this doesn't seem right but MobX is being lame
-			return wheel.gridSnappedMousePos ?? { mouseTick: -1, mouseChannel: -1 };
+			return (
+				wheel.gridSnappedMousePos ?? { mouseTick: -1, mouseChannel: -1 }
+			);
 		},
 		get alreadyPlaced() {
 			if (!store.partData) return true;
