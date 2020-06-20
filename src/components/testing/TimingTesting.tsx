@@ -10,7 +10,7 @@ interface TPSChange {
 	endTPS: number;
 }
 
-let synth = new Synth().toDestination();
+const synth = new Synth().toDestination();
 
 Transport.bpm.value = 1 * 60;
 Transport.PPQ = 1;
@@ -71,7 +71,7 @@ const res = [
 @observer
 export class TimingTesting extends Component {
 	tpq = 240;
-	interval: NodeJS.Timeout | undefined;
+	interval: NodeJS.Timeout | number | undefined;
 	@observable currentTick = 0;
 	@observable markerTicks = range(0, 100, 5);
 
