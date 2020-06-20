@@ -71,7 +71,7 @@ const res = [
 @observer
 export class TimingTesting extends Component {
 	tpq = 240;
-	interval: NodeJS.Timeout | number | undefined;
+	interval: NodeJS.Timeout | undefined;
 	@observable currentTick = 0;
 	@observable markerTicks = range(0, 100, 5);
 
