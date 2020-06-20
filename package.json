@@ -57,6 +57,7 @@
     "scripts": {
         "bundle": "webpack",
         "test": "echo \"Error: no test specified\" && exit 0",
+        "dev": "webpack-dev-server --mode development --port 3000 --hot",
         "start": "webpack-dev-server --mode development --port 3000 --hot --open",
         "build": "webpack --mode production",
         "check-types": "tsc"

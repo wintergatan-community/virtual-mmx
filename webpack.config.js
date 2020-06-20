@@ -13,7 +13,8 @@ module.exports = {
 
     devServer:{
         // This serves the static content not from webpack i.e. from given directory
-        contentBase: path.resolve(__dirname, 'public')
+		contentBase: path.resolve(__dirname, 'public'),
+		overlay: true
     },
     
     devtool: "inline-source-map",
