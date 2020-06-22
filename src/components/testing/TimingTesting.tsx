@@ -10,7 +10,7 @@ interface TPSChange {
 	endTPS: number;
 }
 
-let synth = new Synth().toDestination();
+const synth = new Synth().toDestination();
 
 Transport.bpm.value = 1 * 60;
 Transport.PPQ = 1;
