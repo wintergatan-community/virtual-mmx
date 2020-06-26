@@ -1,8 +1,7 @@
-import React, { Component } from "react";
-import { observer } from "mobx-react";
+import React from "react";
+import { DrumsComponent } from "../storeComponents";
 
-@observer
-export class HiHat extends Component {
+class HiHat_ extends DrumsComponent {
 	render() {
 		return (
 			<g style={{ transform: "translate(59.5px, 21.5px)" }}>
@@ -17,3 +16,5 @@ export class HiHat extends Component {
 		);
 	}
 }
+
+export const HiHat = DrumsComponent.sync(HiHat_);

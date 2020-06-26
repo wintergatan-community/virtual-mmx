@@ -1,28 +1,28 @@
-import React, { Component } from "react";
-import { observer } from "mobx-react";
+import React from "react";
 import { computed, action } from "mobx";
-import { BassString } from "vmmx-schema";
 import { mapValue } from "../../core/helpers";
 import { Capo } from "./Capo";
-import { bass } from "./Bass";
-import { bassStrings } from "../../core/playback/instruments/instruments";
+import { bassStrings } from "../../core/playback/types";
+import { BassComponent } from "../storeComponents";
+import { BassStringStore } from "../../stores/bass";
 
 interface StringProps {
-	string: BassString;
+	stringStore: BassStringStore;
 }
 
-@observer
-export class String extends Component<StringProps> {
+export class String_ extends BassComponent<StringProps> {
 	@computed get x() {
 		const pad = 10;
-		return mapValue(this.props.string, 1, 4, pad, bass.viewWidth - pad);
+		const viewWidth = this.bass.viewWidth;
+		const bassString = this.props.stringStore.string;
+		return mapValue(bassString, 1, 4, pad, viewWidth - pad);
 	}
 
 	@computed get width() {
-		return bass.viewWidth / bassStrings.length;
+		return this.bass.viewWidth / bassStrings.length;
 	}
 
-	@action.bound handleScroll(e: React.WheelEvent<SVGRectElement>) {
+	@action.bound handleScroll(/*e: React.WheelEvent<SVGRectElement>*/) {
 		// bass.strings[this.props.string].capoPos += e.deltaY / 20;
 	}
 
@@ -31,7 +31,7 @@ export class String extends Component<StringProps> {
 			<g style={{ transform: `translateX(${this.x}px)` }}>
 				<line
 					y1={0}
-					y2={bass.viewHeight}
+					y2={this.bass.viewHeight}
 					x1={0}
 					x2={0}
 					stroke="rgb(195, 195, 195)"
@@ -44,8 +44,10 @@ export class String extends Component<StringProps> {
 					fill="#0003"
 					onWheel={this.handleScroll}
 				/> */}
-				<Capo string={this.props.string} />
+				<Capo stringStore={this.props.stringStore} />
 			</g>
 		);
 	}
 }
+
+export const String = BassComponent.sync(String_);

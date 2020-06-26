@@ -1,6 +1,6 @@
 import { Part } from "tone";
-import { insertInOrder, removeInOrder } from "../helpers";
 import { observable, action } from "mobx";
+import { insertInOrder, removeInOrder } from "../helpers";
 
 const partOptions = {
 	loop: true,
@@ -9,16 +9,16 @@ const partOptions = {
 	loopEnd: 240 * 4 * 16 + "i",
 };
 
-export default class PartData {
+export class ChannelPart {
 	readonly tonePart = new Part(partOptions);
 	@observable readonly pegs: number[];
 	listeners: (() => void)[] = [];
 
-	constructor(trigger: (tick: number) => void) {
+	constructor(triggerStrike: (tick: number) => void) {
 		this.pegs = [];
 		this.tonePart.callback = (tick) => {
 			this.listeners.forEach((l) => l());
-			trigger(tick);
+			triggerStrike(tick);
 		};
 		this.tonePart.start();
 	}

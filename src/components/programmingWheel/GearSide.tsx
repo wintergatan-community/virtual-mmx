@@ -1,141 +1,118 @@
 import React from "react";
 import { range, arrToPolyLine } from "../../core/helpers";
-import { observer, useLocalStore } from "mobx-react";
 import { TranslateGrid } from "./TranslateGrid";
-import { useStores } from "../../contexts/StoreContext";
+import { computed } from "mobx";
+import { WheelComponent } from "../storeComponents";
 
 interface GearSideProps {
 	x: number;
 }
 
 // TODO needs major optimization and better structure
-export const GearSide = observer((props: GearSideProps) => {
-	const { wheel, global } = useStores();
-
-	const store = useLocalStore(() => ({
-		get repeat() {
-			return global.tpq * 2;
-		},
-		get segments() {
-			return range(0, wheel.totalTicks, store.repeat);
-		},
-		get scale() {
-			return wheel.tickToPixel(store.repeat);
-		},
-		w(n: number) {
-			return n * wheel.gearWidth;
-		},
-		h(n: number) {
-			return n * store.scale;
-		},
-		scaledPoints(arr: number[][]) {
-			return arr.map((a) => [store.w(a[0]), store.h(a[1])]);
-		},
-		get points1() {
-			return arrToPolyLine(
-				store.scaledPoints([
-					[0, 0],
-					[0.1, 0.3],
-					[0.9, 0.3],
-					[1, 0],
-				])
-			);
-		},
-		get points2() {
-			return arrToPolyLine(
-				store.scaledPoints([
-					[0.1, 0.7],
-					[0, 1],
-					[1, 1],
-					[0.9, 0.7],
-				])
-			);
-		},
-		get points3() {
-			return arrToPolyLine(
-				store.scaledPoints([
-					[0, 0],
-					[0, 1],
-					[0.1, 0.7],
-					[0.1, 0.3],
-				])
-			);
-		},
-		get points4() {
-			return arrToPolyLine(
-				store.scaledPoints([
-					[1, 0],
-					[1, 1],
-					[0.9, 0.7],
-					[0.9, 0.3],
-				])
-			);
-		},
-		get rectBits() {
-			return store.scaledPoints([
+class GearSide_ extends WheelComponent<GearSideProps> {
+	@computed get repeat() {
+		return this.wheel.tpq * 2;
+	}
+	@computed get segments() {
+		return range(0, this.wheel.totalTicks, this.repeat);
+	}
+	@computed get scale() {
+		return this.wheel.tickToPixel(this.repeat);
+	}
+	w(n: number) {
+		return n * this.wheel.gearWidth;
+	}
+	h(n: number) {
+		return n * this.scale;
+	}
+	scaledPoints(arr: number[][]) {
+		return arr.map((a) => [this.w(a[0]), this.h(a[1])]);
+	}
+	@computed get points1() {
+		return arrToPolyLine(
+			this.scaledPoints([
+				[0, 0],
 				[0.1, 0.3],
-				[0.8, 0.5],
-			]);
-		},
-	}));
+				[0.9, 0.3],
+				[1, 0],
+			])
+		);
+	}
+	@computed get points2() {
+		return arrToPolyLine(
+			this.scaledPoints([
+				[0.1, 0.7],
+				[0, 1],
+				[1, 1],
+				[0.9, 0.7],
+			])
+		);
+	}
+	@computed get points3() {
+		return arrToPolyLine(
+			this.scaledPoints([
+				[0, 0],
+				[0, 1],
+				[0.1, 0.7],
+				[0.1, 0.3],
+			])
+		);
+	}
+	@computed get points4() {
+		return arrToPolyLine(
+			this.scaledPoints([
+				[1, 0],
+				[1, 1],
+				[0.9, 0.7],
+				[0.9, 0.3],
+			])
+		);
+	}
+	@computed get rectBits() {
+		return this.scaledPoints([
+			[0.1, 0.3],
+			[0.8, 0.5],
+		]);
+	}
 
-	return (
-		<g style={{ transform: `translateX(${props.x}px)` }}>
-			{store.segments.map((tick, i) => (
-				<TranslateGrid tick={tick} key={i}>
-					<polyline
-						fill="#d7ba89"
-						stroke="#d7ba89"
-						points={store.points1}
-					/>
-					<rect
-						x={store.rectBits[0][0]}
-						y={store.rectBits[0][1]}
-						width={store.rectBits[1][0]}
-						height={store.rectBits[1][1]}
-						fill="#c9af83"
-						stroke="#c9af83"
-					/>
-					<polyline
-						fill="#bfa982"
-						stroke="#bfa982"
-						points={store.points2}
-					/>
-					<polyline
-						fill="#b09c78"
-						stroke="#b09c78"
-						points={store.points3}
-					/>
-					<polyline
-						fill="hsl(38, 49%, 69%)"
-						stroke="hsl(38, 49%, 69%)"
-						points={store.points4}
-					/>
-				</TranslateGrid>
-			))}
-		</g>
-	);
-});
+	render() {
+		return (
+			<g style={{ transform: `translateX(${this.props.x}px)` }}>
+				{this.segments.map((tick, i) => (
+					<TranslateGrid tick={tick} key={i}>
+						<polyline
+							fill="#d7ba89"
+							stroke="#d7ba89"
+							points={this.points1}
+						/>
+						<rect
+							x={this.rectBits[0][0]}
+							y={this.rectBits[0][1]}
+							width={this.rectBits[1][0]}
+							height={this.rectBits[1][1]}
+							fill="#c9af83"
+							stroke="#c9af83"
+						/>
+						<polyline
+							fill="#bfa982"
+							stroke="#bfa982"
+							points={this.points2}
+						/>
+						<polyline
+							fill="#b09c78"
+							stroke="#b09c78"
+							points={this.points3}
+						/>
+						<polyline
+							fill="hsl(38, 49%, 69%)"
+							stroke="hsl(38, 49%, 69%)"
+							points={this.points4}
+						/>
+					</TranslateGrid>
+				))}
+			</g>
+		);
+	}
+}
 
-// export const GearSideSegment = observer(() => {
-// 	return (
-// 		<g>
-// 			<polyline fill="#d7ba89" stroke="#d7ba89" points={store.points1} />
-// 			<rect
-// 				x={3}
-// 				y={10}
-// 				width={14}
-// 				height={15}
-// 				fill="#c9af83"
-// 				stroke="#c9af83"
-// 			/>
-// 			<polyline fill="#bfa982" stroke="#bfa982" points={store.points2} />
-// 			<polyline fill="#b09c78" stroke="#b09c78" points={store.points3} />
-// 			<polyline
-// 				fill="hsl(38, 49%, 69%)"
-// 				stroke="hsl(38, 49%, 69%)"
-// 				points={store.points4}
-// 			/>
-// 		</g>
-// 	);
-// });
+export const GearSide = WheelComponent.sync(GearSide_);

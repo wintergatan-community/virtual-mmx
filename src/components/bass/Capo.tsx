@@ -1,53 +1,53 @@
-import React, { Component, createRef } from "react";
-import { observer } from "mobx-react";
+import React, { createRef } from "react";
 import { computed, action } from "mobx";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
-import { BassString } from "vmmx-schema";
-import { global } from "../../contexts/StoreContext";
-import { bass } from "./Bass";
+import { BassComponent } from "../storeComponents";
+import { BassStringStore } from "../../stores/bass";
 
 interface CapoProps {
-	string: BassString;
+	stringStore: BassStringStore;
 }
 
-@observer
-export class Capo extends Component<CapoProps> {
+class Capo_ extends BassComponent<CapoProps> {
 	capoSVGRef = createRef<SVGRectElement>();
 
-	@computed get capoPos() {
-		return global.program.state.bass.capos[this.props.string] ?? 0;
+	@computed get capo(): number {
+		return this.props.stringStore.capo;
 	}
 
-	@action.bound moveCapo(_: DraggableEvent, data: DraggableData) {
-		let fret = Math.ceil((data.y / bass.viewHeight) * bass.totalFrets);
-		if (this.capoPos === fret) return;
+	@action.bound moveCapo(_: DraggableEvent, data: DraggableData): void {
+		const fret = Math.ceil(
+			(data.y / this.bass.viewHeight) * this.bass.totalFrets
+		);
+		if (this.capo === fret) return;
 		// console.log(this.props.string + ": " + fret);
-		this.setCapoFret(fret);
+		this.props.stringStore.moveCapo(fret);
 	}
 
-	@action setCapoFret(fret: number) {
-		global.program.state.bass.capos[this.props.string] = fret;
-	}
-
-	scale(num: number) {
+	scale(num: number): number {
 		return (num * 511) / 700;
 	}
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<Draggable
 				axis="y"
 				defaultPosition={{ x: 0, y: 0 }}
 				// grid={[0, x]}
-				bounds={{ top: 0, bottom: bass.viewHeight }}
+				bounds={{
+					top: 0,
+					bottom: this.bass.viewHeight,
+				}}
 				scale={this.scale(1)}
 				onDrag={this.moveCapo}
-				nodeRef={(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>} // TODO stupid react, typescript, library nothing works shut up do your job
+				nodeRef={
+					(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>
+				} // TODO stupid react, typescript, library nothing works shut up do your job
 			>
 				<g>
 					<rect
 						x={-10}
-						y={this.capoPos - 6}
+						y={this.capo - 6}
 						width={22}
 						height={12}
 						rx={3}
@@ -66,3 +66,5 @@ export class Capo extends Component<CapoProps> {
 		);
 	}
 }
+
+export const Capo = BassComponent.sync(Capo_);

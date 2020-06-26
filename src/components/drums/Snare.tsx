@@ -1,8 +1,7 @@
-import React, { Component } from "react";
-import { observer } from "mobx-react";
+import React from "react";
+import { DrumsComponent } from "../storeComponents";
 
-@observer
-export class Snare extends Component {
+class Snare_ extends DrumsComponent {
 	render() {
 		return (
 			<g style={{ transform: "translate(53px, 57px)" }}>
@@ -13,3 +12,5 @@ export class Snare extends Component {
 		);
 	}
 }
+
+export const Snare = DrumsComponent.sync(Snare_);

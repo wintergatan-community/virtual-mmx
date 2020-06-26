@@ -1,47 +1,47 @@
 import React from "react";
-import { observer, useLocalStore } from "mobx-react";
-import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "./TranslateGrid";
+import { computed, action } from "mobx";
+import { WheelComponent } from "../storeComponents";
 
-export const PegPlacer = observer(() => {
-	const { wheel } = useStores();
-	const store = useLocalStore(() => ({
-		get partData() {
-			const channel = wheel.gridSnappedMousePos?.mouseChannel;
-			if (channel === undefined) return null;
-			return wheel.pegChannelDatas[channel].partData;
-		},
-		get mouse() {
-			// TODO this doesn't seem right but MobX is being lame
-			return (
-				wheel.gridSnappedMousePos ?? { mouseTick: -1, mouseChannel: -1 }
-			);
-		},
-		get alreadyPlaced() {
-			if (!store.partData) return true;
-			return store.partData.pegs.some((t) => t === store.mouse.mouseTick);
-		},
-		addPeg() {
-			if (!store.mouse) return;
-			store.partData?.add(store.mouse.mouseTick);
-		},
-		get height() {
-			return wheel.tickToPixel(wheel.ticksPerNoteSubdivision);
-		},
-	}));
+class PegPlacer_ extends WheelComponent {
+	@computed get channelPart() {
+		const channelNumber = this.wheel.gridSnappedMousePos?.mouseChannel;
+		if (channelNumber === undefined) return null;
+		return this.wheel.instrumentChannels[channelNumber].channelPart;
+	}
+	@computed get mouse() {
+		// TODO this doesn't seem right but MobX is being lame
+		return this.wheel.gridSnappedMousePos;
+	}
+	@computed get alreadyPlaced() {
+		if (!this.mouse || !this.channelPart) return true;
+		const m = this.mouse;
+		return this.channelPart.pegs.some((t) => t === m.mouseTick);
+	}
+	@action.bound addPeg() {
+		if (!this.mouse) return;
+		this.channelPart?.add(this.mouse.mouseTick);
+	}
+	@computed get height() {
+		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);
+	}
 
-	return store.alreadyPlaced ? null : (
-		<TranslateGrid
-			tick={store.mouse.mouseTick}
-			channel={store.mouse.mouseChannel}
-		>
-			<rect
-				onMouseDown={store.addPeg}
-				onMouseMove={(e) => e.buttons === 1 && store.addPeg()}
-				width={wheel.channelToPixel(1)}
-				height={store.height}
-				fill="#0004"
-			/>
-		</TranslateGrid>
-	);
-});
+	render() {
+		return this.alreadyPlaced || !this.mouse ? null : (
+			<TranslateGrid
+				tick={this.mouse.mouseTick}
+				channel={this.mouse.mouseChannel}
+			>
+				<rect
+					onMouseDown={this.addPeg}
+					onMouseMove={(e) => e.buttons === 1 && this.addPeg()}
+					width={this.wheel.channelToPixel(1)}
+					height={this.height}
+					fill="#0004"
+				/>
+			</TranslateGrid>
+		);
+	}
+}
+
+export const PegPlacer = WheelComponent.sync(PegPlacer_);

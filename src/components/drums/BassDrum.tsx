@@ -1,8 +1,7 @@
-import React, { Component } from "react";
-import { observer } from "mobx-react";
+import React from "react";
+import { DrumsComponent } from "../storeComponents";
 
-@observer
-export class BassDrum extends Component {
+class BassDrum_ extends DrumsComponent {
 	// TODO confirm BassDrum or KickDrum?
 	render() {
 		return (
@@ -14,3 +13,5 @@ export class BassDrum extends Component {
 		);
 	}
 }
+
+export const BassDrum = DrumsComponent.sync(BassDrum_);

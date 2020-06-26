@@ -1,44 +1,51 @@
 import React from "react";
 import { WheelChannel } from "./WheelChannel";
 import { SubdivisionLine } from "./SubdivisionLine";
-import { useStores } from "../../contexts/StoreContext";
-import { observer } from "mobx-react";
+import { WheelComponent } from "../storeComponents";
 
-export const ProgramGrid = observer(() => {
-	return (
-		<>
-			<WheelChannels />
-			<SubdivisionLines />
-		</>
-	);
-});
+class ProgramGrid_ extends WheelComponent {
+	render() {
+		return (
+			<>
+				<WheelChannels />
+				<SubdivisionLines />
+			</>
+		);
+	}
+}
 
-const SubdivisionLines = observer(() => {
-	const { wheel } = useStores();
+export const ProgramGrid = WheelComponent.sync(ProgramGrid_);
 
-	return (
-		<g>
-			{wheel.subdivisionLines.map((tick, i) => (
-				<SubdivisionLine tick={tick} key={tick} />
-			))}
-		</g>
-	);
-});
+class SubdivisionLines_ extends WheelComponent {
+	render() {
+		return (
+			<g>
+				{this.wheel.subdivisionLines.map((tick) => (
+					<SubdivisionLine tick={tick} key={tick} />
+				))}
+			</g>
+		);
+	}
+}
 
-const WheelChannels = observer(() => {
-	const { wheel } = useStores();
+const SubdivisionLines = WheelComponent.sync(SubdivisionLines_);
 
-	return (
-		<g>
-			{wheel.pegChannelDatas.map((data, channel) => {
-				return (
-					<WheelChannel
-						data={data.partData}
-						channel={channel}
-						key={channel}
-					/>
-				);
-			})}
-		</g>
-	);
-});
+class WheelChannels_ extends WheelComponent {
+	render() {
+		return (
+			<g>
+				{this.wheel.instrumentChannels.map((channel, channelNumber) => {
+					return (
+						<WheelChannel
+							channel={channel}
+							channelNumber={channelNumber}
+							key={channelNumber}
+						/>
+					);
+				})}
+			</g>
+		);
+	}
+}
+
+const WheelChannels = WheelComponent.sync(WheelChannels_);

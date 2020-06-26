@@ -1,63 +1,61 @@
 import React from "react";
-import { observer, useLocalStore } from "mobx-react";
-import { useStores } from "../../contexts/StoreContext";
 import { Peg } from "./Peg";
+import { computed } from "mobx";
+import { WheelComponent } from "../storeComponents";
+import { ChannelPart } from "../../core/playback/channelPart";
 
-interface PegsProps {
-	pegs: number[];
-	channel: number;
+interface ChannelPegsProps {
+	channel: ChannelPart;
 }
 
-export const ChannelPegs = observer((props: PegsProps) => {
-	return (
-		<>
-			{props.pegs.map((pegTick) => (
-				<MaybeRenderedPeg
-					pegTick={pegTick}
-					channel={props.channel}
-					key={pegTick}
-				/>
-			))}
-		</>
-	);
-});
+class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
+	render() {
+		return (
+			<>
+				{this.props.channel.pegs.map((pegTick) => (
+					<MaybeRenderedPeg
+						pegTick={pegTick}
+						channel={this.props.channel}
+						key={pegTick}
+					/>
+				))}
+			</>
+		);
+	}
+}
+
+export const ChannelPegs = WheelComponent.sync(ChannelPegs_);
 
 interface MaybeRenderedPegProps {
 	pegTick: number;
-	channel: number;
+	channel: ChannelPart;
 }
 
-export const MaybeRenderedPeg = observer((props: MaybeRenderedPegProps) => {
-	const { wheel } = useStores();
-	const store = useLocalStore(
-		(source) => ({
-			get partData() {
-				return wheel.pegChannelDatas[source.channel].partData;
-			},
-			get tick() {
-				return source.pegTick;
-			},
-			get visible() {
-				return (
-					store.tick > wheel.visibleTopTick ||
-					store.tick < wheel.visibleBottomTick
-				);
-			},
-			removePeg() {
-				store.partData?.remove(store.tick);
-			},
-		}),
-		props
-	);
+class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
+	@computed get visible() {
+		return (
+			this.props.pegTick > this.wheel.visibleTopTick ||
+			this.props.pegTick < this.wheel.visibleBottomTick
+		);
+	}
+	removePeg() {
+		this.props.channel.remove(this.props.pegTick);
+	}
+	@computed get activeDivision() {
+		return this.props.pegTick % this.wheel.ticksPerNoteSubdivision === 0;
+	}
 
-	return store.visible ? (
-		<Peg
-			pegTick={props.pegTick}
-			channel={props.channel}
-			activeDivision={props.pegTick % wheel.ticksPerNoteSubdivision === 0}
-			spawnsEvent={true}
-			click={store.removePeg}
-			key={store.tick}
-		/>
-	) : null;
-});
+	render() {
+		return this.visible ? (
+			<Peg
+				pegTick={this.props.pegTick}
+				activeDivision={this.activeDivision}
+				spawnsEvent={true}
+				click={this.removePeg}
+				key={this.props.pegTick}
+			/>
+		) : null;
+	}
+}
+
+const MaybeRenderedPeg = WheelComponent.sync(MaybeRenderedPeg_);

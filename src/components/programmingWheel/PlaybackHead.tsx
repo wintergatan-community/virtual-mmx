@@ -1,20 +1,22 @@
 import React from "react";
-import { observer } from "mobx-react";
-import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "./TranslateGrid";
+import { WheelComponent } from "../storeComponents";
 
-export const PlaybackHead = observer(() => {
-	const { wheel } = useStores();
-	return (
-		<TranslateGrid tick={wheel.playbackHeadTick}>
-			<line
-				x1={0}
-				x2={wheel.visiblePixelWidth}
-				y1={0}
-				y2={0}
-				stroke="green"
-				strokeWidth={1.5}
-			/>
-		</TranslateGrid>
-	);
-});
+class PlaybackHead_ extends WheelComponent {
+	render() {
+		return (
+			<TranslateGrid tick={this.wheel.playbackHeadTick}>
+				<line
+					x1={0}
+					x2={this.wheel.visiblePixelWidth}
+					y1={0}
+					y2={0}
+					stroke="green"
+					strokeWidth={1.5}
+				/>
+			</TranslateGrid>
+		);
+	}
+}
+
+export const PlaybackHead = WheelComponent.sync(PlaybackHead_);

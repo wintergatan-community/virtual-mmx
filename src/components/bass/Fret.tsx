@@ -1,20 +1,18 @@
-import React, { Component } from "react";
-import { observer } from "mobx-react";
+import React from "react";
 import { computed } from "mobx";
-import { bass } from "./Bass";
+import { BassComponent } from "../storeComponents";
 
 interface FretProps {
 	fret: number;
 	markings: number[];
 }
 
-@observer
-export class Fret extends Component<FretProps> {
+class Fret_ extends BassComponent<FretProps> {
 	@computed get y() {
-		return this.props.fret * bass.fretHeight;
+		return this.props.fret * this.bass.fretHeight;
 	}
 	@computed get midFret() {
-		return -bass.fretHeight / 2;
+		return -this.bass.fretHeight / 2;
 	}
 
 	render() {
@@ -26,14 +24,14 @@ export class Fret extends Component<FretProps> {
 			>
 				<line
 					x1={1}
-					x2={bass.viewWidth}
+					x2={this.bass.viewWidth}
 					y1={0}
 					y2={0}
 					stroke="rgb(239, 239, 239)"
 				/>
 				{this.props.markings.map((marking) => (
 					<circle
-						cx={marking * bass.viewWidth}
+						cx={marking * this.bass.viewWidth}
 						cy={this.midFret}
 						r={6}
 						fill="rgb(96, 90, 80)"
@@ -44,3 +42,5 @@ export class Fret extends Component<FretProps> {
 		);
 	}
 }
+
+export const Fret = BassComponent.sync(Fret_);

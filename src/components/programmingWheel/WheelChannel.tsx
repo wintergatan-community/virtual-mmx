@@ -1,42 +1,37 @@
 import React from "react";
-import { useStores } from "../../contexts/StoreContext";
-import { observer, useLocalStore } from "mobx-react";
-import PartData from "../../core/playback/partData";
 import { ChannelPegs } from "./ChannelPegs";
 import { TranslateGrid } from "./TranslateGrid";
+import { VmmxInstrumentChannel } from "../../core/playback/types";
+import { computed } from "mobx";
+import { WheelComponent } from "../storeComponents";
 
 interface WheelChannelProps {
-	data: PartData;
-	channel: number;
+	channel: VmmxInstrumentChannel;
+	channelNumber: number;
 }
 
-export const WheelChannel = observer((props: WheelChannelProps) => {
-	const { wheel } = useStores();
-	const store = useLocalStore(
-		(source) => ({
-			get partData() {
-				return wheel.pegChannelDatas[source.channel].partData;
-			},
-			get width() {
-				return wheel.tickToPixel(wheel.totalTicks);
-			},
-			get channelOne() {
-				// TODO move this away from this component
-				return wheel.channelToPixel(1);
-			},
-		}),
-		props
-	);
+class WheelChannel_ extends WheelComponent<WheelChannelProps> {
+	@computed get width() {
+		return this.wheel.tickToPixel(this.wheel.totalTicks);
+	}
+	@computed get channelOne() {
+		// TODO move this away from this component
+		return this.wheel.channelToPixel(1);
+	}
 
-	return (
-		<TranslateGrid channel={props.channel}>
-			<rect
-				width={store.channelOne}
-				height={store.width}
-				fill="rgb(39, 39, 39)"
-				stroke="rgb(47, 47, 47)"
-			/>
-			<ChannelPegs pegs={store.partData.pegs} channel={props.channel} />
-		</TranslateGrid>
-	);
-});
+	render() {
+		return (
+			<TranslateGrid channel={this.props.channelNumber}>
+				<rect
+					width={this.channelOne}
+					height={this.width}
+					fill="rgb(39, 39, 39)"
+					stroke="rgb(47, 47, 47)"
+				/>
+				<ChannelPegs channel={this.props.channel.channelPart} />
+			</TranslateGrid>
+		);
+	}
+}
+
+export const WheelChannel = WheelComponent.sync(WheelChannel_);

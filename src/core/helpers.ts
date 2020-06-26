@@ -3,7 +3,7 @@ import { Note } from "vmmx-schema";
 export function range(start: number, stop: number, step?: number) {
 	if (step === undefined) step = 1;
 
-	let result: number[] = [];
+	const result: number[] = [];
 	if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
 		return result;
 	}
@@ -38,7 +38,7 @@ export function removeInOrder<T>(testFunc: (item: T) => boolean, arr: T[]) {
 
 export function arrToPolyLine(points: number[][]) {
 	let res = "";
-	for (let point of points) {
+	for (const point of points) {
 		res += point[0] + "," + point[1] + " ";
 	}
 	return res;
@@ -201,3 +201,34 @@ export function mapToObject<Key extends ObjectKey, InValue, OutValue>(
 		])
 	);
 }
+
+// type Keyable = string | number;
+
+// function nestedFromFlat<K extends Keyable, O>(
+// 	keyArray: K[],
+// 	keyString: Keyable,
+// 	dataObj: Record<Keyable, O[keyof O]>
+// ): Record<K, O> {
+// 	return fromEntries(
+// 		keyArray.map((key) => [
+// 			key,
+// 			fromEntries(
+// 				Object.entries(dataObj).map(([prop, values]) => [
+// 					prop,
+// 					values[key],
+// 				])
+// 			),
+// 		])
+// 	);
+
+// 	OR
+
+// 	let result = {}
+// 	for(let key of keyArray) {
+// 		result[key] = {}
+// 		for(let [prop, values] of Object.entries(dataObj)) {
+// 			result[key][prop] = values[key]
+// 		}
+// 	}
+// 	return result
+// }

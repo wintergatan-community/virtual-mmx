@@ -1,66 +1,51 @@
 import React from "react";
 import { mapValue } from "../../core/helpers";
-import { observer, useLocalStore } from "mobx-react";
-import { useStores } from "../../contexts/StoreContext";
 import { TranslateGrid } from "./TranslateGrid";
-import { runInAction } from "mobx";
+import { runInAction, computed } from "mobx";
+import { WheelComponent } from "../storeComponents";
 import "./Peg.css";
 
 interface PegProps {
 	pegTick: number;
-	channel: number;
 	activeDivision: boolean;
 	spawnsEvent: boolean;
 	click?: () => void;
 }
 
-export const Peg = observer((props: PegProps) => {
-	const { wheel } = useStores();
-	const store = useLocalStore(
-		(source) => ({
-			get tick() {
-				return source.pegTick;
-			},
-			get w() {
-				return 10;
-			},
-			get h() {
-				return Math.min(
-					20,
-					Math.max(
-						wheel.tickToPixel(wheel.ticksPerNoteSubdivision) - 5,
-						5
-					)
-				);
-			},
-			get shift() {
-				return mapValue(
-					wheel.pegOffsetFunction(this.tick),
-					0,
-					1,
-					0,
-					wheel.channelToPixel(1) - this.w
-				);
-			},
-			playing: false,
-		}),
-		props
-	);
+class Peg_ extends WheelComponent<PegProps> {
+	@computed get w() {
+		return 10;
+	}
+	@computed get h() {
+		const hNormal =
+			this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision) - 5;
+		return Math.min(20, Math.max(hNormal, 5));
+	}
+	@computed get shift() {
+		const offset = this.wheel.pegOffsetFunction(this.props.pegTick);
+		const end = this.wheel.channelToPixel(1) - this.w;
+		return mapValue(offset, 0, 1, 0, end);
+	}
+	playing = false;
 
-	return (
-		<TranslateGrid tick={store.tick}>
-			<rect
-				width={store.w}
-				height={store.h}
-				fill={props.activeDivision ? "#ccc" : "#ccc9"}
-				x={store.shift}
-				rx={3}
-				onClick={props.click}
-				className={store.playing ? "pegPlaying" : ""}
-				onAnimationEnd={() =>
-					runInAction(() => (store.playing = false))
-				}
-			/>
-		</TranslateGrid>
-	);
-});
+	render() {
+		return (
+			<TranslateGrid tick={this.props.pegTick}>
+				<rect
+					width={this.w}
+					height={this.h}
+					fill={this.props.activeDivision ? "#ccc" : "#ccc9"}
+					x={this.shift}
+					rx={3}
+					onClick={this.props.click}
+					className={this.playing ? "pegPlaying" : ""}
+					onAnimationEnd={() =>
+						runInAction(() => (this.playing = false))
+					}
+				/>
+			</TranslateGrid>
+		);
+	}
+}
+
+export const Peg = WheelComponent.sync(Peg_);

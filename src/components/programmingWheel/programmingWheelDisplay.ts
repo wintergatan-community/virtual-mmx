@@ -1,9 +1,9 @@
-import { NoteSubdivision } from "../core/types";
-import { GlobalStore } from "./globalStore";
+import { NoteSubdivision } from "../../core/types";
 import { observable, computed, action } from "mobx";
-import { range } from "../core/helpers";
+import { range } from "../../core/helpers";
 import { computedFn } from "mobx-utils";
-import { PegChannelData } from "../core/playback/instruments/instruments";
+import { VmmxInstrumentChannel } from "../../core/playback/types";
+import { AppStore } from "../../stores/app";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -18,7 +18,7 @@ type SubdivisionLineFunction = (
 ) => { stroke: string; strokeWidth: number };
 type SubdivisionLineFunctionKey = "primary"; // TODO more
 
-interface ProgrammingWheelInterface {
+interface ProgrammingWheelDisplayInterface {
 	/** The total number of ticks in the wheel */
 	totalTicks: number;
 	/** The total number of channels in the wheel */
@@ -47,8 +47,8 @@ interface ProgrammingWheelInterface {
 	channelWidth: number;
 	/** Whether or not translucent pegs should be rendered for the current subdivision in the absence of a drop event */
 	showEmpties: boolean;
-	/** An array of PegChannelData used for channel column headers and instrument identification*/
-	pegChannelDatas: PegChannelData[];
+	/** An array of VmmxInstrumentChannel used for channel column headers and instrument identification*/
+	instrumentChannels: VmmxInstrumentChannel[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
 	/** The current tick of the playback head */
@@ -81,15 +81,24 @@ interface ProgrammingWheelInterface {
 	inVisibleRange(tick: number, channel: number): boolean;
 }
 
-export class ProgrammingWheelStore implements ProgrammingWheelInterface {
-	g: GlobalStore;
+export class ProgrammingWheelDisplayStore
+	implements ProgrammingWheelDisplayInterface {
+	appStore: AppStore;
+
+	@computed get tpq() {
+		return this.appStore.program.metadata.tpq;
+	}
+
+	constructor(appStore: AppStore) {
+		this.appStore = appStore;
+	}
 
 	@computed get totalTicks() {
 		// return this.g.program.metadata.length;
 		return 64 * 240;
 	}
 	@computed get totalChannels() {
-		return this.pegChannelDatas.length;
+		return this.instrumentChannels.length;
 	}
 	@computed get visiblePixelWidth() {
 		return this.totalChannels * this.channelWidth;
@@ -119,26 +128,26 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable pixelsPerQuarter = 35;
 	@observable channelWidth = 36;
 	@observable showEmpties = false;
-	@computed get pegChannelDatas() {
-		let channelDatas: PegChannelData[] = [];
-		const instruments = this.g.player.instruments;
+	@computed get instrumentChannels() {
+		const channels: VmmxInstrumentChannel[] = [];
+		const instruments = this.appStore.player.instruments;
 
-		for (let channelData of Object.values(instruments.vibraphone.channels)) {
-			channelDatas.push(channelData);
+		for (const channel of Object.values(instruments.vibraphone.channels)) {
+			channels.push(channel);
 		}
 
-		for (let stringData of Object.values(instruments.bass.strings)) {
-			channelDatas.push(stringData);
+		for (const channel of Object.values(instruments.bass.channels)) {
+			channels.push(channel);
 		}
 
-		return channelDatas;
+		return channels;
 	}
 
 	@computed get pegOffsetFunction() {
 		return this.pegOffsetFunctions.realistic;
 	}
 	@observable pegOffsetFunctions = {
-		realistic: function (this: ProgrammingWheelStore, tick: number) {
+		realistic: function (this: ProgrammingWheelDisplayStore, tick: number) {
 			if (tick % this.ticksPerNoteSubdivisions.eighth === 0) {
 				return 0.5;
 			} else if (tick % this.ticksPerNoteSubdivisions.sixteenth === 0) {
@@ -153,7 +162,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		return this.subdivisionLineFunctions.primary;
 	}
 	@observable subdivisionLineFunctions = {
-		primary: function (this: ProgrammingWheelStore, tick: number) {
+		primary: function (this: ProgrammingWheelDisplayStore, tick: number) {
 			if (tick % this.ticksPerNoteSubdivisions.whole === 0) {
 				return { stroke: "rgb(115, 115, 115)", strokeWidth: 1 };
 			} else if (tick % this.ticksPerNoteSubdivisions.quarter === 0) {
@@ -168,22 +177,22 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@observable ticksPerNoteSubdivision = 240; // TODO figure out why can't link to quarter without get crash
 	@computed get ticksPerNoteSubdivisions() {
 		return {
-			whole: this.g.tpq * 4,
-			quarter: this.g.tpq * 1,
-			eighth: this.g.tpq / 2,
-			sixteenth: this.g.tpq / 4,
-			triplet: (this.g.tpq * 2) / 3,
+			whole: this.tpq * 4,
+			quarter: this.tpq * 1,
+			eighth: this.tpq / 2,
+			sixteenth: this.tpq / 4,
+			triplet: (this.tpq * 2) / 3,
 		};
 	}
 
 	tickToPixel = computedFn(function (
-		this: ProgrammingWheelStore,
+		this: ProgrammingWheelDisplayStore,
 		tick: number
 	) {
-		return (tick * this.pixelsPerQuarter) / this.g.tpq;
+		return (tick * this.pixelsPerQuarter) / this.tpq;
 	});
 	pixelToTick(x: number) {
-		return (x / this.pixelsPerQuarter) * this.g.tpq;
+		return (x / this.pixelsPerQuarter) * this.tpq;
 	}
 	channelToPixel(channel: number) {
 		return channel * this.channelWidth;
@@ -199,7 +208,9 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@computed get subdivisionLines() {
 		return range(0, this.totalTicks, this.ticksPerNoteSubdivision / 2);
 	}
-	@observable playbackHeadTick = 0;
+	@computed get playbackHeadTick() {
+		return this.appStore.player.currentTick % this.totalTicks;
+	}
 
 	@observable gearWidth = 24;
 
@@ -209,19 +220,19 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 		// TODO still a little buggy
 		if (!this.mousePos) return;
 
-		let oldPerQuarter = this.pixelsPerQuarter;
+		const oldPerQuarter = this.pixelsPerQuarter;
 		let newPerQuarter = oldPerQuarter - change;
 
 		const minPerQuarter =
-			this.visiblePixelHeight / (this.totalTicks / this.g.tpq);
+			this.visiblePixelHeight / (this.totalTicks / this.tpq);
 		if (newPerQuarter < minPerQuarter) {
 			newPerQuarter = minPerQuarter;
 		}
 
-		let m = this.mousePos.mouseTick;
-		let t = this.visibleTopTick;
-		let r = oldPerQuarter / newPerQuarter;
-		let x = m - t - r * (m - t); // mmm... algebra's hard
+		const m = this.mousePos.mouseTick;
+		const t = this.visibleTopTick;
+		const r = oldPerQuarter / newPerQuarter;
+		const x = m - t - r * (m - t); // mmm... algebra's hard
 		let newTop = x + this.visibleTopTick;
 		if (newTop < 0) newTop += this.totalTicks; // too far above
 
@@ -240,14 +251,7 @@ export class ProgrammingWheelStore implements ProgrammingWheelInterface {
 	@action moveMouse(mouseTick: number, mouseChannel: number) {
 		this.mousePos = { mouseTick, mouseChannel };
 	}
-	@action setPlaybackHeadTick(tick: number) {
-		this.playbackHeadTick = tick % this.totalTicks;
-	}
 	@action setVisibleTopTick(tick: number) {
 		this.visibleTopTick = tick;
-	}
-
-	constructor(g: GlobalStore) {
-		this.g = g;
 	}
 }

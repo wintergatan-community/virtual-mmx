@@ -1,33 +1,48 @@
-import React, { Component } from "react";
-import { VibraphoneNote } from "./VibraphoneNote";
+import React from "react";
+import { Provider } from "mobx-react";
+import { AppComponent } from "../storeComponents";
+import { VibraphoneBar } from "./VibraphoneBar";
 import "./Vibraphone.css";
-import { vibraphoneChannels } from "../../core/playback/instruments/instruments";
 
-const wholeWidth = 400;
-const noteWidth = wholeWidth / 11;
-const noteWidthPadded = noteWidth * 0.9;
+export class VibraphoneDisplayStore {
+	wholeWidth = 400;
+	noteWidth = this.wholeWidth / 11;
+	noteWidthPadded = this.noteWidth * 0.9;
+}
 
-export const vibra = { wholeWidth, noteWidth, noteWidthPadded };
-
-export class Vibraphone extends Component {
+class Vibraphone_ extends AppComponent {
+	vibra = new VibraphoneDisplayStore();
 	height = 160;
 
 	render() {
 		return (
-			<svg
-				viewBox={`0 0 ${wholeWidth} ${this.height}`}
-				style={{
-					width: wholeWidth,
-					height: this.height,
-					border: "1px red solid",
-				}}
-			>
-				<g style={{ transform: `translateY(${this.height / 2}px)` }}>
-					{vibraphoneChannels.map((channel) => (
-						<VibraphoneNote channel={channel} key={channel} />
-					))}
-				</g>
-			</svg>
+			<Provider vibra={this.vibra}>
+				<svg
+					viewBox={`0 0 ${this.vibra.wholeWidth} ${this.height}`}
+					style={{
+						width: this.vibra.wholeWidth,
+						height: this.height,
+						border: "1px red solid",
+					}}
+				>
+					<g
+						style={{
+							transform: `translateY(${this.height / 2}px)`,
+						}}
+					>
+						{Object.values(
+							this.app.program.state.vibraphone.barStores
+						).map((barStore) => (
+							<VibraphoneBar
+								barStore={barStore}
+								key={barStore.bar}
+							/>
+						))}
+					</g>
+				</svg>
+			</Provider>
 		);
 	}
 }
+
+export const Vibraphone = AppComponent.sync(Vibraphone_);

@@ -1,55 +1,60 @@
 import React from "react";
 import { NoteSubdivision } from "../../core/types";
-import { useStores } from "../../contexts/StoreContext";
-import { observer, useLocalStore } from "mobx-react";
+import { computed, action } from "mobx";
+import { WheelComponent } from "../storeComponents";
 
-export const SubdivisonChooser = observer(() => {
-	const { wheel } = useStores();
+class SubdivisonChooser_ extends WheelComponent {
+	render() {
+		return (
+			<g>
+				{Object.keys(this.wheel.ticksPerNoteSubdivisions).map(
+					(division, i) => (
+						<SubdivisonOption
+							type={division as NoteSubdivision}
+							y={i * 40}
+							key={division}
+						/>
+					)
+				)}
+			</g>
+		);
+	}
+}
 
-	return (
-		<g>
-			{Object.keys(wheel.ticksPerNoteSubdivisions).map((division, i) => (
-				<SubdivisonOption
-					type={division as NoteSubdivision}
-					y={i * 40}
-					key={division}
-				/>
-			))}
-		</g>
-	);
-});
+export const SubdivisonChooser = WheelComponent.sync(SubdivisonChooser_);
 
 interface SubdivisonOptionProps {
 	type: NoteSubdivision;
 	y: number;
 }
 
-export const SubdivisonOption = observer((props: SubdivisonOptionProps) => {
-	const { wheel } = useStores();
-	const store = useLocalStore(() => ({
-		handleClick() {
-			wheel.setSubdivision(props.type);
-		},
-		get x() {
-			return wheel.channelWidth - 40;
-		},
-		get y() {
-			return wheel.visiblePixelHeight - 40 - props.y;
-		},
-	}));
+class SubdivisonOption_ extends WheelComponent<SubdivisonOptionProps> {
+	@action.bound handleClick() {
+		this.wheel.setSubdivision(this.props.type);
+	}
+	@computed get x() {
+		return this.wheel.channelWidth - 40;
+	}
+	@computed get y() {
+		return this.wheel.visiblePixelHeight - 40 - this.props.y;
+	}
 
-	return (
-		<g
-			style={{
-				transform: `translate(${store.x}px, ${store.y}px)`,
-				position: "static", // TODO unneeded?
-			}}
-			onClick={store.handleClick}
-		>
-			<rect width={40} height={40} fill="white" stroke="black" />
-			<text x={20} y={20} textAnchor="middle" fontSize={10}>
-				{props.type}
-			</text>
-		</g>
-	);
-});
+	render() {
+		return (
+			<g
+				style={{
+					transform: `translate(${this.x}px, ${this.y}px)`,
+					position: "static", // TODO unneeded?
+				}}
+				onClick={this.handleClick}
+			>
+				<rect width={40} height={40} fill="white" stroke="black" />
+				<text x={20} y={20} textAnchor="middle" fontSize={10}>
+					{this.props.type}
+				</text>
+			</g>
+		);
+	}
+}
+
+export const SubdivisonOption = WheelComponent.sync(SubdivisonOption_);
