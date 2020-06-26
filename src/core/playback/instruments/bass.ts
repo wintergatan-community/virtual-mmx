@@ -1,10 +1,10 @@
 import { BassString, BassDropEvent, TickedDropEvent } from "vmmx-schema";
 import { Sampler, Volume, Destination, PitchShift } from "tone";
 import { computed, autorun } from "mobx";
-import { VmmxInstrument, VmmxInstrumentChannel } from "../playback/types";
-import { mapToObject } from "../helpers";
-import { BassStore, BassStringStore } from "../../stores/bass";
-import { ChannelPart } from "../playback/channelPart";
+import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
+import { mapToObject } from "../../helpers";
+import { BassStore, BassStringStore } from "../../../stores/bass";
+import { ChannelPart } from "../channelPart";
 
 export class BassInstrument
 	implements VmmxInstrument<BassString, BassDropEvent> {
@@ -75,6 +75,7 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		this.bassSynth?.triggerAttack(this.note, time);
+		if (!this.bassSynth?.loaded) return;
+		this.bassSynth.triggerAttack(this.note, time);
 	}
 }

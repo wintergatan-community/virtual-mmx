@@ -1,8 +1,9 @@
-import { Program, ProgramMetadata, MachineState, Event } from "vmmx-schema";
+import { Program, ProgramMetadata, MachineState } from "vmmx-schema";
 import { VmmxPlayer } from "../core/playback/player";
 import { BassStore } from "./bass";
 import { DrumsStore } from "./drums";
 import { VibraphoneStore } from "./vibraphone";
+import { observable } from "mobx";
 
 export class AppStore {
 	program = new ProgramStore(this);
@@ -10,7 +11,8 @@ export class AppStore {
 
 	loadProgram(program: Program) {
 		this.player.loadEvents(program.dropEvents);
-		// TODO also update bpm, tpq, etc.
+		this.program.state.machine.bpm = program.state.machine.bpm;
+		this.program.metadata.tpq = program.metadata.tpq;
 	}
 }
 
@@ -36,7 +38,7 @@ class ProgramMetadataStore implements ProgramMetadata {
 
 	title = "Untitled";
 	author = "Unknown Author";
-	tpq: 240 = 240; // TODO interface in schema shouldn't force 240
+	@observable tpq: 240 = 240; // TODO interface in schema shouldn't force 240
 	version = "0.1.0-beta";
 	readonly length = 61440;
 	procrastination = 69420;
@@ -73,7 +75,7 @@ class MachineStore implements MachineState {
 		vibraphone: false,
 		bass: false,
 	};
-	bpm = 180;
+	@observable bpm = 180;
 	flywheelConnected = true;
 
 	constructor(appStore: AppStore) {

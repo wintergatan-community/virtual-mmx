@@ -1,7 +1,7 @@
 import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
-import { VmmxInstrument, VmmxInstrumentChannel } from "../playback/types";
-import { ChannelPart } from "../playback/channelPart";
-import { DrumsStore } from "../../stores/drums";
+import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
+import { ChannelPart } from "../channelPart";
+import { DrumsStore } from "../../../stores/drums";
 
 export class DrumsInstrument
 	implements VmmxInstrument<DrumType, DrumDropEvent> {

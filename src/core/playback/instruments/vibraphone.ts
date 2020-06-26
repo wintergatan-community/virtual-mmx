@@ -1,9 +1,12 @@
-import { VmmxInstrument, VmmxInstrumentChannel } from "../playback/types";
+import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { Destination, Volume, Sampler } from "tone";
-import { mapToObject } from "../helpers";
+import { mapToObject } from "../../helpers";
 import { computed } from "mobx";
-import { VibraphoneStore, VibraphoneBarStore } from "../../stores/vibraphone";
-import { ChannelPart } from "../playback/channelPart";
+import {
+	VibraphoneStore,
+	VibraphoneBarStore,
+} from "../../../stores/vibraphone";
+import { ChannelPart } from "../channelPart";
 import {
 	VibraphoneDropEvent,
 	TickedDropEvent,
@@ -36,9 +39,7 @@ export class VibraphoneInstrument
 		const volume = new Volume(-12);
 		vibraphoneSynth.chain(volume, Destination);
 
-		Object.values(this.channels).forEach((c) =>
-			c.onToneLoad(vibraphoneSynth)
-		);
+		Object.values(this.channels).forEach((c) => c.onToneLoad(vibraphoneSynth));
 	}
 
 	addNoteFromEvent(event: VibraphoneDropEvent & TickedDropEvent) {
@@ -65,6 +66,7 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		this.channelSynth?.triggerAttack(this.note, time);
+		if (!this.channelSynth?.loaded) return;
+		this.channelSynth.triggerAttack(this.note, time);
 	}
 }

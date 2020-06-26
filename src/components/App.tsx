@@ -9,8 +9,11 @@ import { AppStore } from "../stores/app";
 import { Provider } from "mobx-react";
 import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
 import { ToneIndicator } from "./ToneIndicator";
+import sampleProgram from "../sampleProgram.json";
+import { Program } from "vmmx-schema";
 
 const app = new AppStore();
+app.loadProgram(sampleProgram as Program);
 
 export class App extends Component {
 	render() {

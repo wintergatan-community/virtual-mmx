@@ -2,9 +2,9 @@ import { TickedDropEvent } from "vmmx-schema";
 import { Transport, context } from "tone";
 import { observable, action, autorun, computed, runInAction } from "mobx";
 import { AppStore } from "../../stores/app";
-import { VibraphoneInstrument } from "../instruments/vibraphone";
-import { BassInstrument } from "../instruments/bass";
-import { DrumsInstrument } from "../instruments/drums";
+import { VibraphoneInstrument } from "./instruments/vibraphone";
+import { BassInstrument } from "./instruments/bass";
+import { DrumsInstrument } from "./instruments/drums";
 
 export class VmmxPlayer {
 	appStore: AppStore;
@@ -38,12 +38,12 @@ export class VmmxPlayer {
 		});
 		// TODO disposers?
 
-		window.onclick = () => {
+		window.addEventListener("mousedown", () => {
 			if (this.toneLoaded) return;
 			console.log("Tone Instruments Loaded");
 			Object.values(this.instruments).forEach((i) => i.onToneLoad());
 			runInAction(() => (this.toneLoaded = true));
-		};
+		});
 	}
 
 	@computed get program() {
