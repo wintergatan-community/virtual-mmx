@@ -13,7 +13,9 @@ export class MockupLayout extends Component {
 					height: 860,
 					zIndex: -1,
 					overflow: "hidden",
+					userSelect: "none",
 				}}
+				draggable={false}
 			/>
 		);
 	}

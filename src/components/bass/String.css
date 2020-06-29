@@ -1,0 +1,9 @@
+@keyframes bassPluckedPulse {
+	from {
+		stroke: orange;
+	}
+}
+
+.bassPlucked {
+	animation: bassPluckedPulse 0.4s 1 ease-out;
+}

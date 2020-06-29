@@ -1,6 +1,6 @@
 import React from "react";
 import { Peg } from "./Peg";
-import { computed } from "mobx";
+import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
 import { ChannelPart } from "../../core/playback/channelPart";
 
@@ -38,7 +38,7 @@ class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
 			this.props.pegTick < this.wheel.visibleBottomTick
 		);
 	}
-	removePeg() {
+	@action.bound removePeg() {
 		this.props.channel.remove(this.props.pegTick);
 	}
 	@computed get activeDivision() {

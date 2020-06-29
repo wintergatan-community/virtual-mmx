@@ -19,8 +19,8 @@ class TranslateGrid_ extends WheelComponent<TranslateProps> {
 
 	render() {
 		return (
-			<g style={{ transform: `translate(${this.x}px, ${this.y}px)` }}>
-				{this.props.children}
+			<g transform={`translate(${this.x}, ${this.y})`}>
+				<g>{this.props.children}</g>
 			</g>
 		);
 	}

@@ -38,12 +38,15 @@ export class VmmxPlayer {
 		});
 		// TODO disposers?
 
-		window.addEventListener("mousedown", () => {
-			if (this.toneLoaded) return;
-			console.log("Tone Instruments Loaded");
-			Object.values(this.instruments).forEach((i) => i.onToneLoad());
-			runInAction(() => (this.toneLoaded = true));
-		});
+		window.addEventListener(
+			"mousedown",
+			() => {
+				console.log("Tone Instruments Loaded");
+				Object.values(this.instruments).forEach((i) => i.onToneLoad());
+				runInAction(() => (this.toneLoaded = true));
+			},
+			{ once: true }
+		);
 	}
 
 	@computed get program() {

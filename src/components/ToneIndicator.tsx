@@ -17,6 +17,7 @@ class ToneIndicator_ extends AppComponent {
 					padding: 5,
 					borderRadius: 8,
 					transition: "0.5s",
+					userSelect: "none",
 				}}
 			>
 				{this.loaded ? "Tone Loaded" : "Tone Not Loaded"}

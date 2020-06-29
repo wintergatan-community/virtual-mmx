@@ -185,12 +185,12 @@ export class ProgrammingWheelDisplayStore
 		};
 	}
 
-	tickToPixel = computedFn(function (
-		this: ProgrammingWheelDisplayStore,
-		tick: number
-	) {
-		return (tick * this.pixelsPerQuarter) / this.tpq;
-	});
+	@computed get pixelPerTick() {
+		return this.pixelsPerQuarter / this.tpq;
+	}
+	tickToPixel(tick: number) {
+		return tick * this.pixelPerTick;
+	}
 	pixelToTick(x: number) {
 		return (x / this.pixelsPerQuarter) * this.tpq;
 	}

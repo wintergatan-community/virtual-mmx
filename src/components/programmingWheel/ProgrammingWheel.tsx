@@ -6,10 +6,11 @@ import { Blur } from "./Blur";
 import { ProgramGrid } from "./ProgramGrid";
 import { PegPlacer } from "./PegPlacer";
 import { PlaybackHead } from "./PlaybackHead";
-import { GearSide } from "./GearSide";
 import { computed, action } from "mobx";
 import { ProgrammingWheelDisplayStore } from "./programmingWheelDisplay";
 import { AppComponent, WheelComponent } from "../storeComponents";
+import { Spring } from "react-spring/renderprops";
+import { GearSide } from "./GearSide";
 
 class ProgrammingWheel_ extends AppComponent {
 	wheel = new ProgrammingWheelDisplayStore(this.app);
@@ -21,12 +22,11 @@ class ProgrammingWheel_ extends AppComponent {
 	) {
 		if (!this.svgRef.current) return;
 		const svgBound = this.svgRef.current.getBoundingClientRect();
-		const x = e.clientX - svgBound.left - this.wheel.gearWidth;
+		const x = e.clientX - svgBound.left;
 		const mouseChannel = this.wheel.pixelToChannel(x);
 		const y = e.clientY - svgBound.top;
 		const mouseTick = this.wheel.pixelToTick(y) + this.wheel.visibleTopTick;
-		if (mouseChannel < 0 || mouseChannel >= this.wheel.totalChannels)
-			return;
+		if (mouseChannel < 0 || mouseChannel >= this.wheel.totalChannels) return;
 		this.wheel.moveMouse(mouseTick, mouseChannel);
 	}
 	@action.bound handleScroll(e: React.WheelEvent<SVGSVGElement>) {
@@ -43,48 +43,45 @@ class ProgrammingWheel_ extends AppComponent {
 	render() {
 		return (
 			<Provider wheel={this.wheel}>
-				<svg
-					viewBox={`0 0 ${
-						this.wheel.visiblePixelWidth + this.wheel.gearWidth * 2
-					} ${this.wheel.visiblePixelHeight}`}
-					style={{
-						width:
-							this.wheel.visiblePixelWidth +
-							this.wheel.gearWidth * 2,
-						height: this.wheel.visiblePixelHeight,
-					}}
-					onMouseMove={this.handleMouseMove}
-					onWheel={this.handleScroll}
-					ref={this.svgRef}
+				<Spring
+					// dodgy, snaps at end of wheel, doesn't work well with zoom, but fun idea
+					to={{ scrollTick: -this.wheel.visibleTopTick }}
+					config={{ tension: 400, friction: 50 }}
 				>
-					<TranslateGrid tick={-this.wheel.visibleTopTick}>
-						<MovingWindow />
-						<TranslateGrid tick={this.wheel.totalTicks}>
-							{/* second MovingWindow for seemless scroll */}
-							<MovingWindow />
-						</TranslateGrid>
-					</TranslateGrid>
-					<g
-						style={{
-							transform: `translateX(${this.wheel.gearWidth}px)`,
-						}}
-					>
-						{this.wheel.instrumentChannels.map(
-							(channel, channelNumber) => (
-								<TranslateGrid
-									channel={channelNumber}
-									key={channelNumber}
-								>
-									<NoteLabel
-										tuning={channel.note ?? "None"}
-									/>
+					{(springProps) => (
+						<div style={{ display: "flex" }}>
+							<GearSide tick={springProps.scrollTick} />
+							<svg
+								viewBox={`0 0 ${this.wheel.visiblePixelWidth} ${this.wheel.visiblePixelHeight}`}
+								style={{
+									width: this.wheel.visiblePixelWidth,
+									height: this.wheel.visiblePixelHeight,
+								}}
+								onMouseMove={this.handleMouseMove}
+								onWheel={this.handleScroll}
+								ref={this.svgRef}
+							>
+								<TranslateGrid tick={springProps.scrollTick}>
+									<MovingWindow />
+									<TranslateGrid tick={this.wheel.totalTicks}>
+										{/* second MovingWindow for seemless scroll */}
+										<MovingWindow />
+									</TranslateGrid>
 								</TranslateGrid>
-							)
-						)}
-					</g>
-					<SubdivisonChooser />
-					<Blur />
-				</svg>
+
+								{/* {this.wheel.instrumentChannels.map((channel, channelNumber) => (
+							<TranslateGrid channel={channelNumber} key={channelNumber}>
+							<NoteLabel tuning={channel.note ?? "None"} />
+							</TranslateGrid>
+							))}
+							
+							<SubdivisonChooser />
+						<Blur /> */}
+							</svg>
+							<GearSide tick={springProps.scrollTick} />
+						</div>
+					)}
+				</Spring>
 			</Provider>
 		);
 	}
@@ -96,25 +93,15 @@ class MovingWindow_ extends WheelComponent {
 	render() {
 		return (
 			<>
-				<g
-					style={{
-						transform: `translateX(${this.wheel.gearWidth}px)`,
-					}}
-				>
-					<ProgramGrid />
-					<PegPlacer />
-					<PlaybackHead />
-					<line
-						x1={0}
-						y1={0}
-						x2={this.wheel.visiblePixelWidth}
-						y2={0}
-						stroke="red"
-					/>
-				</g>
-				<GearSide x={0} />
-				<GearSide
-					x={this.wheel.visiblePixelWidth + this.wheel.gearWidth}
+				<ProgramGrid />
+				<PegPlacer />
+				<PlaybackHead />
+				<line
+					x1={0}
+					y1={0}
+					x2={this.wheel.visiblePixelWidth}
+					y2={0}
+					stroke="red"
 				/>
 			</>
 		);
@@ -132,14 +119,7 @@ class NoteLabel_ extends WheelComponent<NoteLabelProps> {
 		return (
 			<>
 				<TranslateGrid channel={0.5}>
-					<rect
-						x={-17.5}
-						y={7}
-						width={35}
-						height={22}
-						fill="#444"
-						rx={7}
-					/>
+					<rect x={-17.5} y={7} width={35} height={22} fill="#444" rx={7} />
 					<text
 						style={{ userSelect: "none" }}
 						x={0}

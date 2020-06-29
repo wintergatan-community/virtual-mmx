@@ -39,9 +39,7 @@ class Peg_ extends WheelComponent<PegProps> {
 					rx={3}
 					onClick={this.props.click}
 					className={this.playing ? "pegPlaying" : ""}
-					onAnimationEnd={() =>
-						runInAction(() => (this.playing = false))
-					}
+					onAnimationEnd={() => runInAction(() => (this.playing = false))}
 				/>
 			</TranslateGrid>
 		);
