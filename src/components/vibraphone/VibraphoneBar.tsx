@@ -4,12 +4,15 @@ import { computed, observable, action } from "mobx";
 import { VibraphoneComponent } from "../storeComponents";
 import { VibraphoneBarStore } from "../../stores/vibraphone";
 import "./Vibraphone.css";
+import { ForcePulse } from "./Pulse";
 
 interface VibraphoneBarProps {
 	barStore: VibraphoneBarStore;
 }
 
 class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
+	pulse = new ForcePulse();
+
 	componentDidMount() {
 		this.channelPart.runOnNote(this.strike);
 		// TODO disposer?
@@ -25,34 +28,31 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 	@computed get x() {
 		return this.vibra.noteWidth * (this.props.barStore.bar - 1);
 	}
+	@computed get y() {
+		return -this.height / 2 + this.pulse.x;
+	}
 	@computed get height() {
 		return noteToVibraphoneLength(this.props.barStore.note);
 	}
-	@observable hit = false;
 
-	@action.bound strike() {
-		this.hit = true;
-	}
-	@action.bound endStrike() {
-		this.hit = false;
-	}
 	handlePress = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
-		if (e.buttons === 1 && !this.hit) {
+		if (e.buttons === 1) {
 			this.vibraphoneChannel.triggerStrike();
 			this.strike();
 		}
 	};
 
+	strike() {
+		this.pulse.applyCollision();
+	}
+
 	render() {
 		return (
 			<g
-				style={{
-					transform: `translate(${this.x}px, ${-this.height / 2}px)`,
-				}}
-				className={this.hit ? "vibraphoneHit" : ""}
-				onAnimationEnd={this.endStrike}
+				transform={`translate(${this.x}, ${this.y})`}
 				onMouseDown={this.handlePress}
-				onMouseOver={this.handlePress}
+				onMouseEnter={this.handlePress}
+				y={this.pulse.x}
 			>
 				<rect
 					width={this.vibra.noteWidthPadded}
