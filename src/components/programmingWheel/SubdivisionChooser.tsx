@@ -1,5 +1,5 @@
 import React from "react";
-import { NoteSubdivision } from "../../core/types";
+import { NoteSubdivision } from "../../core/helpers/types";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
 
@@ -7,15 +7,13 @@ class SubdivisonChooser_ extends WheelComponent {
 	render() {
 		return (
 			<g>
-				{Object.keys(this.wheel.ticksPerNoteSubdivisions).map(
-					(division, i) => (
-						<SubdivisonOption
-							type={division as NoteSubdivision}
-							y={i * 40}
-							key={division}
-						/>
-					)
-				)}
+				{Object.keys(this.wheel.ticksPerNoteSubdivisions).map((division, i) => (
+					<SubdivisonOption
+						type={division as NoteSubdivision}
+						y={i * 40}
+						key={division}
+					/>
+				))}
 			</g>
 		);
 	}

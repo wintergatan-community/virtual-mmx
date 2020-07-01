@@ -1,5 +1,5 @@
 import React from "react";
-import { mapValue } from "../../core/helpers";
+import { mapValue } from "../../core/helpers/functions";
 import { TranslateGrid } from "./TranslateGrid";
 import { runInAction, computed } from "mobx";
 import { WheelComponent } from "../storeComponents";

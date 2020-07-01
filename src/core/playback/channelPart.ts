@@ -1,6 +1,6 @@
 import { Part } from "tone";
 import { observable, action } from "mobx";
-import { insertInOrder, removeInOrder } from "../helpers";
+import { insertInOrder, removeInOrder } from "../helpers/functions";
 
 const partOptions = {
 	loop: true,

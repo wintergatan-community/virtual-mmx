@@ -2,7 +2,7 @@ import { BassString, BassDropEvent, TickedDropEvent } from "vmmx-schema";
 import { Sampler, Volume, Destination, PitchShift } from "tone";
 import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
-import { mapToObject } from "../../helpers";
+import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
 import { ChannelPart } from "../channelPart";
 

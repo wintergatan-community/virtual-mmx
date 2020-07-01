@@ -1,5 +1,5 @@
 import React from "react";
-import { SomeReactChildren } from "../../core/types";
+import { SomeReactChildren } from "../../core/helpers/types";
 import { computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
 

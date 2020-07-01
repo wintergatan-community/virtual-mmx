@@ -1,11 +1,9 @@
 import React from "react";
 import { computed, action, observable } from "mobx";
-import { mapValue } from "../../core/helpers";
 import { Capo } from "./Capo";
 import { bassStrings } from "../../core/playback/types";
 import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
-import "./String.css";
 
 interface StringProps {
 	stringStore: BassStringStore;
@@ -13,14 +11,11 @@ interface StringProps {
 
 export class String_ extends BassComponent<StringProps> {
 	@computed get x() {
-		const pad = 10;
-		const viewWidth = this.bass.viewWidth;
-		const bassString = this.props.stringStore.string;
-		return mapValue(bassString, 1, 4, pad, viewWidth - pad);
+		return this.bass.stringToPixel(this.props.stringStore.string);
 	}
 
 	@computed get width() {
-		return this.bass.viewWidth / bassStrings.length;
+		return this.bass.viewWidth / bassStrings.length - 2;
 	}
 
 	@action.bound handleScroll(/*e: React.WheelEvent<SVGRectElement>*/) {
@@ -52,6 +47,7 @@ export class String_ extends BassComponent<StringProps> {
 		return (
 			<g style={{ transform: `translateX(${this.x}px)` }}>
 				<line
+					// string
 					y1={0}
 					y2={this.bass.viewHeight}
 					x1={0}
@@ -62,22 +58,17 @@ export class String_ extends BassComponent<StringProps> {
 					onAnimationEnd={this.endStrike}
 				/>
 				<line
+					// strum hit box
 					y1={0}
 					y2={this.bass.viewHeight}
 					x1={0}
 					x2={0}
-					stroke="#0000"
+					stroke="#0004"
 					strokeWidth={6}
 					onMouseEnter={this.strum}
+					onClick={() => console.log(2)}
+					style={{ pointerEvents: "all" }}
 				/>
-				{/* <rect
-					x={-this.width / 2}
-					y={0}
-					width={this.width}
-					height={this.bass.viewHeight}
-					fill="#0003"
-					onWheel={this.handleScroll}
-				/> */}
 				<Capo stringStore={this.props.stringStore} />
 			</g>
 		);

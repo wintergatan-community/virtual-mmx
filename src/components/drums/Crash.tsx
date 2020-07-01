@@ -1,10 +1,38 @@
 import React from "react";
 import { DrumsComponent } from "../storeComponents";
+import { ForcePulse } from "../vibraphone/Pulse";
+import { computed, action } from "mobx";
 
 class Crash_ extends DrumsComponent {
+	pulse = new ForcePulse();
+
+	componentDidMount() {
+		this.crashChannel.channelPart.runOnNote(this.animateHit);
+
+		this.pulse.tension = 1;
+	}
+
+	@computed get crashChannel() {
+		return this.app.player.instruments.drums.channels.crash;
+	}
+
+	handlePress = () => {
+		this.crashChannel.triggerStrike();
+		this.animateHit();
+	};
+
+	@action.bound animateHit() {
+		this.pulse.applyCollision(4);
+	}
+
 	render() {
 		return (
-			<g style={{ transform: "translate(50px, 91px)" }}>
+			<g
+				style={{
+					transform: `translate(50px, 91px) rotate(${this.pulse.x}deg)`,
+				}}
+				onMouseDown={this.handlePress}
+			>
 				<ellipse
 					rx={34}
 					ry={8}

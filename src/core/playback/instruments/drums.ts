@@ -2,15 +2,19 @@ import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { ChannelPart } from "../channelPart";
 import { DrumsStore } from "../../../stores/drums";
+import { Sampler } from "tone";
+
+type DrumTypeTOFIX = DrumType | "crash";
 
 export class DrumsInstrument
-	implements VmmxInstrument<DrumType, DrumDropEvent> {
+	implements VmmxInstrument<DrumTypeTOFIX, DrumDropEvent> {
 	drumsStore: DrumsStore;
 
-	channels: Record<DrumType, VmmxInstrumentChannel> = {
-		bassdrum: new BassdrumChannel(),
-		hihat: new HihatChannel(),
-		snare: new SnareChannel(),
+	channels: Record<DrumTypeTOFIX, DrumsChannel> = {
+		bassdrum: new DrumsChannel("bassdrum"),
+		hihat: new DrumsChannel("hihat"),
+		snare: new DrumsChannel("snare"),
+		crash: new DrumsChannel("crash"),
 	};
 
 	constructor(drumsStore: DrumsStore) {
@@ -18,7 +22,9 @@ export class DrumsInstrument
 	}
 
 	onToneLoad() {
-		// TODO
+		Object.values(this.channels).forEach((c) => {
+			c.onToneLoad();
+		});
 	}
 
 	addNoteFromEvent(event: DrumDropEvent & TickedDropEvent) {
@@ -26,29 +32,23 @@ export class DrumsInstrument
 	}
 }
 
-class BassdrumChannel implements VmmxInstrumentChannel {
+class DrumsChannel implements VmmxInstrumentChannel {
 	channelPart = new ChannelPart(this.triggerStrike.bind(this));
+	private drumSynth?: Sampler;
+	drum: DrumTypeTOFIX;
 
-	triggerStrike(/*time?: number*/) {
-		// this.bassdrumSynth.triggerAttack('SomeNote', time);
-		// TODO add bassdrum synth
+	constructor(drum: DrumTypeTOFIX) {
+		this.drum = drum;
 	}
-}
 
-class HihatChannel implements VmmxInstrumentChannel {
-	channelPart = new ChannelPart(this.triggerStrike.bind(this));
-
-	triggerStrike(/*time?: number*/) {
-		// this.hihatSynth.triggerAttack('SomeNote', time);
-		// TODO add hihat synth
+	triggerStrike(time?: number) {
+		if (!this.drumSynth?.loaded) return;
+		this.drumSynth.triggerAttack("A1", time);
 	}
-}
 
-class SnareChannel implements VmmxInstrumentChannel {
-	channelPart = new ChannelPart(this.triggerStrike.bind(this));
-
-	triggerStrike(/*time?: number*/) {
-		// this.snareSynth.triggerAttack('SomeNote', time);
-		// TODO add snare synth
+	onToneLoad() {
+		this.drumSynth = new Sampler({
+			A1: `./samples/drums/${this.drum}.wav`,
+		}).toDestination();
 	}
 }

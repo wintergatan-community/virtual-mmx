@@ -15,6 +15,10 @@ import { GearSide } from "./GearSide";
 class ProgrammingWheel_ extends AppComponent {
 	wheel = new ProgrammingWheelDisplayStore(this.app);
 
+	componentDidMount() {
+		this.wheel.setSubdivision("eighth");
+	}
+
 	svgRef = createRef<SVGSVGElement>();
 
 	@action.bound handleMouseMove(

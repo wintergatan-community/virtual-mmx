@@ -1,6 +1,6 @@
-import { NoteSubdivision } from "../../core/types";
+import { NoteSubdivision } from "../../core/helpers/types";
 import { observable, computed, action } from "mobx";
-import { range } from "../../core/helpers";
+import { range } from "../../core/helpers/functions";
 import { computedFn } from "mobx-utils";
 import { VmmxInstrumentChannel } from "../../core/playback/types";
 import { AppStore } from "../../stores/app";
@@ -126,7 +126,7 @@ export class ProgrammingWheelDisplayStore
 		return { mouseTick, mouseChannel };
 	}
 	@observable pixelsPerQuarter = 35;
-	@observable channelWidth = 36;
+	@observable channelWidth = 30; //36
 	@observable showEmpties = false;
 	@computed get instrumentChannels() {
 		const channels: VmmxInstrumentChannel[] = [];
@@ -135,7 +135,9 @@ export class ProgrammingWheelDisplayStore
 		for (const channel of Object.values(instruments.vibraphone.channels)) {
 			channels.push(channel);
 		}
-
+		for (const channel of Object.values(instruments.drums.channels)) {
+			channels.push(channel);
+		}
 		for (const channel of Object.values(instruments.bass.channels)) {
 			channels.push(channel);
 		}

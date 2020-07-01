@@ -17,7 +17,7 @@ export class AppStore {
 }
 
 // TODO can't implement Program until confusing change is done in schema
-class ProgramStore /* implements Program*/ {
+export class ProgramStore /* implements Program*/ {
 	appStore: AppStore;
 
 	metadata = new ProgramMetadataStore(this.appStore);

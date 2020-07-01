@@ -3,7 +3,7 @@ import { TransportControls } from "./transport/TransportContols";
 import { MockupLayout } from "./mockupLayout/MockupLayout";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
-import { SomeReactChildren } from "../core/types";
+import { SomeReactChildren } from "../core/helpers/types";
 import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
 import { Provider } from "mobx-react";
@@ -19,7 +19,7 @@ export class App extends Component {
 	render() {
 		return (
 			<Provider app={app}>
-				<MockupLayout />
+				{/* <MockupLayout /> */}
 				<ToneIndicator />
 
 				<Move x={78} y={82}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Snare } from "./Snare";
-import { BassDrum } from "./BassDrum";
+import { Bassdrum } from "./Bassdrum";
 import { HiHat } from "./HiHat";
 import { Crash } from "./Crash";
 import { AppComponent } from "../storeComponents";
@@ -24,7 +24,7 @@ class Drums_ extends AppComponent {
 					}}
 				>
 					<Snare />
-					<BassDrum />
+					<Bassdrum />
 					<HiHat />
 					<Crash />
 				</svg>

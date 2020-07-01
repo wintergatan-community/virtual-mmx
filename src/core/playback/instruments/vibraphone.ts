@@ -1,6 +1,6 @@
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { Destination, Volume, Sampler } from "tone";
-import { mapToObject } from "../../helpers";
+import { mapToObject } from "../../helpers/functions";
 import { computed } from "mobx";
 import {
 	VibraphoneStore,

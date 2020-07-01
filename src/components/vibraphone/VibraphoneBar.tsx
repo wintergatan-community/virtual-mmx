@@ -1,9 +1,8 @@
 import React from "react";
-import { noteToVibraphoneLength } from "../../core/helpers";
-import { computed, observable, action } from "mobx";
+import { noteToVibraphoneLength } from "../../core/helpers/functions";
+import { computed, action } from "mobx";
 import { VibraphoneComponent } from "../storeComponents";
 import { VibraphoneBarStore } from "../../stores/vibraphone";
-import "./Vibraphone.css";
 import { ForcePulse } from "./Pulse";
 
 interface VibraphoneBarProps {
@@ -14,7 +13,7 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.channelPart.runOnNote(this.strike);
+		this.channelPart.runOnNote(this.animateHit);
 		// TODO disposer?
 	}
 	@computed get vibraphoneChannel() {
@@ -38,12 +37,12 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 	handlePress = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
 		if (e.buttons === 1) {
 			this.vibraphoneChannel.triggerStrike();
-			this.strike();
+			this.animateHit();
 		}
 	};
 
-	strike() {
-		this.pulse.applyCollision();
+	@action.bound animateHit() {
+		this.pulse.applyCollision(3);
 	}
 
 	render() {

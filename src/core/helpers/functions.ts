@@ -202,6 +202,11 @@ export function mapToObject<Key extends ObjectKey, InValue, OutValue>(
 	);
 }
 
+export interface Point {
+	x: number;
+	y: number;
+}
+
 // type Keyable = string | number;
 
 // function nestedFromFlat<K extends Keyable, O>(

@@ -31,9 +31,9 @@ class Fret_ extends BassComponent<FretProps> {
 				/>
 				{this.props.markings.map((marking) => (
 					<circle
-						cx={marking * this.bass.viewWidth}
+						cx={this.bass.stringToPixel(marking)}
 						cy={this.midFret}
-						r={6}
+						r={5}
 						fill="rgb(96, 90, 80)"
 						key={marking}
 					/>

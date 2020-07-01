@@ -2,7 +2,6 @@ import React from "react";
 import { Provider } from "mobx-react";
 import { AppComponent } from "../storeComponents";
 import { VibraphoneBar } from "./VibraphoneBar";
-import "./Vibraphone.css";
 
 export class VibraphoneDisplayStore {
 	wholeWidth = 400;
@@ -30,14 +29,11 @@ class Vibraphone_ extends AppComponent {
 							transform: `translateY(${this.height / 2}px)`,
 						}}
 					>
-						{Object.values(
-							this.app.program.state.vibraphone.barStores
-						).map((barStore) => (
-							<VibraphoneBar
-								barStore={barStore}
-								key={barStore.bar}
-							/>
-						))}
+						{Object.values(this.app.program.state.vibraphone.barStores).map(
+							(barStore) => (
+								<VibraphoneBar barStore={barStore} key={barStore.bar} />
+							)
+						)}
 					</g>
 				</svg>
 			</Provider>

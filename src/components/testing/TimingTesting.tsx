@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { observable, action } from "mobx";
 import { observer } from "mobx-react";
-import { range } from "../../core/helpers";
+import { range } from "../../core/helpers/functions";
 import { Transport, Synth } from "tone";
 
 interface TPSChange {
@@ -71,12 +71,12 @@ const res = [
 @observer
 export class TimingTesting extends Component {
 	tpq = 240;
-	interval: NodeJS.Timeout | undefined;
+	// interval: NodeJS.Timeout | undefined;
 	@observable currentTick = 0;
 	@observable markerTicks = range(0, 100, 5);
 
 	componentDidMount() {
-		this.interval = setInterval(() => this.updateTick(), 10);
+		// this.interval = setInterval(() => this.updateTick(), 10);
 	}
 
 	@action updateTick() {
@@ -84,7 +84,7 @@ export class TimingTesting extends Component {
 	}
 
 	@action suspend = () => {
-		this.interval ?? clearInterval(this.interval);
+		// this.interval ?? clearInterval(this.interval);
 	};
 
 	render() {

@@ -2,7 +2,7 @@ import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 import { AppStore } from "./app";
 import { observable, computed } from "mobx";
 import { vibraphoneBars } from "../core/playback/types";
-import { fromEntries } from "../core/helpers";
+import { fromEntries } from "../core/helpers/functions";
 
 export class VibraphoneStore implements VibraphoneState {
 	appStore: AppStore;
@@ -30,10 +30,7 @@ export class VibraphoneStore implements VibraphoneState {
 		VibraphoneChannel,
 		VibraphoneBarStore
 	> = fromEntries(
-		vibraphoneBars.map((bar) => [
-			bar,
-			new VibraphoneBarStore(bar, this.notes),
-		])
+		vibraphoneBars.map((bar) => [bar, new VibraphoneBarStore(bar, this.notes)])
 	);
 
 	constructor(appStore: AppStore) {

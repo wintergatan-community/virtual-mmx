@@ -24,10 +24,6 @@ class Capo_ extends BassComponent<CapoProps> {
 		this.props.stringStore.moveCapo(fret);
 	}
 
-	scale(num: number): number {
-		return (num * 511) / 700;
-	}
-
 	render(): JSX.Element {
 		return (
 			<Draggable
@@ -38,11 +34,8 @@ class Capo_ extends BassComponent<CapoProps> {
 					top: 0,
 					bottom: this.bass.viewHeight,
 				}}
-				scale={this.scale(1)}
 				onDrag={this.moveCapo}
-				nodeRef={
-					(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>
-				} // TODO stupid react, typescript, library nothing works shut up do your job
+				nodeRef={(this.capoSVGRef as unknown) as React.RefObject<HTMLElement>} // TODO stupid react, typescript, library nothing works shut up do your job
 			>
 				<g>
 					<rect
