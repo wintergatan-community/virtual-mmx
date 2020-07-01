@@ -12,7 +12,7 @@ interface GroupLeverProps {
 }
 
 class GroupLever_ extends AppComponent<GroupLeverProps> {
-	@observable active = false;
+	@observable muted = false;
 
 	@computed get x() {
 		const pad = 10;
@@ -21,12 +21,13 @@ class GroupLever_ extends AppComponent<GroupLeverProps> {
 	}
 
 	@computed get y() {
-		return this.active ? 14 : -14;
+		const amp = 14;
+		return this.muted ? -amp : amp;
 	}
 
 	@action.bound handleToggle() {
-		this.active = !this.active;
-		this.props.channels.forEach((c) => (c.muted = this.active));
+		this.muted = !this.muted;
+		this.props.channels.forEach((c) => (c.muted = this.muted));
 	}
 
 	render() {
