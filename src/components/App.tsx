@@ -12,6 +12,7 @@ import { ToneIndicator } from "./ToneIndicator";
 import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
+import { MutingLevers } from "./mutingLevers/MutingLevers";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
@@ -20,7 +21,7 @@ export class App extends Component {
 	render() {
 		return (
 			<Provider app={app}>
-				<MockupLayout />
+				{/* <MockupLayout /> */}
 				<ToneIndicator />
 
 				<Move x={78} y={82}>
@@ -38,6 +39,9 @@ export class App extends Component {
 				</Move>
 				<Move x={890} y={231}>
 					<Crank />
+				</Move>
+				<Move x={890} y={81}>
+					<MutingLevers />
 				</Move>
 
 				{/* <Move x={860} y={460}>

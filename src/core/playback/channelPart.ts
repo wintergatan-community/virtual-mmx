@@ -13,10 +13,12 @@ export class ChannelPart {
 	readonly tonePart = new Part(partOptions);
 	@observable readonly pegs: number[];
 	listeners: (() => void)[] = [];
+	muted = false;
 
 	constructor(triggerStrike: (tick: number) => void) {
 		this.pegs = [];
 		this.tonePart.callback = (tick) => {
+			if (this.muted) return;
 			this.listeners.forEach((l) => l());
 			triggerStrike(tick);
 		};

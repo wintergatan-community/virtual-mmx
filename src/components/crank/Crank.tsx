@@ -53,7 +53,12 @@ class Crank_ extends AppComponent {
 						rx={10}
 						fill="rgb(237, 237, 237)"
 					/>
-					<text y={4} fontSize={11} textAnchor="middle">
+					<text
+						y={4}
+						fontSize={11}
+						textAnchor="middle"
+						style={{ userSelect: "none" }}
+					>
 						{this.app.program.state.machine.bpm} BPM
 					</text>
 				</g>
