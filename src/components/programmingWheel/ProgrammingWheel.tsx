@@ -9,7 +9,7 @@ import { ProgrammingWheelDisplayStore } from "./programmingWheelDisplay";
 import { AppComponent, WheelComponent } from "../storeComponents";
 import { Spring } from "react-spring/renderprops";
 import { GearSide } from "./GearSide";
-import { BottomBar } from "./BottomBar/BottomBar";
+import { BottomBar } from "./bottomBar/BottomBar";
 
 class ProgrammingWheel_ extends AppComponent {
 	wheel = new ProgrammingWheelDisplayStore(this.app);

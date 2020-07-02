@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TransportControls } from "./transport/TransportContols";
+import { TransportControls } from "./transportControls/TransportContols";
 import { MockupLayout } from "./mockupLayout/MockupLayout";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
@@ -24,8 +24,7 @@ export class App extends Component {
 				<MockupLayout />
 				<ToneIndicator />
 
-				<Move x={78} y={52}>
-					{/*82*/}
+				<Move x={78} y={82}>
 					<ProgrammingWheel />
 				</Move>
 				<Move x={100} y={600}>
@@ -42,6 +41,9 @@ export class App extends Component {
 				</Move>
 				<Move x={890} y={81}>
 					<MutingLevers />
+				</Move>
+				<Move x={889} y={624}>
+					<TransportControls />
 				</Move>
 
 				{/* <Move x={860} y={460}>

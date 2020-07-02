@@ -30,6 +30,7 @@ class SubdivisionOption_ extends WheelComponent<SubdivisionOptionProps> {
 					border: "1px rgb(166, 166, 166) solid",
 					borderTop: 0,
 					borderBottom: 0,
+					cursor: "pointer",
 				}}
 				onClick={this.select}
 			>
