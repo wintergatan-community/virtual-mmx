@@ -21,12 +21,12 @@ export class App extends Component {
 	render() {
 		return (
 			<Provider app={app}>
-				{/* <MockupLayout /> */}
+				<MockupLayout />
 				<ToneIndicator />
 
-				<Move x={78} y={82}>
+				<Move x={78} y={52}>
+					{/*82*/}
 					<ProgrammingWheel />
-					<TransportControls />
 				</Move>
 				<Move x={100} y={600}>
 					<Vibraphone />

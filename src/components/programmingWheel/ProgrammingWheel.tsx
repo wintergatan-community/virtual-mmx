@@ -1,8 +1,6 @@
 import React, { createRef } from "react";
 import { Provider } from "mobx-react";
 import { TranslateGrid } from "./TranslateGrid";
-import { SubdivisonChooser } from "./SubdivisionChooser";
-import { Blur } from "./Blur";
 import { ProgramGrid } from "./ProgramGrid";
 import { PegPlacer } from "./PegPlacer";
 import { PlaybackHead } from "./PlaybackHead";
@@ -11,6 +9,7 @@ import { ProgrammingWheelDisplayStore } from "./programmingWheelDisplay";
 import { AppComponent, WheelComponent } from "../storeComponents";
 import { Spring } from "react-spring/renderprops";
 import { GearSide } from "./GearSide";
+import { BottomBar } from "./BottomBar/BottomBar";
 
 class ProgrammingWheel_ extends AppComponent {
 	wheel = new ProgrammingWheelDisplayStore(this.app);
@@ -47,45 +46,48 @@ class ProgrammingWheel_ extends AppComponent {
 	render() {
 		return (
 			<Provider wheel={this.wheel}>
-				<Spring
-					// dodgy, snaps at end of wheel, doesn't work well with zoom, but fun idea
-					to={{ scrollTick: -this.wheel.visibleTopTick }}
-					config={{ tension: 400, friction: 50 }}
-				>
-					{(springProps) => (
-						<div style={{ display: "flex" }}>
-							<GearSide tick={springProps.scrollTick} />
-							<svg
-								viewBox={`0 0 ${this.wheel.visiblePixelWidth} ${this.wheel.visiblePixelHeight}`}
-								style={{
-									width: this.wheel.visiblePixelWidth,
-									height: this.wheel.visiblePixelHeight,
-								}}
-								onMouseMove={this.handleMouseMove}
-								onWheel={this.handleScroll}
-								ref={this.svgRef}
-							>
-								<TranslateGrid tick={springProps.scrollTick}>
-									<MovingWindow />
-									<TranslateGrid tick={this.wheel.totalTicks}>
-										{/* second MovingWindow for seemless scroll */}
+				<div>
+					<Spring
+						// dodgy, snaps at end of wheel, doesn't work well with zoom, but fun idea
+						to={{ scrollTick: -this.wheel.visibleTopTick }}
+						config={{ tension: 400, friction: 50 }}
+					>
+						{(springProps) => (
+							<div style={{ display: "flex" }}>
+								<GearSide tick={-this.wheel.visibleTopTick} />
+								<svg
+									viewBox={`0 0 ${this.wheel.visiblePixelWidth} ${this.wheel.visiblePixelHeight}`}
+									style={{
+										width: this.wheel.visiblePixelWidth,
+										height: this.wheel.visiblePixelHeight,
+									}}
+									onMouseMove={this.handleMouseMove}
+									onWheel={this.handleScroll}
+									ref={this.svgRef}
+								>
+									<TranslateGrid tick={-this.wheel.visibleTopTick}>
 										<MovingWindow />
+										<TranslateGrid tick={this.wheel.totalTicks}>
+											{/* second MovingWindow for seemless scroll */}
+											<MovingWindow />
+										</TranslateGrid>
 									</TranslateGrid>
-								</TranslateGrid>
 
-								{/* {this.wheel.instrumentChannels.map((channel, channelNumber) => (
-							<TranslateGrid channel={channelNumber} key={channelNumber}>
-							<NoteLabel tuning={channel.note ?? "None"} />
-							</TranslateGrid>
-							))}
-							
-							<SubdivisonChooser />
-						<Blur /> */}
-							</svg>
-							<GearSide tick={springProps.scrollTick} />
-						</div>
-					)}
-				</Spring>
+									{/* {this.wheel.instrumentChannels.map((channel, channelNumber) => (
+									<TranslateGrid channel={channelNumber} key={channelNumber}>
+									<NoteLabel tuning={channel.note ?? "None"} />
+									</TranslateGrid>
+									))}
+									
+									<SubdivisonChooser />
+								<Blur /> */}
+								</svg>
+								<GearSide tick={-this.wheel.visibleTopTick} />
+							</div>
+						)}
+					</Spring>
+					<BottomBar />
+				</div>
 			</Provider>
 		);
 	}

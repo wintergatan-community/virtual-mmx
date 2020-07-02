@@ -1,7 +1,6 @@
 import { NoteSubdivision } from "../../core/helpers/types";
 import { observable, computed, action } from "mobx";
 import { range } from "../../core/helpers/functions";
-import { computedFn } from "mobx-utils";
 import { VmmxInstrumentChannel } from "../../core/playback/types";
 import { AppStore } from "../../stores/app";
 
@@ -176,7 +175,10 @@ export class ProgrammingWheelDisplayStore
 		},
 	};
 
-	@observable ticksPerNoteSubdivision = 240; // TODO figure out why can't link to quarter without get crash
+	@observable subdivision: NoteSubdivision = "quarter";
+	@computed get ticksPerNoteSubdivision() {
+		return this.ticksPerNoteSubdivisions[this.subdivision];
+	}
 	@computed get ticksPerNoteSubdivisions() {
 		return {
 			whole: this.tpq * 4,
@@ -247,8 +249,8 @@ export class ProgrammingWheelDisplayStore
 		if (newTick < 0) newTick += this.totalTicks;
 		this.visibleTopTick = newTick;
 	}
-	@action setSubdivision(type: NoteSubdivision) {
-		this.ticksPerNoteSubdivision = this.ticksPerNoteSubdivisions[type]; // TODO use action
+	@action setSubdivision(subdivision: NoteSubdivision) {
+		this.subdivision = subdivision;
 	}
 	@action moveMouse(mouseTick: number, mouseChannel: number) {
 		this.mousePos = { mouseTick, mouseChannel };
