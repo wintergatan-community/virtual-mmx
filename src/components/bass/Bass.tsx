@@ -30,35 +30,33 @@ class Bass_ extends AppComponent {
 	render() {
 		return (
 			<Provider bass={this.bass}>
-				<div style={{ border: "1px blue solid" }}>
-					<svg
-						viewBox={`0 0 ${this.bass.viewWidth} ${this.bass.viewHeight}`}
-						style={{
-							width: this.bass.viewWidth,
-							height: this.bass.viewHeight,
-						}}
-						ref={this.fretBoardRef}
-						onMouseMove={this.bass.mouseTracker.update}
-						onMouseLeave={this.bass.mouseTracker.leave}
-					>
-						<rect
-							rx={20}
-							ry={6}
-							width={this.bass.viewWidth}
-							height={this.bass.viewHeight}
-							fill="rgb(241, 221, 189, 1)"
-						/>
-						{this.fretDatas.map((fretData) => (
-							<Fret {...fretData} key={fretData.fret} />
-						))}
-						{Object.values(this.app.program.state.bass.stringStores).map(
-							(stringStore) => (
-								<String stringStore={stringStore} key={stringStore.string} />
-							)
-						)}
-						<FretFinger />
-					</svg>
-				</div>
+				<svg
+					viewBox={`0 0 ${this.bass.viewWidth} ${this.bass.viewHeight}`}
+					style={{
+						width: this.bass.viewWidth,
+						height: this.bass.viewHeight,
+					}}
+					ref={this.fretBoardRef}
+					onMouseMove={this.bass.mouseTracker.update}
+					onMouseLeave={this.bass.mouseTracker.leave}
+				>
+					<rect
+						rx={20}
+						ry={6}
+						width={this.bass.viewWidth}
+						height={this.bass.viewHeight}
+						fill="rgb(241, 221, 189, 1)"
+					/>
+					{this.fretDatas.map((fretData) => (
+						<Fret {...fretData} key={fretData.fret} />
+					))}
+					{Object.values(this.app.program.state.bass.stringStores).map(
+						(stringStore) => (
+							<String stringStore={stringStore} key={stringStore.string} />
+						)
+					)}
+					<FretFinger />
+				</svg>
 			</Provider>
 		);
 	}

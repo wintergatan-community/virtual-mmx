@@ -21,7 +21,6 @@ class Crank_ extends AppComponent {
 				style={{
 					width: this.width,
 					height: this.height,
-					border: "1px purple solid",
 				}}
 			>
 				<rect x={-26} y={-35} width={6} height={70} fill="rgb(83, 83, 83)" />

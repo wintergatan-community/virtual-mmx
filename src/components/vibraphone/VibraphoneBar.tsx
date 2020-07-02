@@ -3,7 +3,7 @@ import { noteToVibraphoneLength } from "../../core/helpers/functions";
 import { computed, action } from "mobx";
 import { VibraphoneComponent } from "../storeComponents";
 import { VibraphoneBarStore } from "../../stores/vibraphone";
-import { ForcePulse } from "./Pulse";
+import { ForcePulse } from "../../core/helpers/pulse";
 
 interface VibraphoneBarProps {
 	barStore: VibraphoneBarStore;

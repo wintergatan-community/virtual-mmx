@@ -1,7 +1,7 @@
 import React from "react";
 import { DrumsComponent } from "../storeComponents";
 import { computed, action } from "mobx";
-import { ForcePulse } from "../vibraphone/Pulse";
+import { ForcePulse } from "../../core/helpers/pulse";
 
 class Bassdrum_ extends DrumsComponent {
 	pulse = new ForcePulse();

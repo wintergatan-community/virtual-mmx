@@ -20,7 +20,6 @@ class Drums_ extends AppComponent {
 					style={{
 						width: this.width,
 						height: this.height,
-						border: "1px green solid",
 					}}
 				>
 					<Snare />

@@ -40,6 +40,7 @@ class TransportControls_ extends AppComponent {
 						margin: 2,
 						cursor: "pointer",
 						transition: "0.2s",
+						userSelect: "none",
 					}}
 					onClick={this.togglePlay}
 				>
@@ -57,6 +58,7 @@ class TransportControls_ extends AppComponent {
 						borderRadius: 3,
 						margin: 2,
 						cursor: "pointer",
+						userSelect: "none",
 					}}
 					onClick={this.player.restart}
 				>

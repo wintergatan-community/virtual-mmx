@@ -21,7 +21,6 @@ class Vibraphone_ extends AppComponent {
 					style={{
 						width: this.vibra.wholeWidth,
 						height: this.height,
-						border: "1px red solid",
 					}}
 				>
 					<g

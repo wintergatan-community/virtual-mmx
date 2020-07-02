@@ -31,6 +31,7 @@ class SubdivisionOption_ extends WheelComponent<SubdivisionOptionProps> {
 					borderTop: 0,
 					borderBottom: 0,
 					cursor: "pointer",
+					userSelect: "none",
 				}}
 				onClick={this.select}
 			>

@@ -21,7 +21,7 @@ export class App extends Component {
 	render() {
 		return (
 			<Provider app={app}>
-				<MockupLayout />
+				{/* <MockupLayout /> */}
 				<ToneIndicator />
 
 				<Move x={78} y={82}>

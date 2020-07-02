@@ -31,7 +31,6 @@ class MutingLevers_ extends AppComponent {
 				style={{
 					width: this.width,
 					height: this.height,
-					border: "1px orange solid",
 				}}
 			>
 				{range(0, 5).map((offset) => (
