@@ -69,4 +69,8 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 		if (!this.channelSynth?.loaded) return;
 		this.channelSynth.triggerAttack(this.note, time);
 	}
+
+	get channelColor() {
+		return "rgb(39, 39, 39)";
+	}
 }

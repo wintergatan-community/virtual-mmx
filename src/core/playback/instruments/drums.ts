@@ -51,4 +51,8 @@ class DrumsChannel implements VmmxInstrumentChannel {
 			A1: `./samples/drums/${this.drum}.wav`,
 		}).toDestination();
 	}
+
+	get channelColor() {
+		return "rgb(60, 60, 60)";
+	}
 }

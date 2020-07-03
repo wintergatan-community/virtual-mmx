@@ -25,7 +25,7 @@ class WheelChannel_ extends WheelComponent<WheelChannelProps> {
 				<rect
 					width={this.channelOne}
 					height={this.width}
-					fill="rgb(39, 39, 39)"
+					fill={this.props.channel.channelColor}
 					stroke="rgb(47, 47, 47)"
 				/>
 				<ChannelPegs channel={this.props.channel.channelPart} />

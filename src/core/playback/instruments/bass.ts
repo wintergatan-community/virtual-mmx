@@ -78,4 +78,8 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 		if (!this.bassSynth?.loaded) return;
 		this.bassSynth.triggerAttack(this.note, time);
 	}
+
+	get channelColor() {
+		return "rgb(39, 39, 39)";
+	}
 }
