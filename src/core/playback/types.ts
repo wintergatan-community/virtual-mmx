@@ -20,7 +20,6 @@ export interface VmmxInstrumentChannel {
 	channelPart: ChannelPart;
 	triggerStrike(time?: number): void;
 	note?: Note;
-	channelColor: string;
 }
 
 // TODO this should be part of schema, and it should be VibraphoneBar
