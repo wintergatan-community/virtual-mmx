@@ -1,5 +1,5 @@
 import { BassString, BassDropEvent, TickedDropEvent } from "vmmx-schema";
-import { Sampler, Volume, Destination, PitchShift } from "tone";
+import { Sampler, Volume, Destination, PitchShift, context } from "tone";
 import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
@@ -76,6 +76,6 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 
 	triggerStrike(time?: number) {
 		if (!this.bassSynth?.loaded) return;
-		this.bassSynth.triggerAttack(this.note, time);
+		this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
 	}
 }

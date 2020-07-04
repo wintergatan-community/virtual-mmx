@@ -1,5 +1,5 @@
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
-import { Destination, Volume, Sampler } from "tone";
+import { Destination, Volume, Sampler, context } from "tone";
 import { mapToObject } from "../../helpers/functions";
 import { computed } from "mobx";
 import {
@@ -67,6 +67,6 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 
 	triggerStrike(time?: number) {
 		if (!this.channelSynth?.loaded) return;
-		this.channelSynth.triggerAttack(this.note, time);
+		this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
 	}
 }

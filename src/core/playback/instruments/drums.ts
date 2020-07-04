@@ -2,7 +2,7 @@ import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { ChannelPart } from "../channelPart";
 import { DrumsStore } from "../../../stores/drums";
-import { Sampler } from "tone";
+import { Sampler, context } from "tone";
 
 type DrumTypeTOFIX = DrumType | "crash";
 
@@ -43,7 +43,7 @@ class DrumsChannel implements VmmxInstrumentChannel {
 
 	triggerStrike(time?: number) {
 		if (!this.drumSynth?.loaded) return;
-		this.drumSynth.triggerAttack("A1", time);
+		this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
 	}
 
 	onToneLoad() {
