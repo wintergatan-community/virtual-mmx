@@ -1,9 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, ReactNode } from "react";
 import { TransportControls } from "./transportControls/TransportContols";
 import { MockupLayout } from "./mockupLayout/MockupLayout";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
-import { SomeReactChildren } from "../core/helpers/types";
 import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
 import { Provider } from "mobx-react";
@@ -55,7 +54,7 @@ export class App extends Component {
 }
 
 interface MoveProps {
-	children: SomeReactChildren;
+	children: ReactNode;
 	x: number;
 	y: number;
 }

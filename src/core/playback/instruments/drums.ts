@@ -2,7 +2,7 @@ import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { ChannelPart } from "../channelPart";
 import { DrumsStore } from "../../../stores/drums";
-import { Sampler, context } from "tone";
+import { Sampler, context, Transport } from "tone";
 
 type DrumTypeTOFIX = DrumType | "crash";
 
