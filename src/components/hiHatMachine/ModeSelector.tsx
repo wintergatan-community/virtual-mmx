@@ -50,6 +50,10 @@ export class ModeSelector extends React.Component<Props> {
 
 	@action.bound hover(state: HoverState) {
 		this.currentHover = state;
+		// This is still a little quirky, halp
+		// (Press down, move out, come back. Releasing triggers a click but it isn't
+		//  shown darker.)
+		this.mouseDown = false;
 	}
 
 	@action.bound press(down: boolean) {
