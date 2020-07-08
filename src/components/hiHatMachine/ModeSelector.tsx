@@ -93,7 +93,7 @@ export class ModeSelector extends React.Component<Props> {
 						/>
 					))}
 				</div>
-				<ModeOffOption
+				<OffOption
 					active={this.props.currentMode === "off"}
 					hover={this.currentHover === "off"}
 					onClick={this.props.selectMode}
@@ -104,7 +104,7 @@ export class ModeSelector extends React.Component<Props> {
 	}
 }
 
-function Option(props: {
+const Option = observer(function (props: {
 	mode: HiHatMachineMode;
 	position: OptionPosition;
 	active: HighlightState | false;
@@ -144,7 +144,7 @@ function Option(props: {
 		>
 			{modeOptionIcon[props.mode]}
 			{props.active && (
-				<ModeOptionHighlight
+				<OptionHighlight
 					zIndex={-2}
 					color="#6bb6fd"
 					position={props.position}
@@ -152,7 +152,7 @@ function Option(props: {
 				/>
 			)}
 			{props.hover && (
-				<ModeOptionHighlight
+				<OptionHighlight
 					zIndex={-1}
 					color={props.mouseDown ? "rgba(0,0,0,15%)" : "rgba(0,0,0,10%)"}
 					position={props.position}
@@ -161,9 +161,9 @@ function Option(props: {
 			)}
 		</div>
 	);
-}
+});
 
-function ModeOptionHighlight(props: {
+const OptionHighlight = observer(function (props: {
 	zIndex: number;
 	color: string;
 	position: OptionPosition;
@@ -209,9 +209,9 @@ function ModeOptionHighlight(props: {
 		borderRadius: `${leftRadius} ${rightRadius} ${rightRadius} ${leftRadius}`,
 	};
 	return <div style={style} />;
-}
+});
 
-function ModeOffOption(props: {
+const OffOption = observer(function (props: {
 	active: boolean;
 	hover: boolean;
 	onClick: (mode: HiHatMachineMode) => void;
@@ -242,7 +242,7 @@ function ModeOffOption(props: {
 			OFF
 		</div>
 	);
-}
+});
 
 function getHighlightsFromMode(mode: HiHatMachineMode | null) {
 	const highlighted = Object.fromEntries(
