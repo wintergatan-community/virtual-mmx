@@ -1,10 +1,9 @@
-import React from "react";
-import { SomeReactChildren } from "../../core/helpers/types";
+import React, { ReactNode } from "react";
 import { computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
 
 interface TranslateProps {
-	children: SomeReactChildren;
+	children: ReactNode;
 	tick?: number;
 	channel?: number;
 }

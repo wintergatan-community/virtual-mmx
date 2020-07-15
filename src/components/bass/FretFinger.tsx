@@ -1,8 +1,6 @@
 import React from "react";
 import { BassComponent } from "../storeComponents";
-import { computed, observable, action } from "mobx";
-import { Spring, config } from "react-spring/renderprops";
-import { observer } from "mobx-react";
+import { computed } from "mobx";
 
 class FretFinger_ extends BassComponent {
 	@computed get x() {
