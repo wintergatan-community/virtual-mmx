@@ -7,7 +7,8 @@ class PegPlacer_ extends WheelComponent {
 	@computed get channelPart() {
 		const channelNumber = this.wheel.gridSnappedMousePos?.mouseChannel;
 		if (channelNumber === undefined) return null;
-		return this.wheel.instrumentChannels[channelNumber].channelPart;
+		return this.wheel.instrumentChannels[channelNumber].vmmxInstrumentChannel
+			.channelPart;
 	}
 	@computed get mouse() {
 		// TODO this doesn't seem right but MobX is being lame

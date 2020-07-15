@@ -17,6 +17,28 @@ type SubdivisionLineFunction = (
 ) => { stroke: string; strokeWidth: number };
 type SubdivisionLineFunctionKey = "primary"; // TODO more
 
+/** The background color to use for displaying a channel */
+export enum ChannelColor {
+	LIGHT = "rgb(60, 60, 60)",
+	DARK = "rgb(39, 39, 39)",
+}
+
+/** A single VmmxInstrumentChannel with additional display related information. */
+export class DisplayChannel {
+	/** The vmmx instrument channel to display */
+	vmmxInstrumentChannel: VmmxInstrumentChannel;
+	/** The color of this channel */
+	channelColor: ChannelColor;
+
+	constructor(
+		vmmxInstrumentChannel: VmmxInstrumentChannel,
+		channelColor: ChannelColor
+	) {
+		this.vmmxInstrumentChannel = vmmxInstrumentChannel;
+		this.channelColor = channelColor;
+	}
+}
+
 interface ProgrammingWheelDisplayInterface {
 	/** The total number of ticks in the wheel */
 	totalTicks: number;
@@ -46,8 +68,8 @@ interface ProgrammingWheelDisplayInterface {
 	channelWidth: number;
 	/** Whether or not translucent pegs should be rendered for the current subdivision in the absence of a drop event */
 	showEmpties: boolean;
-	/** An array of VmmxInstrumentChannel used for channel column headers and instrument identification*/
-	instrumentChannels: VmmxInstrumentChannel[];
+	/** An array of DisplayChannel used for channel column headers and instrument identification */
+	instrumentChannels: DisplayChannel[];
 	/** An array of numbers representing SubdivsionLine ticks */
 	subdivisionLines: number[];
 	/** The current tick of the playback head */
@@ -128,17 +150,17 @@ export class ProgrammingWheelDisplayStore
 	@observable channelWidth = 30; //36
 	@observable showEmpties = false;
 	@computed get instrumentChannels() {
-		const channels: VmmxInstrumentChannel[] = [];
+		const channels: DisplayChannel[] = [];
 		const instruments = this.appStore.player.instruments;
 
 		for (const channel of Object.values(instruments.vibraphone.channels)) {
-			channels.push(channel);
+			channels.push(new DisplayChannel(channel, ChannelColor.DARK));
 		}
 		for (const channel of Object.values(instruments.drums.channels)) {
-			channels.push(channel);
+			channels.push(new DisplayChannel(channel, ChannelColor.LIGHT));
 		}
 		for (const channel of Object.values(instruments.bass.channels)) {
-			channels.push(channel);
+			channels.push(new DisplayChannel(channel, ChannelColor.DARK));
 		}
 
 		return channels;

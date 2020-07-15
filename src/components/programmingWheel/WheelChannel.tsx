@@ -4,10 +4,13 @@ import { TranslateGrid } from "./TranslateGrid";
 import { VmmxInstrumentChannel } from "../../core/playback/types";
 import { computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
+import { ChannelColor } from "./programmingWheelDisplay";
 
 interface WheelChannelProps {
+	color: string;
 	channel: VmmxInstrumentChannel;
 	channelNumber: number;
+	channelColor: ChannelColor;
 }
 
 class WheelChannel_ extends WheelComponent<WheelChannelProps> {
@@ -20,12 +23,13 @@ class WheelChannel_ extends WheelComponent<WheelChannelProps> {
 	}
 
 	render() {
+		console.log(this.props.channelColor);
 		return (
 			<TranslateGrid channel={this.props.channelNumber}>
 				<rect
 					width={this.channelOne}
 					height={this.width}
-					fill="rgb(39, 39, 39)"
+					fill={this.props.channelColor}
 					stroke="rgb(47, 47, 47)"
 				/>
 				<ChannelPegs channel={this.props.channel.channelPart} />
