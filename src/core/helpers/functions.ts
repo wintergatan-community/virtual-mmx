@@ -206,10 +206,10 @@ export function mapToObject<Key extends ObjectKey, InValue, OutValue>(
 }
 
 export function mapArrayToObj<Key extends ObjectKey, Value>(
-	arr: Key[],
-	func: (element: Key) => Value
+	keys: Key[],
+	func: (key: Key) => Value
 ) {
-	return fromEntries(arr.map((key) => [key, func(key)]));
+	return fromEntries(keys.map((key) => [key, func(key)]));
 }
 
 export interface Point {

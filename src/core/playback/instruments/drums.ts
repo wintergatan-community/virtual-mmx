@@ -29,11 +29,13 @@ export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 }
 
 class DrumsChannel implements VmmxInstrumentChannel {
+	appStore: AppStore;
 	toneChannels: JointToneChannel<DrumsBakedData>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 
 	constructor(appStore: AppStore, drum: DrumTypeTOFIX) {
+		this.appStore = appStore;
 		this.drum = drum;
 
 		this.toneChannels = new JointToneChannel(
@@ -43,8 +45,12 @@ class DrumsChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		if (!this.drumSynth?.loaded) return;
-		this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
+		if (
+			this.drumSynth?.loaded &&
+			this.appStore.performance.program.state.machine.mute[this.drum]
+		) {
+			this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
+		}
 	}
 
 	onToneLoad() {

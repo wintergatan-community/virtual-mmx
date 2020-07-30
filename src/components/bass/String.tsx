@@ -27,15 +27,13 @@ export class String_ extends BassComponent<StringProps> {
 
 	@action.bound strum(e: React.MouseEvent<SVGLineElement, MouseEvent>) {
 		if (e.buttons === 1) {
-			this.bassStringChannel.triggerStrike();
+			this.bassStringTimelines.performance.triggerEvent();
 			this.vibrate.applyCollision(1);
 		}
 	}
 
-	get bassStringChannel() {
-		return this.app.player.instruments.bass.channels[
-			this.props.stringStore.string
-		];
+	get bassStringTimelines() {
+		return this.app.jointTimelines.bass[this.props.stringStore.string];
 	}
 
 	render() {

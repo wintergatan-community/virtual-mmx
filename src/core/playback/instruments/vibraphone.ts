@@ -42,11 +42,13 @@ export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 
 // TODO shema needs to replace use of "channel" and "note"
 export class VibraphoneBarChannel implements VmmxInstrumentChannel {
+	private appStore: AppStore;
 	private barStore: VibraphoneBarStore;
 	private channelSynth?: Sampler;
 	readonly toneChannels: JointToneChannel<VibraphoneBakedData>;
 
 	constructor(appStore: AppStore, barStore: VibraphoneBarStore) {
+		this.appStore = appStore;
 		this.barStore = barStore;
 
 		this.toneChannels = new JointToneChannel(
@@ -64,7 +66,11 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		if (!this.channelSynth?.loaded) return;
-		this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
+		if (
+			this.channelSynth?.loaded &&
+			this.appStore.performance.program.state.machine.mute.vibraphone
+		) {
+			this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
+		}
 	}
 }

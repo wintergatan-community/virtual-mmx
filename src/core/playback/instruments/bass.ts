@@ -27,11 +27,13 @@ export class BassInstrument implements VmmxInstrument<BassString> {
 }
 
 export class BassStringChannel implements VmmxInstrumentChannel {
+	private appStore: AppStore;
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
 	readonly toneChannels: JointToneChannel<BassBakedData>;
 
 	constructor(appStore: AppStore, stringStore: BassStringStore) {
+		this.appStore = appStore;
 		this.stringStore = stringStore;
 
 		this.toneChannels = new JointToneChannel(
@@ -77,7 +79,11 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		if (!this.bassSynth?.loaded) return;
-		this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
+		if (
+			this.bassSynth?.loaded &&
+			this.appStore.performance.program.state.machine.mute.bass
+		) {
+			this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
+		}
 	}
 }
