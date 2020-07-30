@@ -1,8 +1,8 @@
 import { BassState, BassString, Note } from "vmmx-schema";
 import { AppStore } from "./app";
 import { observable, computed } from "mobx";
-import { bassStrings } from "../core/playback/types";
 import { fromEntries } from "../core/helpers/functions";
+import { bassStrings } from "../toFutureSchema";
 
 export class BassStore implements BassState {
 	appStore: AppStore;

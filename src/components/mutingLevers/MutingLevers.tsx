@@ -4,7 +4,7 @@ import { GroupLever } from "./GroupLever";
 import { range } from "../../core/helpers/functions";
 import { Connector } from "./Connector";
 import { computed } from "mobx";
-import { ChannelGroupTOFIX } from "../../stores/app";
+import { ChannelGroupTOFIX } from "../../toFutureSchema";
 
 class MutingLevers_ extends AppComponent {
 	width = 160;

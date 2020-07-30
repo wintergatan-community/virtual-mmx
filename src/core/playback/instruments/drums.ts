@@ -1,11 +1,9 @@
-import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { DrumsStore } from "../../../stores/drums";
-import { Sampler, context, Transport } from "tone";
-import { ToneChannel, JointToneChannel } from "../toneChannel";
-import { AppStore, DrumsBakedData } from "../../../stores/app";
-
-export type DrumTypeTOFIX = DrumType | "crash";
+import { Sampler, context } from "tone";
+import { JointToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
+import { DrumTypeTOFIX, DrumsBakedData } from "../../../toFutureSchema";
 
 export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 	drumsStore: DrumsStore;

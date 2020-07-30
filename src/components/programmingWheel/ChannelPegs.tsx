@@ -2,7 +2,8 @@ import React from "react";
 import { Peg } from "./Peg";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { EventTimeline, VibraphoneBakedData } from "../../stores/app";
+import { EventTimeline } from "../../stores/eventTimeline";
+import { VibraphoneBakedData } from "../../toFutureSchema";
 
 interface ChannelPegsProps {
 	timeline: EventTimeline<VibraphoneBakedData>; // TODO not "any"?

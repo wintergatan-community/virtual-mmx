@@ -11,7 +11,7 @@ import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
-import { TimeEditor } from "./timeEditor/TimeEditor";
+// import { TimeEditor } from "./timeEditor/TimeEditor";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
@@ -48,7 +48,7 @@ export class App extends Component {
 				{/* <Move x={860} y={460}>
 					<Spinny />
 				</Move> */}
-				<TimeEditor />
+				{/* <TimeEditor /> */}
 			</Provider>
 		);
 	}

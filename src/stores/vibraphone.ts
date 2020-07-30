@@ -1,8 +1,8 @@
 import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 import { AppStore } from "./app";
 import { observable, computed } from "mobx";
-import { vibraphoneBars } from "../core/playback/types";
 import { mapArrayToObj } from "../core/helpers/functions";
+import { vibraphoneBars } from "../toFutureSchema";
 
 export class VibraphoneStore implements VibraphoneState {
 	appStore: AppStore;

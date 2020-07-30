@@ -4,8 +4,9 @@ import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
-import { ToneChannel, JointToneChannel } from "../toneChannel";
-import { AppStore, BassBakedData } from "../../../stores/app";
+import { JointToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
+import { BassBakedData } from "../../../toFutureSchema";
 
 export class BassInstrument implements VmmxInstrument<BassString> {
 	private bassStore: BassStore;

@@ -7,8 +7,9 @@ import {
 	VibraphoneBarStore,
 } from "../../../stores/vibraphone";
 import { VibraphoneChannel } from "vmmx-schema";
-import { ToneChannel, JointToneChannel } from "../toneChannel";
-import { AppStore, VibraphoneBakedData } from "../../../stores/app";
+import { JointToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
+import { VibraphoneBakedData } from "../../../toFutureSchema";
 
 export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 	readonly vibraphoneStore: VibraphoneStore;

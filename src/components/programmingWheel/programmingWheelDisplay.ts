@@ -1,8 +1,9 @@
 import { NoteSubdivision } from "../../core/helpers/types";
 import { observable, computed, action } from "mobx";
 import { range } from "../../core/helpers/functions";
-import { VmmxInstrumentChannel } from "../../core/playback/types";
-import { AppStore, EventTimeline, VibraphoneBakedData } from "../../stores/app";
+import { AppStore } from "../../stores/app";
+import { EventTimeline } from "../../stores/eventTimeline";
+import { VibraphoneBakedData } from "../../toFutureSchema";
 
 interface WheelMousePos {
 	mouseTick: number;

@@ -1,6 +1,6 @@
 import { Part } from "tone";
-import { EventTimeline, JointEventTimeline } from "../../stores/app";
 import { CoreDropEvent } from "vmmx-schema";
+import { EventTimeline, JointEventTimeline } from "../../stores/eventTimeline";
 
 const partOptions = {
 	loop: true,

@@ -1,10 +1,10 @@
 import React from "react";
-import { computed, action, observable } from "mobx";
+import { computed, action } from "mobx";
 import { Capo } from "./Capo";
-import { bassStrings } from "../../core/playback/types";
 import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
 import { ForcePulse } from "../../core/helpers/pulse";
+import { bassStrings } from "../../toFutureSchema";
 
 interface StringProps {
 	stringStore: BassStringStore;
