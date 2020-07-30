@@ -4,23 +4,28 @@ import { GroupLever } from "./GroupLever";
 import { range } from "../../core/helpers/functions";
 import { Connector } from "./Connector";
 import { computed } from "mobx";
+import { ChannelGroupTOFIX } from "../../stores/app";
 
 class MutingLevers_ extends AppComponent {
 	width = 160;
 	height = 160;
 
 	@computed get levers() {
-		const i = this.app.player.instruments;
-		const bass = i.bass.channels;
-		const drums = i.drums.channels;
-		const vibraphone = i.vibraphone.channels;
+		// TODO not so efficient
+		const machine = this.app.performance.program.state.machine;
+		const muted = machine.mute;
+		const muteInfo = (channelGroup: ChannelGroupTOFIX) => ({
+			muted: muted[channelGroup],
+			setMuted: (muted: boolean) => machine.setMuted(channelGroup, muted),
+		});
+
 		return {
-			B: Object.values(bass).map((c) => c.channelPart),
-			H: [drums.hihat.channelPart],
-			S: [drums.snare.channelPart],
-			K: [drums.bassdrum.channelPart],
-			C: [drums.crash.channelPart],
-			V: Object.values(vibraphone).map((c) => c.channelPart),
+			B: muteInfo("bass"),
+			H: muteInfo("hihat"),
+			S: muteInfo("snare"),
+			K: muteInfo("bassdrum"),
+			C: muteInfo("crash"),
+			V: muteInfo("vibraphone"),
 		};
 	}
 
@@ -36,14 +41,17 @@ class MutingLevers_ extends AppComponent {
 				{range(0, 5).map((offset) => (
 					<Connector offset={offset} key={offset} />
 				))}
-				{Object.entries(this.levers).map(([char, channels], offset) => (
-					<GroupLever
-						offset={offset}
-						char={char}
-						channels={channels}
-						key={offset}
-					/>
-				))}
+				{Object.entries(this.levers).map(
+					([char, { muted, setMuted }], offset) => (
+						<GroupLever
+							offset={offset}
+							char={char}
+							muted={muted}
+							setMuted={setMuted}
+							key={offset}
+						/>
+					)
+				)}
 			</svg>
 		);
 	}

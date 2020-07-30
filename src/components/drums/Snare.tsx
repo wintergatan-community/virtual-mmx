@@ -7,18 +7,18 @@ class Snare_ extends DrumsComponent {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.snareChannel.channelPart.runOnNote(this.animateHit);
+		this.snareTimeline.addEventListener(this.animateHit);
 
 		this.pulse.friction = 0.6;
 		this.pulse.tension = 0.5;
 	}
 
-	@computed get snareChannel() {
-		return this.app.player.instruments.drums.channels.snare;
+	@computed get snareTimeline() {
+		return this.app.performance.eventTimelines.performanceDrop.drums.snare;
 	}
 
 	handlePress = () => {
-		this.snareChannel.triggerStrike();
+		this.snareTimeline.triggerEvent();
 		this.animateHit();
 	};
 

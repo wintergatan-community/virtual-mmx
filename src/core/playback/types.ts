@@ -1,25 +1,17 @@
-import { ChannelPart } from "./channelPart";
-import {
-	VibraphoneChannel,
-	BassString,
-	DrumType,
-	TickedDropEvent,
-	Note,
-} from "vmmx-schema";
+import { VibraphoneChannel, BassString, DrumType } from "vmmx-schema";
+import { ToneChannel } from "./toneChannel";
+import { DrumTypeTOFIX } from "./instruments/drums";
 
-export interface VmmxInstrument<
-	ChannelType extends string | number | symbol,
-	DropEventKind
-> {
+export interface VmmxInstrument<ChannelType extends string | number | symbol> {
 	channels: Record<ChannelType, VmmxInstrumentChannel>;
-	addNoteFromEvent(event: DropEventKind & TickedDropEvent): void;
+	// addNoteFromEvent(event: DropEventKind & TickedDropEvent): void;
 	onToneLoad(): void; // preferably async, but get "Uncaught ReferenceError: regeneratorRuntime is not defined"
 }
 
 export interface VmmxInstrumentChannel {
-	channelPart: ChannelPart;
+	performanceChannel: ToneChannel<any>; // TODO maybe not "any", not sure yet
+	programChannel: ToneChannel<any>;
 	triggerStrike(time?: number): void;
-	note?: Note;
 }
 
 // TODO this should be part of schema, and it should be VibraphoneBar
@@ -37,4 +29,11 @@ export const vibraphoneBars: VibraphoneChannel[] = [
 	11,
 ];
 export const bassStrings: BassString[] = [1, 2, 3, 4];
-export const drumTypes: DrumType[] = ["bassdrum", "hihat", "snare"];
+export const drumTypes: DrumTypeTOFIX[] = [
+	"bassdrum",
+	"hihat",
+	"snare",
+	"crash",
+];
+export const instruments: InstrumentName[] = ["bass", "drums", "vibraphone"];
+export type InstrumentName = "bass" | "drums" | "vibraphone";

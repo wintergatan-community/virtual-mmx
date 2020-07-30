@@ -3,12 +3,12 @@ import { AppComponent } from "../storeComponents";
 import { computed, action, observable } from "mobx";
 import { mapValue } from "../../core/helpers/functions";
 import { Spring } from "react-spring/renderprops";
-import { ChannelPart } from "../../core/playback/channelPart";
 
 interface GroupLeverProps {
 	offset: number;
 	char: string;
-	channels: ChannelPart[];
+	muted: boolean;
+	setMuted: (muted: boolean) => void;
 }
 
 class GroupLever_ extends AppComponent<GroupLeverProps> {
@@ -27,7 +27,7 @@ class GroupLever_ extends AppComponent<GroupLeverProps> {
 
 	@action.bound handleToggle() {
 		this.muted = !this.muted;
-		this.props.channels.forEach((c) => (c.muted = this.muted));
+		this.props.setMuted(!this.props.muted);
 	}
 
 	render() {

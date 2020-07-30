@@ -13,16 +13,11 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.channelPart.runOnNote(this.animateHit);
+		this.vibraphoneTimelines.addJointEventListener(this.animateHit);
 		// TODO disposer?
 	}
-	@computed get vibraphoneChannel() {
-		return this.app.player.instruments.vibraphone.channels[
-			this.props.barStore.bar
-		];
-	}
-	@computed get channelPart() {
-		return this.vibraphoneChannel.channelPart;
+	@computed get vibraphoneTimelines() {
+		return this.app.jointTimelines.vibraphone[this.props.barStore.bar];
 	}
 	@computed get x() {
 		return this.vibra.noteWidth * (this.props.barStore.bar - 1);
@@ -36,7 +31,7 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 
 	handlePress = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
 		if (e.buttons === 1) {
-			this.vibraphoneChannel.triggerStrike();
+			this.vibraphoneTimelines.performance.triggerEvent();
 			this.animateHit();
 		}
 	};

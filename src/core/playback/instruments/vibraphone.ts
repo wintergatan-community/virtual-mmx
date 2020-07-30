@@ -6,24 +6,20 @@ import {
 	VibraphoneStore,
 	VibraphoneBarStore,
 } from "../../../stores/vibraphone";
-import { ChannelPart } from "../channelPart";
-import {
-	VibraphoneDropEvent,
-	TickedDropEvent,
-	VibraphoneChannel,
-} from "vmmx-schema";
+import { VibraphoneChannel } from "vmmx-schema";
+import { ToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
 
-export class VibraphoneInstrument
-	implements VmmxInstrument<VibraphoneChannel, VibraphoneDropEvent> {
+export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 	readonly vibraphoneStore: VibraphoneStore;
 	readonly channels: Record<VibraphoneChannel, VibraphoneBarChannel>;
 
-	constructor(vibraphoneStore: VibraphoneStore) {
+	constructor(appStore: AppStore, vibraphoneStore: VibraphoneStore) {
 		this.vibraphoneStore = vibraphoneStore;
 
 		this.channels = mapToObject(
 			this.vibraphoneStore.barStores,
-			(_, barStore) => new VibraphoneBarChannel(barStore)
+			(_, barStore) => new VibraphoneBarChannel(appStore, barStore)
 		);
 	}
 
@@ -41,20 +37,27 @@ export class VibraphoneInstrument
 
 		Object.values(this.channels).forEach((c) => c.onToneLoad(vibraphoneSynth));
 	}
-
-	addNoteFromEvent(event: VibraphoneDropEvent & TickedDropEvent) {
-		this.channels[event.channel].channelPart.add(event.tick);
-	}
 }
 
 // TODO shema needs to replace use of "channel" and "note"
 export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	private barStore: VibraphoneBarStore;
 	private channelSynth?: Sampler;
-	readonly channelPart = new ChannelPart(this.triggerStrike.bind(this));
+	readonly performanceChannel: ToneChannel<number>;
+	readonly programChannel: ToneChannel<number>;
 
-	constructor(barStore: VibraphoneBarStore) {
+	constructor(appStore: AppStore, barStore: VibraphoneBarStore) {
 		this.barStore = barStore;
+
+		const p = appStore.performance;
+		this.performanceChannel = new ToneChannel(
+			p.eventTimelines.performanceDrop.vibraphone[barStore.bar],
+			this.triggerStrike.bind(this)
+		);
+		this.programChannel = new ToneChannel(
+			p.program.dropEventTimelines.vibraphone[barStore.bar],
+			this.triggerStrike.bind(this)
+		);
 	}
 
 	onToneLoad(synth: Sampler) {

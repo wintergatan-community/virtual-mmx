@@ -25,14 +25,17 @@ export function mapValue(
 	return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 }
 
-export function insertInOrder<T>(item: T, arr: T[]) {
+export function insertInOrder<T>(item: T, index: number, arr: T[]) {
 	let i;
-	for (i = 0; i < arr.length && arr[i] < item; i++);
+	for (i = 0; i < arr.length && i < index; i++);
 	arr.splice(i, 0, item);
 }
-export function removeInOrder<T>(testFunc: (item: T) => boolean, arr: T[]) {
+export function removeInOrder<T>(
+	testFunc: (item: T, index: number) => boolean,
+	arr: T[]
+) {
 	let i;
-	for (i = 0; i < arr.length && !testFunc(arr[i]); i++);
+	for (i = 0; i < arr.length && !testFunc(arr[i], i); i++);
 	arr.splice(i, 1);
 }
 
@@ -181,7 +184,7 @@ const notesArray = [
 	"G9",
 ];
 
-type ObjectKey = string | number | symbol;
+export type ObjectKey = string | number | symbol;
 
 // Object.fromEntries doesn't play well with typescript normally
 export function fromEntries<Key extends ObjectKey, Value>(
@@ -200,6 +203,13 @@ export function mapToObject<Key extends ObjectKey, InValue, OutValue>(
 			func(key as Key, value as InValue),
 		])
 	);
+}
+
+export function mapArrayToObj<Key extends ObjectKey, Value>(
+	arr: Key[],
+	func: (element: Key) => Value
+) {
+	return fromEntries(arr.map((key) => [key, func(key)]));
 }
 
 export interface Point {

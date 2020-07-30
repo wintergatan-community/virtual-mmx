@@ -1,9 +1,9 @@
 import { MouseTracker } from "./MouseTracker";
 import { mapValue } from "../../core/helpers/functions";
-import { computed } from "mobx";
+import { computed, observable } from "mobx";
 
 export class BassDisplayStore {
-	movingFret = false;
+	@observable movingCapo = false;
 	mouseTracker = new MouseTracker();
 
 	viewWidth = 73;
@@ -24,9 +24,9 @@ export class BassDisplayStore {
 		return mapValue(pixel, this.pad, this.viewWidth - this.pad, 1, 4);
 	};
 	fretToPixel = (fret: number) => {
-		return mapValue(fret, 0, this.totalFrets, 0, this.viewHeight);
+		return (fret * this.viewHeight) / this.totalFrets;
 	};
 	pixelToFret = (pixel: number) => {
-		return mapValue(pixel, 0, this.viewHeight, 0, this.totalFrets);
+		return (pixel * this.totalFrets) / this.viewHeight;
 	};
 }

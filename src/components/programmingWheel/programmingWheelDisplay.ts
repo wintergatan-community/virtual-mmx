@@ -2,7 +2,7 @@ import { NoteSubdivision } from "../../core/helpers/types";
 import { observable, computed, action } from "mobx";
 import { range } from "../../core/helpers/functions";
 import { VmmxInstrumentChannel } from "../../core/playback/types";
-import { AppStore } from "../../stores/app";
+import { AppStore, EventTimeline } from "../../stores/app";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -26,15 +26,12 @@ export enum ChannelColor {
 /** A single VmmxInstrumentChannel with additional display related information. */
 export class DisplayChannel {
 	/** The vmmx instrument channel to display */
-	vmmxInstrumentChannel: VmmxInstrumentChannel;
+	timeline: EventTimeline<any>;
 	/** The color of this channel */
 	channelColor: ChannelColor;
 
-	constructor(
-		vmmxInstrumentChannel: VmmxInstrumentChannel,
-		channelColor: ChannelColor
-	) {
-		this.vmmxInstrumentChannel = vmmxInstrumentChannel;
+	constructor(timeline: EventTimeline<any>, channelColor: ChannelColor) {
+		this.timeline = timeline;
 		this.channelColor = channelColor;
 	}
 }
@@ -107,7 +104,7 @@ export class ProgrammingWheelDisplayStore
 	appStore: AppStore;
 
 	@computed get tpq() {
-		return this.appStore.program.metadata.tpq;
+		return this.appStore.performance.program.metadata.tpq;
 	}
 
 	constructor(appStore: AppStore) {
@@ -151,15 +148,15 @@ export class ProgrammingWheelDisplayStore
 	@observable showEmpties = false;
 	@computed get instrumentChannels() {
 		const channels: DisplayChannel[] = [];
-		const instruments = this.appStore.player.instruments;
+		const instruments = this.appStore.performance.program.dropEventTimelines;
 
-		for (const channel of Object.values(instruments.vibraphone.channels)) {
+		for (const channel of Object.values(instruments.vibraphone)) {
 			channels.push(new DisplayChannel(channel, ChannelColor.DARK));
 		}
-		for (const channel of Object.values(instruments.drums.channels)) {
+		for (const channel of Object.values(instruments.drums)) {
 			channels.push(new DisplayChannel(channel, ChannelColor.LIGHT));
 		}
-		for (const channel of Object.values(instruments.bass.channels)) {
+		for (const channel of Object.values(instruments.bass)) {
 			channels.push(new DisplayChannel(channel, ChannelColor.DARK));
 		}
 

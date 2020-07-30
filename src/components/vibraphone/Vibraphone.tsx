@@ -28,11 +28,11 @@ class Vibraphone_ extends AppComponent {
 							transform: `translateY(${this.height / 2}px)`,
 						}}
 					>
-						{Object.values(this.app.program.state.vibraphone.barStores).map(
-							(barStore) => (
-								<VibraphoneBar barStore={barStore} key={barStore.bar} />
-							)
-						)}
+						{Object.values(
+							this.app.performance.program.state.vibraphone.barStores
+						).map((barStore) => (
+							<VibraphoneBar barStore={barStore} key={barStore.bar} />
+						))}
 					</g>
 				</svg>
 			</Provider>

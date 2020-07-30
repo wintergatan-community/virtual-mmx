@@ -1,41 +1,48 @@
-import { BassString, BassDropEvent, TickedDropEvent } from "vmmx-schema";
+import { BassString } from "vmmx-schema";
 import { Sampler, Volume, Destination, PitchShift, context } from "tone";
 import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
-import { ChannelPart } from "../channelPart";
+import { ToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
 
-export class BassInstrument
-	implements VmmxInstrument<BassString, BassDropEvent> {
+export class BassInstrument implements VmmxInstrument<BassString> {
 	private bassStore: BassStore;
 	readonly channels: Record<BassString, BassStringChannel>;
 
-	constructor(bassStore: BassStore) {
+	constructor(appStore: AppStore, bassStore: BassStore) {
 		this.bassStore = bassStore;
 
 		this.channels = mapToObject(
 			this.bassStore.stringStores,
-			(_, stringStore) => new BassStringChannel(stringStore)
+			(_, stringStore) => new BassStringChannel(appStore, stringStore)
 		);
 	}
 
 	onToneLoad() {
 		Object.values(this.channels).forEach((c) => c.onToneLoad());
 	}
-
-	addNoteFromEvent(event: BassDropEvent & TickedDropEvent) {
-		this.channels[event.string].channelPart.add(event.tick);
-	}
 }
 
 export class BassStringChannel implements VmmxInstrumentChannel {
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
-	readonly channelPart = new ChannelPart(this.triggerStrike.bind(this));
+	readonly performanceChannel: ToneChannel<any>;
+	readonly programChannel: ToneChannel<any>;
 
-	constructor(stringStore: BassStringStore) {
+	constructor(appStore: AppStore, stringStore: BassStringStore) {
 		this.stringStore = stringStore;
+
+		const p = appStore.performance;
+		this.performanceChannel = new ToneChannel(
+			p.eventTimelines.performanceDrop.bass[stringStore.string],
+			this.triggerStrike.bind(this)
+		);
+		this.programChannel = new ToneChannel(
+			p.program.dropEventTimelines.bass[stringStore.string],
+			this.triggerStrike.bind(this)
+		);
 	}
 
 	onToneLoad() {

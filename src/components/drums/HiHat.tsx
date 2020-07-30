@@ -7,18 +7,18 @@ class HiHat_ extends DrumsComponent {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.hihatChannel.channelPart.runOnNote(this.animateHit);
+		this.hihatTimeline.addEventListener(this.animateHit);
 
 		this.pulse.friction = 0.6;
 		this.pulse.tension = 0.5;
 	}
 
-	@computed get hihatChannel() {
-		return this.app.player.instruments.drums.channels.hihat;
+	@computed get hihatTimeline() {
+		return this.app.performance.eventTimelines.performanceDrop.drums.hihat;
 	}
 
 	handlePress = () => {
-		this.hihatChannel.triggerStrike();
+		this.hihatTimeline.triggerEvent();
 		this.animateHit();
 	};
 

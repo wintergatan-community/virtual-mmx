@@ -2,20 +2,20 @@ import React from "react";
 import { Peg } from "./Peg";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { ChannelPart } from "../../core/playback/channelPart";
+import { EventTimeline } from "../../stores/app";
 
 interface ChannelPegsProps {
-	channel: ChannelPart;
+	timeline: EventTimeline<any>; // TODO not "any"?
 }
 
 class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
 	render() {
 		return (
 			<>
-				{this.props.channel.pegs.map((pegTick) => (
+				{this.props.timeline.events.map((_, pegTick) => (
 					<MaybeRenderedPeg
 						pegTick={pegTick}
-						channel={this.props.channel}
+						timeline={this.props.timeline}
 						key={pegTick}
 					/>
 				))}
@@ -28,7 +28,7 @@ export const ChannelPegs = WheelComponent.sync(ChannelPegs_);
 
 interface MaybeRenderedPegProps {
 	pegTick: number;
-	channel: ChannelPart;
+	timeline: EventTimeline<any>;
 }
 
 class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
@@ -39,7 +39,7 @@ class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
 		);
 	}
 	@action.bound removePeg() {
-		this.props.channel.remove(this.props.pegTick);
+		this.props.timeline.remove(this.props.pegTick);
 	}
 	@computed get activeDivision() {
 		return this.props.pegTick % this.wheel.ticksPerNoteSubdivision === 0;

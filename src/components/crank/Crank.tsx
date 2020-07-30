@@ -8,7 +8,7 @@ class Crank_ extends AppComponent {
 
 	@computed get y() {
 		const tick = this.app.player.currentTick;
-		const tpq = this.app.program.metadata.tpq;
+		const tpq = this.app.performance.program.metadata.tpq;
 		const rot = (tick / tpq) * 2 * Math.PI;
 
 		return 10 * Math.sin(rot);
@@ -58,7 +58,7 @@ class Crank_ extends AppComponent {
 						textAnchor="middle"
 						style={{ userSelect: "none" }}
 					>
-						{this.app.program.state.machine.bpm} BPM
+						{this.app.performance.program.state.machine.bpm} BPM
 					</text>
 				</g>
 			</svg>

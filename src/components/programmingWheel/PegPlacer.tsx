@@ -4,24 +4,23 @@ import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
 
 class PegPlacer_ extends WheelComponent {
-	@computed get channelPart() {
+	@computed get timeline() {
 		const channelNumber = this.wheel.gridSnappedMousePos?.mouseChannel;
 		if (channelNumber === undefined) return null;
-		return this.wheel.instrumentChannels[channelNumber].vmmxInstrumentChannel
-			.channelPart;
+		return this.wheel.instrumentChannels[channelNumber].timeline;
 	}
 	@computed get mouse() {
 		// TODO this doesn't seem right but MobX is being lame
 		return this.wheel.gridSnappedMousePos;
 	}
 	@computed get alreadyPlaced() {
-		if (!this.mouse || !this.channelPart) return true;
+		if (!this.mouse || !this.timeline) return true;
 		const m = this.mouse;
-		return this.channelPart.pegs.some((t) => t === m.mouseTick);
+		return this.timeline.events.some((_, t) => t === m.mouseTick);
 	}
 	@action.bound addPeg() {
 		if (!this.mouse) return;
-		this.channelPart?.add(this.mouse.mouseTick);
+		this.timeline?.add(this.mouse.mouseTick, true);
 	}
 	@computed get height() {
 		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);

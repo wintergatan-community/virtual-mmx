@@ -1,24 +1,26 @@
 import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
-import { ChannelPart } from "../channelPart";
 import { DrumsStore } from "../../../stores/drums";
 import { Sampler, context, Transport } from "tone";
+import { ToneChannel } from "../toneChannel";
+import { AppStore } from "../../../stores/app";
 
-type DrumTypeTOFIX = DrumType | "crash";
+export type DrumTypeTOFIX = DrumType | "crash";
 
-export class DrumsInstrument
-	implements VmmxInstrument<DrumTypeTOFIX, DrumDropEvent> {
+export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 	drumsStore: DrumsStore;
 
-	channels: Record<DrumTypeTOFIX, DrumsChannel> = {
-		bassdrum: new DrumsChannel("bassdrum"),
-		hihat: new DrumsChannel("hihat"),
-		snare: new DrumsChannel("snare"),
-		crash: new DrumsChannel("crash"),
-	};
+	channels: Record<DrumTypeTOFIX, DrumsChannel>;
 
-	constructor(drumsStore: DrumsStore) {
+	constructor(appStore: AppStore, drumsStore: DrumsStore) {
 		this.drumsStore = drumsStore;
+
+		this.channels = {
+			bassdrum: new DrumsChannel(appStore, "bassdrum"),
+			hihat: new DrumsChannel(appStore, "hihat"),
+			snare: new DrumsChannel(appStore, "snare"),
+			crash: new DrumsChannel(appStore, "crash"),
+		};
 	}
 
 	onToneLoad() {
@@ -26,19 +28,26 @@ export class DrumsInstrument
 			c.onToneLoad();
 		});
 	}
-
-	addNoteFromEvent(event: DrumDropEvent & TickedDropEvent) {
-		this.channels[event.drum].channelPart.add(event.tick);
-	}
 }
 
 class DrumsChannel implements VmmxInstrumentChannel {
-	channelPart = new ChannelPart(this.triggerStrike.bind(this));
+	performanceChannel: ToneChannel<any>;
+	programChannel: ToneChannel<any>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 
-	constructor(drum: DrumTypeTOFIX) {
+	constructor(appStore: AppStore, drum: DrumTypeTOFIX) {
 		this.drum = drum;
+
+		const p = appStore.performance;
+		this.performanceChannel = new ToneChannel(
+			p.eventTimelines.performanceDrop.drums[this.drum],
+			this.triggerStrike.bind(this)
+		);
+		this.programChannel = new ToneChannel(
+			p.program.dropEventTimelines.drums[this.drum],
+			this.triggerStrike.bind(this)
+		);
 	}
 
 	triggerStrike(time?: number) {

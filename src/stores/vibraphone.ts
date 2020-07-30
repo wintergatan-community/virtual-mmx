@@ -2,7 +2,7 @@ import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 import { AppStore } from "./app";
 import { observable, computed } from "mobx";
 import { vibraphoneBars } from "../core/playback/types";
-import { fromEntries } from "../core/helpers/functions";
+import { mapArrayToObj } from "../core/helpers/functions";
 
 export class VibraphoneStore implements VibraphoneState {
 	appStore: AppStore;
@@ -25,12 +25,12 @@ export class VibraphoneStore implements VibraphoneState {
 		11: "E6",
 	};
 
-	// TODO would be nice if this were prettier
 	@observable barStores: Record<
 		VibraphoneChannel,
 		VibraphoneBarStore
-	> = fromEntries(
-		vibraphoneBars.map((bar) => [bar, new VibraphoneBarStore(bar, this.notes)])
+	> = mapArrayToObj(
+		vibraphoneBars,
+		(bar) => new VibraphoneBarStore(bar, this.notes)
 	);
 
 	constructor(appStore: AppStore) {

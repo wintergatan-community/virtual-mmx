@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from "react";
 import { TransportControls } from "./transportControls/TransportContols";
-import { MockupLayout } from "./mockupLayout/MockupLayout";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { Bass } from "./bass/Bass";
@@ -12,6 +11,7 @@ import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
+import { TimeEditor } from "./timeEditor/TimeEditor";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
@@ -48,6 +48,7 @@ export class App extends Component {
 				{/* <Move x={860} y={460}>
 					<Spinny />
 				</Move> */}
+				<TimeEditor />
 			</Provider>
 		);
 	}

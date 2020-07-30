@@ -1,14 +1,12 @@
 import React from "react";
 import { ChannelPegs } from "./ChannelPegs";
 import { TranslateGrid } from "./TranslateGrid";
-import { VmmxInstrumentChannel } from "../../core/playback/types";
 import { computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { ChannelColor } from "./programmingWheelDisplay";
+import { ChannelColor, DisplayChannel } from "./programmingWheelDisplay";
 
 interface WheelChannelProps {
-	color: string;
-	channel: VmmxInstrumentChannel;
+	displayChannel: DisplayChannel;
 	channelNumber: number;
 	channelColor: ChannelColor;
 }
@@ -23,7 +21,6 @@ class WheelChannel_ extends WheelComponent<WheelChannelProps> {
 	}
 
 	render() {
-		console.log(this.props.channelColor);
 		return (
 			<TranslateGrid channel={this.props.channelNumber}>
 				<rect
@@ -32,7 +29,7 @@ class WheelChannel_ extends WheelComponent<WheelChannelProps> {
 					fill={this.props.channelColor}
 					stroke="rgb(47, 47, 47)"
 				/>
-				<ChannelPegs channel={this.props.channel.channelPart} />
+				<ChannelPegs timeline={this.props.displayChannel.timeline} />
 			</TranslateGrid>
 		);
 	}

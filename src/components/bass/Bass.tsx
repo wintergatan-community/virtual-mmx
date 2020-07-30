@@ -6,6 +6,9 @@ import { String } from "./String";
 import { AppComponent } from "../storeComponents";
 import { BassDisplayStore } from "./bassDisplay";
 import { FretFinger } from "./FretFinger";
+import { action, computed } from "mobx";
+import { BassString } from "vmmx-schema";
+import { BassStringStore } from "../../stores/bass";
 
 class Bass_ extends AppComponent {
 	bass = new BassDisplayStore();
@@ -21,6 +24,22 @@ class Bass_ extends AppComponent {
 			markings,
 		};
 	});
+
+	@computed get hoveredString(): BassStringStore | undefined {
+		if (!this.bass.mouseTracker.mousePos) return;
+		const percentX = this.bass.mouseTracker.mousePos.x / this.bass.viewWidth;
+		const hoveredStringNumber = Math.ceil(percentX * 4) as BassString;
+		return this.app.performance.program.state.bass.stringStores[
+			hoveredStringNumber
+		];
+	}
+
+	@action.bound handleWheel(e: React.WheelEvent<SVGSVGElement>) {
+		if (!this.hoveredString) return;
+		this.hoveredString.moveCapo(
+			this.hoveredString.capo + (e.deltaY > 0 ? 1 : -1)
+		);
+	}
 
 	componentDidMount() {
 		if (!this.fretBoardRef.current) return;
@@ -39,6 +58,7 @@ class Bass_ extends AppComponent {
 					ref={this.fretBoardRef}
 					onMouseMove={this.bass.mouseTracker.update}
 					onMouseLeave={this.bass.mouseTracker.leave}
+					onWheel={this.handleWheel}
 				>
 					<rect
 						rx={20}
@@ -50,11 +70,11 @@ class Bass_ extends AppComponent {
 					{this.fretDatas.map((fretData) => (
 						<Fret {...fretData} key={fretData.fret} />
 					))}
-					{Object.values(this.app.program.state.bass.stringStores).map(
-						(stringStore) => (
-							<String stringStore={stringStore} key={stringStore.string} />
-						)
-					)}
+					{Object.values(
+						this.app.performance.program.state.bass.stringStores
+					).map((stringStore) => (
+						<String stringStore={stringStore} key={stringStore.string} />
+					))}
 					<FretFinger />
 				</svg>
 			</Provider>

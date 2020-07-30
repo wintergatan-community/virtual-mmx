@@ -4,12 +4,15 @@ import { Capo } from "./Capo";
 import { bassStrings } from "../../core/playback/types";
 import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
+import { ForcePulse } from "../../core/helpers/pulse";
 
 interface StringProps {
 	stringStore: BassStringStore;
 }
 
 export class String_ extends BassComponent<StringProps> {
+	vibrate = new ForcePulse();
+
 	@computed get x() {
 		return this.bass.stringToPixel(this.props.stringStore.string);
 	}
@@ -23,18 +26,10 @@ export class String_ extends BassComponent<StringProps> {
 	}
 
 	@action.bound strum(e: React.MouseEvent<SVGLineElement, MouseEvent>) {
-		if (e.buttons === 1 && !this.plucked) {
+		if (e.buttons === 1) {
 			this.bassStringChannel.triggerStrike();
-			this.strike();
+			this.vibrate.applyCollision(1);
 		}
-	}
-	@observable plucked = false;
-
-	@action.bound endStrike() {
-		this.plucked = false;
-	}
-	@action.bound strike() {
-		this.plucked = true;
 	}
 
 	get bassStringChannel() {
@@ -52,10 +47,10 @@ export class String_ extends BassComponent<StringProps> {
 					y2={this.bass.viewHeight}
 					x1={0}
 					x2={0}
-					stroke="rgb(195, 195, 195)"
+					stroke={`rgb(${this.vibrate.x * 50}, ${this.vibrate.x * 50}, ${
+						this.vibrate.x * 50
+					})`}
 					strokeWidth={1.5}
-					className={this.plucked ? "bassPlucked" : ""}
-					onAnimationEnd={this.endStrike}
 				/>
 				<line
 					// strum hit box
@@ -63,11 +58,9 @@ export class String_ extends BassComponent<StringProps> {
 					y2={this.bass.viewHeight}
 					x1={0}
 					x2={0}
-					stroke="#0004"
+					stroke="#0000"
 					strokeWidth={6}
 					onMouseEnter={this.strum}
-					onClick={() => console.log(2)}
-					style={{ pointerEvents: "all" }}
 				/>
 				<Capo stringStore={this.props.stringStore} />
 			</g>

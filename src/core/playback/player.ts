@@ -10,7 +10,7 @@ export class VmmxPlayer {
 	appStore: AppStore;
 
 	@observable running = false;
-	@observable currentTick = 0;
+	@observable currentTick = 0; // TODO cant i just make this computed?
 	@observable toneLoaded = false;
 
 	instruments: {
@@ -22,14 +22,16 @@ export class VmmxPlayer {
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
 
+		const state = this.program.state;
 		this.instruments = {
-			vibraphone: new VibraphoneInstrument(this.program.state.vibraphone),
-			bass: new BassInstrument(this.program.state.bass),
-			drums: new DrumsInstrument(this.program.state.drums),
+			vibraphone: new VibraphoneInstrument(appStore, state.vibraphone),
+			bass: new BassInstrument(appStore, state.bass),
+			drums: new DrumsInstrument(appStore, state.drums),
 		};
 
 		this.updateCurrentTickLoop();
 
+		// TODO gotta remove with dynamic bpm
 		autorun(() => {
 			Transport.bpm.value = this.program.state.machine.bpm;
 		});
@@ -50,25 +52,13 @@ export class VmmxPlayer {
 	}
 
 	@computed get program() {
-		return this.appStore.program;
+		return this.appStore.performance.program;
 	}
 
 	@action.bound updateCurrentTickLoop() {
 		requestAnimationFrame(this.updateCurrentTickLoop);
 		this.currentTick = Transport.ticks;
 		// TODO disposer?
-	}
-
-	@action loadEvents(dropEvents: TickedDropEvent[]) {
-		dropEvents.forEach((event) => {
-			// TODO schema should use "drums" instead of "drum"
-			const kind: "bass" | "drums" | "vibraphone" =
-				event.kind === "drum" ? "drums" : event.kind;
-
-			const instrument = this.instruments[kind];
-
-			instrument.addNoteFromEvent(event as any); // TODO do typescript better
-		});
 	}
 
 	@action play() {

@@ -20,7 +20,6 @@ class Capo_ extends BassComponent<CapoProps> {
 			(data.y / this.bass.viewHeight) * this.bass.totalFrets
 		);
 		if (this.capo === fret) return;
-		// console.log(this.props.string + ": " + fret);
 		this.props.stringStore.moveCapo(fret);
 	}
 
@@ -29,6 +28,7 @@ class Capo_ extends BassComponent<CapoProps> {
 			<Draggable
 				axis="y"
 				defaultPosition={{ x: 0, y: 0 }}
+				position={{ x: 0, y: this.bass.fretToPixel(this.capo) }}
 				// grid={[0, x]}
 				bounds={{
 					top: 0,

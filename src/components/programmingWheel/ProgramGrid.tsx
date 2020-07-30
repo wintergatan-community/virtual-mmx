@@ -37,7 +37,7 @@ class WheelChannels_ extends WheelComponent {
 				{this.wheel.instrumentChannels.map((channel, channelNumber) => {
 					return (
 						<WheelChannel
-							channel={channel.vmmxInstrumentChannel}
+							displayChannel={channel}
 							channelNumber={channelNumber}
 							key={channelNumber}
 							channelColor={channel.channelColor}

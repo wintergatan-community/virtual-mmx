@@ -7,17 +7,17 @@ class Crash_ extends DrumsComponent {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.crashChannel.channelPart.runOnNote(this.animateHit);
+		this.crashTimeline.addEventListener(this.animateHit);
 
 		this.pulse.tension = 1;
 	}
 
-	@computed get crashChannel() {
-		return this.app.player.instruments.drums.channels.crash;
+	@computed get crashTimeline() {
+		return this.app.performance.eventTimelines.performanceDrop.drums.crash;
 	}
 
 	handlePress = () => {
-		this.crashChannel.triggerStrike();
+		this.crashTimeline.triggerEvent();
 		this.animateHit();
 	};
 

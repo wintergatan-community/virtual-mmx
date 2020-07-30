@@ -3,7 +3,6 @@ import { mapValue } from "../../core/helpers/functions";
 import { TranslateGrid } from "./TranslateGrid";
 import { runInAction, computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import "./Peg.css";
 
 interface PegProps {
 	pegTick: number;
@@ -26,7 +25,6 @@ class Peg_ extends WheelComponent<PegProps> {
 		const end = this.wheel.channelToPixel(1) - this.w;
 		return mapValue(offset, 0, 1, 0, end);
 	}
-	playing = false;
 
 	render() {
 		return (
@@ -38,8 +36,6 @@ class Peg_ extends WheelComponent<PegProps> {
 					x={this.shift}
 					rx={3}
 					onClick={this.props.click}
-					className={this.playing ? "pegPlaying" : ""}
-					onAnimationEnd={() => runInAction(() => (this.playing = false))}
 				/>
 			</TranslateGrid>
 		);

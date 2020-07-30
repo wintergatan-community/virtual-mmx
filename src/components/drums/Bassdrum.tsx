@@ -7,19 +7,18 @@ class Bassdrum_ extends DrumsComponent {
 	pulse = new ForcePulse();
 
 	componentDidMount() {
-		this.bassdrumChannel.channelPart.runOnNote(this.animateHit);
+		this.bassdrumTimelines.addJointEventListener(this.animateHit);
 
 		this.pulse.friction = 0.6;
 		this.pulse.tension = 0.5;
 	}
 
-	@computed get bassdrumChannel() {
-		return this.app.player.instruments.drums.channels.bassdrum;
+	@computed get bassdrumTimelines() {
+		return this.app.jointTimelines.drums.bassdrum;
 	}
 
 	handlePress = () => {
-		this.bassdrumChannel.triggerStrike();
-		this.animateHit();
+		this.bassdrumTimelines.performance.triggerEvent();
 	};
 
 	@action.bound animateHit() {
