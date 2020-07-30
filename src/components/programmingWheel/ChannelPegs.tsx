@@ -2,21 +2,21 @@ import React from "react";
 import { Peg } from "./Peg";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { EventTimeline } from "../../stores/app";
+import { EventTimeline, VibraphoneBakedData } from "../../stores/app";
 
 interface ChannelPegsProps {
-	timeline: EventTimeline<any>; // TODO not "any"?
+	timeline: EventTimeline<VibraphoneBakedData>; // TODO not "any"?
 }
 
 class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
 	render() {
 		return (
 			<>
-				{this.props.timeline.events.map((_, pegTick) => (
+				{this.props.timeline.events.map((peg) => (
 					<MaybeRenderedPeg
-						pegTick={pegTick}
+						pegTick={peg.tick}
 						timeline={this.props.timeline}
-						key={pegTick}
+						key={peg.tick}
 					/>
 				))}
 			</>

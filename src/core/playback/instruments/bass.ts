@@ -5,7 +5,7 @@ import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
 import { ToneChannel } from "../toneChannel";
-import { AppStore } from "../../../stores/app";
+import { AppStore, BassBakedData } from "../../../stores/app";
 
 export class BassInstrument implements VmmxInstrument<BassString> {
 	private bassStore: BassStore;
@@ -28,8 +28,8 @@ export class BassInstrument implements VmmxInstrument<BassString> {
 export class BassStringChannel implements VmmxInstrumentChannel {
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
-	readonly performanceChannel: ToneChannel<any>;
-	readonly programChannel: ToneChannel<any>;
+	readonly performanceChannel: ToneChannel<BassBakedData>;
+	readonly programChannel: ToneChannel<BassBakedData>;
 
 	constructor(appStore: AppStore, stringStore: BassStringStore) {
 		this.stringStore = stringStore;

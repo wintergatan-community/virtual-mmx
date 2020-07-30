@@ -1,7 +1,7 @@
 import React from "react";
 import { mapValue } from "../../core/helpers/functions";
 import { TranslateGrid } from "./TranslateGrid";
-import { runInAction, computed } from "mobx";
+import { computed } from "mobx";
 import { WheelComponent } from "../storeComponents";
 
 interface PegProps {

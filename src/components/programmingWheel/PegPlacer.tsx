@@ -20,7 +20,7 @@ class PegPlacer_ extends WheelComponent {
 	}
 	@action.bound addPeg() {
 		if (!this.mouse) return;
-		this.timeline?.add(this.mouse.mouseTick, true);
+		this.timeline?.add({ tick: this.mouse.mouseTick });
 	}
 	@computed get height() {
 		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);

@@ -3,7 +3,7 @@ import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { DrumsStore } from "../../../stores/drums";
 import { Sampler, context, Transport } from "tone";
 import { ToneChannel } from "../toneChannel";
-import { AppStore } from "../../../stores/app";
+import { AppStore, DrumsBakedData } from "../../../stores/app";
 
 export type DrumTypeTOFIX = DrumType | "crash";
 
@@ -31,8 +31,8 @@ export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 }
 
 class DrumsChannel implements VmmxInstrumentChannel {
-	performanceChannel: ToneChannel<any>;
-	programChannel: ToneChannel<any>;
+	performanceChannel: ToneChannel<DrumsBakedData>;
+	programChannel: ToneChannel<DrumsBakedData>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 

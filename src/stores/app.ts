@@ -13,6 +13,7 @@ import {
 	BassDropEvent,
 	DrumDropEvent,
 	VibraphoneDropEvent,
+	CoreDropEvent,
 } from "vmmx-schema";
 import { VmmxPlayer } from "../core/playback/player";
 import { BassStore } from "./bass";
@@ -28,7 +29,7 @@ import {
 import { bassStrings, drumTypes, vibraphoneBars } from "../core/playback/types";
 import { DrumTypeTOFIX } from "../core/playback/instruments/drums";
 
-class JointTimeline<EventData> {
+class JointTimeline<EventData extends CoreDropEvent> {
 	program: EventTimeline<EventData>;
 	performance: EventTimeline<EventData>;
 
@@ -118,20 +119,26 @@ class PerformanceStore implements Performance {
 			),
 		},
 		machine: {
-			channelMute: mapToEventTimelines<ChannelGroupTOFIX, boolean>(
-				channelGroups
-			),
+			channelMute: mapToEventTimelines<
+				ChannelGroupTOFIX,
+				{ tick: number; mute: boolean }
+			>(channelGroups),
 		},
 		vibraphone: {
-			vibratoEnabled: new EventTimeline<boolean>(),
-			vibratoSpeed: new EventTimeline<number>(),
+			vibratoEnabled: new EventTimeline<{
+				tick: number;
+				enableVibrato: boolean;
+			}>(),
+			vibratoSpeed: new EventTimeline<{ tick: number; speed: number }>(),
 		},
 		hihatMachine: undefined, // TODO not sure what to do with this yet
 		hihat: {
-			closed: new EventTimeline<boolean>(),
+			closed: new EventTimeline<{ tick: number; closed: boolean }>(),
 		},
 		bass: {
-			capo: mapToEventTimelines<BassString, number>(bassStrings),
+			capo: mapToEventTimelines<BassString, { tick: number; moveCapo: number }>(
+				bassStrings
+			),
 		},
 	};
 
@@ -140,22 +147,24 @@ class PerformanceStore implements Performance {
 	}
 }
 
-function mapToEventTimelines<Key extends ObjectKey, E>(arr: Key[]) {
+function mapToEventTimelines<Key extends ObjectKey, E extends CoreDropEvent>(
+	arr: Key[]
+) {
 	return mapArrayToObj(arr, () => new EventTimeline<E>());
 }
 
 type Listener<E> = (tick?: number, event?: E) => void;
 
-export class EventTimeline<E /* extends Event*/> {
+export class EventTimeline<E extends CoreDropEvent /* extends Event*/> {
 	events: E[] = [];
 	eventListeners: Listener<E>[] = [];
 	eventTickListeners: Record<number, Listener<E>[]> = [];
 	addEventListeners: Listener<E>[] = [];
 	removeEventListeners: ((tick: number) => void)[] = [];
 
-	add(tick: number, event: E) {
-		insertInOrder(event, tick, this.events);
-		this.addEventListeners.forEach((l) => l(tick, event));
+	add(event: E) {
+		insertInOrder(event, event.tick, this.events);
+		this.addEventListeners.forEach((l) => l(event.tick, event));
 	}
 	remove(tick: number) {
 		removeInOrder((_, searchTick) => searchTick === tick, this.events);
@@ -170,6 +179,7 @@ export class EventTimeline<E /* extends Event*/> {
 	}
 
 	triggerEvent(tick?: number) {
+		console.log(tick);
 		if (tick === undefined) {
 			this.eventListeners.forEach((l) => l(tick));
 		} else {
@@ -188,13 +198,17 @@ export class EventTimeline<E /* extends Event*/> {
 	}
 }
 
-interface BassBakedData {
+export interface BassBakedData {
 	fret?: number;
+	tick: number;
 }
-interface DrumsBakedData {
+export interface DrumsBakedData {
 	closeHat?: boolean;
+	tick: number;
 }
-type VibraphoneBakedData = true;
+export interface VibraphoneBakedData {
+	tick: number;
+}
 
 // TODO can't implement Program until confusing change is done in schema
 export class ProgramStore implements Program {
@@ -220,6 +234,7 @@ export class ProgramStore implements Program {
 	}
 
 	loadProgram(program: Program) {
+		// TODO this needs to be fixed up
 		program.dropEvents.forEach((event) => {
 			// TODO schema should use "drums" instead of "drum"
 			const kind: "bass" | "drums" | "vibraphone" =
@@ -227,16 +242,17 @@ export class ProgramStore implements Program {
 
 			if (kind == "bass") {
 				const e = event as BassDropEvent;
-				this.dropEventTimelines[kind][e.string].add(event.tick, {
+				this.dropEventTimelines[kind][e.string].add({
 					fret: e.fret,
+					tick: event.tick,
 				});
 			} else if (kind == "drums") {
 				const e = event as DrumDropEvent;
-				this.dropEventTimelines[kind][e.drum].add(event.tick, {}); // TODO need something for open hat
+				this.dropEventTimelines[kind][e.drum].add({ tick: event.tick }); // TODO need something for open hat
 			} else if (kind == "vibraphone") {
 				const e = event as VibraphoneDropEvent;
 				// TODO schema "channel" should be called "bar"
-				this.dropEventTimelines[kind][e.channel].add(event.tick, true);
+				this.dropEventTimelines[kind][e.channel].add({ tick: event.tick });
 			}
 		});
 
