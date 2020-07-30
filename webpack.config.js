@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
     // webpack will take the files from ./src/index
     entry: './src/index',
@@ -8,7 +10,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.[hash].js',
-        publicPath: '/'
+        publicPath: './'
     },
 
     devServer:{
@@ -79,8 +81,16 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
-            inject: true,
-
+            inject: true
         }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'public/samples', to: 'samples' },
+                { from: 'public/favicon.ico', to: 'favicon.ico'},
+                { from: 'public/manifest.json', to: 'manifest.json'},
+                { from: 'public/robots.txt', to: 'robots.txt'},
+                { from: 'public/*.png', to: '/'}
+            ]
+        })
     ],
 };
