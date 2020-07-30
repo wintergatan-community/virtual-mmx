@@ -10,13 +10,12 @@ class PegPlacer_ extends WheelComponent {
 		return this.wheel.instrumentChannels[channelNumber].timeline;
 	}
 	@computed get mouse() {
-		// TODO this doesn't seem right but MobX is being lame
 		return this.wheel.gridSnappedMousePos;
 	}
 	@computed get alreadyPlaced() {
 		if (!this.mouse || !this.timeline) return true;
 		const m = this.mouse;
-		return this.timeline.events.some((_, t) => t === m.mouseTick);
+		return this.timeline.events.some((e) => e.tick === m.mouseTick);
 	}
 	@action.bound addPeg() {
 		if (!this.mouse) return;

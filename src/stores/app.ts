@@ -29,7 +29,7 @@ import {
 import { bassStrings, drumTypes, vibraphoneBars } from "../core/playback/types";
 import { DrumTypeTOFIX } from "../core/playback/instruments/drums";
 
-class JointTimeline<EventData extends CoreDropEvent> {
+export class JointEventTimeline<EventData extends CoreDropEvent> {
 	program: EventTimeline<EventData>;
 	performance: EventTimeline<EventData>;
 
@@ -49,13 +49,13 @@ class JointTimeline<EventData extends CoreDropEvent> {
 
 export class AppStore {
 	performance = new PerformanceStore(this);
-	player = new VmmxPlayer(this);
+
 	jointTimelines = {
 		// TODO cant figure out how to let TypeScript let me do this better
 		bass: mapArrayToObj(
 			bassStrings,
 			(bassString) =>
-				new JointTimeline({
+				new JointEventTimeline({
 					program: this.prog.bass[bassString],
 					performance: this.perf.bass[bassString],
 				})
@@ -63,7 +63,7 @@ export class AppStore {
 		drums: mapArrayToObj(
 			drumTypes,
 			(drumType) =>
-				new JointTimeline({
+				new JointEventTimeline({
 					program: this.prog.drums[drumType],
 					performance: this.perf.drums[drumType],
 				})
@@ -71,12 +71,14 @@ export class AppStore {
 		vibraphone: mapArrayToObj(
 			vibraphoneBars,
 			(vibraphoneBar) =>
-				new JointTimeline({
+				new JointEventTimeline({
 					program: this.prog.vibraphone[vibraphoneBar],
 					performance: this.perf.vibraphone[vibraphoneBar],
 				})
 		),
 	};
+
+	player = new VmmxPlayer(this);
 
 	loadProgram(program: Program) {
 		this.performance.program.loadProgram(program);
@@ -153,39 +155,40 @@ function mapToEventTimelines<Key extends ObjectKey, E extends CoreDropEvent>(
 	return mapArrayToObj(arr, () => new EventTimeline<E>());
 }
 
-type Listener<E> = (tick?: number, event?: E) => void;
+type Listener<EventData> = (event?: EventData, time?: number) => void;
 
 export class EventTimeline<E extends CoreDropEvent /* extends Event*/> {
-	events: E[] = [];
+	@observable events: E[] = [];
 	eventListeners: Listener<E>[] = [];
 	eventTickListeners: Record<number, Listener<E>[]> = [];
 	addEventListeners: Listener<E>[] = [];
-	removeEventListeners: ((tick: number) => void)[] = [];
+	removeEventListeners: Listener<E>[] = [];
 
 	add(event: E) {
 		insertInOrder(event, event.tick, this.events);
-		this.addEventListeners.forEach((l) => l(event.tick, event));
+		this.addEventListeners.forEach((l) => l(event));
 	}
 	remove(tick: number) {
-		removeInOrder((_, searchTick) => searchTick === tick, this.events);
-		this.removeEventListeners.forEach((l) => l(tick));
+		const event = removeInOrder((event) => event.tick === tick, this.events);
+		this.removeEventListeners.forEach((l) => l(event));
 	}
 
 	onAdd(listener: Listener<E>) {
 		this.addEventListeners.push(listener);
 	}
-	onRemove(listener: (tick: number) => void) {
+	onRemove(listener: Listener<E>) {
 		this.removeEventListeners.push(listener);
 	}
 
-	triggerEvent(tick?: number) {
-		console.log(tick);
-		if (tick === undefined) {
-			this.eventListeners.forEach((l) => l(tick));
+	triggerEvent(event?: E, time?: number) {
+		if (event === undefined) {
+			this.eventListeners.forEach((l) => l(undefined, time));
 		} else {
-			const event = this.events[tick];
-			this.eventListeners.forEach((l) => l(tick, event));
-			this.eventTickListeners[tick].forEach((l) => l(tick, event));
+			const tick = event.tick;
+			this.eventListeners.forEach((l) => l(event, time));
+			if (this.eventTickListeners[tick]) {
+				this.eventTickListeners[tick].forEach((l) => l(event, time));
+			}
 		}
 	}
 
@@ -193,6 +196,7 @@ export class EventTimeline<E extends CoreDropEvent /* extends Event*/> {
 		if (tick == undefined) {
 			this.eventListeners.push(listener);
 		} else {
+			this.eventTickListeners[tick] = this.eventTickListeners[tick] ?? [];
 			this.eventTickListeners[tick].push(listener);
 		}
 	}

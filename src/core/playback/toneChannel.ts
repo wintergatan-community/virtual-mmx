@@ -1,5 +1,5 @@
-import { Part, Ticks } from "tone";
-import { EventTimeline } from "../../stores/app";
+import { Part } from "tone";
+import { EventTimeline, JointEventTimeline } from "../../stores/app";
 import { CoreDropEvent } from "vmmx-schema";
 
 const partOptions = {
@@ -14,15 +14,28 @@ export class ToneChannel<EventData extends CoreDropEvent> {
 
 	constructor(
 		timeline: EventTimeline<EventData>,
-		triggerStrike: (tick?: number) => void
+		triggerStrike: (time?: number) => void
 	) {
-		timeline.onAdd((tick) => this.tonePart.add(tick + "i"));
-		timeline.onRemove((tick) => this.tonePart.remove(tick + "i"));
-		this.tonePart.callback = (time) => {
-			timeline.triggerEvent(time);
+		timeline.onAdd((event) => this.tonePart.add(event?.tick + "i", event));
+		timeline.onRemove((event) => this.tonePart.remove(event?.tick + "i"));
+		this.tonePart.callback = (time, event) => {
+			timeline.triggerEvent(event, time);
 		};
-		timeline.addEventListener(triggerStrike);
+		timeline.addEventListener((_, time) => triggerStrike(time));
 
 		this.tonePart.start();
+	}
+}
+
+export class JointToneChannel<EventData extends CoreDropEvent> {
+	program: ToneChannel<EventData>;
+	performance: ToneChannel<EventData>;
+
+	constructor(
+		timelines: JointEventTimeline<EventData>,
+		triggerStrike: (time?: number) => void
+	) {
+		this.program = new ToneChannel(timelines.program, triggerStrike);
+		this.performance = new ToneChannel(timelines.performance, triggerStrike);
 	}
 }

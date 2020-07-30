@@ -4,7 +4,7 @@ import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
-import { ToneChannel } from "../toneChannel";
+import { ToneChannel, JointToneChannel } from "../toneChannel";
 import { AppStore, BassBakedData } from "../../../stores/app";
 
 export class BassInstrument implements VmmxInstrument<BassString> {
@@ -28,19 +28,13 @@ export class BassInstrument implements VmmxInstrument<BassString> {
 export class BassStringChannel implements VmmxInstrumentChannel {
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
-	readonly performanceChannel: ToneChannel<BassBakedData>;
-	readonly programChannel: ToneChannel<BassBakedData>;
+	readonly toneChannels: JointToneChannel<BassBakedData>;
 
 	constructor(appStore: AppStore, stringStore: BassStringStore) {
 		this.stringStore = stringStore;
 
-		const p = appStore.performance;
-		this.performanceChannel = new ToneChannel(
-			p.eventTimelines.performanceDrop.bass[stringStore.string],
-			this.triggerStrike.bind(this)
-		);
-		this.programChannel = new ToneChannel(
-			p.program.dropEventTimelines.bass[stringStore.string],
+		this.toneChannels = new JointToneChannel(
+			appStore.jointTimelines.bass[stringStore.string],
 			this.triggerStrike.bind(this)
 		);
 	}

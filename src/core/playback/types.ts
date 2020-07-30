@@ -1,16 +1,14 @@
-import { VibraphoneChannel, BassString, DrumType } from "vmmx-schema";
-import { ToneChannel } from "./toneChannel";
+import { VibraphoneChannel, BassString } from "vmmx-schema";
+import { JointToneChannel } from "./toneChannel";
 import { DrumTypeTOFIX } from "./instruments/drums";
 
 export interface VmmxInstrument<ChannelType extends string | number | symbol> {
 	channels: Record<ChannelType, VmmxInstrumentChannel>;
-	// addNoteFromEvent(event: DropEventKind & TickedDropEvent): void;
 	onToneLoad(): void; // preferably async, but get "Uncaught ReferenceError: regeneratorRuntime is not defined"
 }
 
 export interface VmmxInstrumentChannel {
-	performanceChannel: ToneChannel<any>; // TODO maybe not "any", not sure yet
-	programChannel: ToneChannel<any>;
+	toneChannels: JointToneChannel<any>; // TODO maybe not "any", not sure yet
 	triggerStrike(time?: number): void;
 }
 

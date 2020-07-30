@@ -7,7 +7,7 @@ import {
 	VibraphoneBarStore,
 } from "../../../stores/vibraphone";
 import { VibraphoneChannel } from "vmmx-schema";
-import { ToneChannel } from "../toneChannel";
+import { ToneChannel, JointToneChannel } from "../toneChannel";
 import { AppStore, VibraphoneBakedData } from "../../../stores/app";
 
 export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
@@ -43,19 +43,13 @@ export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	private barStore: VibraphoneBarStore;
 	private channelSynth?: Sampler;
-	readonly performanceChannel: ToneChannel<VibraphoneBakedData>;
-	readonly programChannel: ToneChannel<VibraphoneBakedData>;
+	readonly toneChannels: JointToneChannel<VibraphoneBakedData>;
 
 	constructor(appStore: AppStore, barStore: VibraphoneBarStore) {
 		this.barStore = barStore;
 
-		const p = appStore.performance;
-		this.performanceChannel = new ToneChannel(
-			p.eventTimelines.performanceDrop.vibraphone[barStore.bar],
-			this.triggerStrike.bind(this)
-		);
-		this.programChannel = new ToneChannel(
-			p.program.dropEventTimelines.vibraphone[barStore.bar],
+		this.toneChannels = new JointToneChannel(
+			appStore.jointTimelines.vibraphone[barStore.bar],
 			this.triggerStrike.bind(this)
 		);
 	}

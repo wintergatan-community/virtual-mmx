@@ -36,7 +36,7 @@ export function removeInOrder<T>(
 ) {
 	let i;
 	for (i = 0; i < arr.length && !testFunc(arr[i], i); i++);
-	arr.splice(i, 1);
+	return arr.splice(i, 1)[0];
 }
 
 export function arrToPolyLine(points: number[][]) {

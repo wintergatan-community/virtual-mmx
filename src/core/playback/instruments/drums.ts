@@ -2,7 +2,7 @@ import { DrumDropEvent, TickedDropEvent, DrumType } from "vmmx-schema";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { DrumsStore } from "../../../stores/drums";
 import { Sampler, context, Transport } from "tone";
-import { ToneChannel } from "../toneChannel";
+import { ToneChannel, JointToneChannel } from "../toneChannel";
 import { AppStore, DrumsBakedData } from "../../../stores/app";
 
 export type DrumTypeTOFIX = DrumType | "crash";
@@ -31,21 +31,15 @@ export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 }
 
 class DrumsChannel implements VmmxInstrumentChannel {
-	performanceChannel: ToneChannel<DrumsBakedData>;
-	programChannel: ToneChannel<DrumsBakedData>;
+	toneChannels: JointToneChannel<DrumsBakedData>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 
 	constructor(appStore: AppStore, drum: DrumTypeTOFIX) {
 		this.drum = drum;
 
-		const p = appStore.performance;
-		this.performanceChannel = new ToneChannel(
-			p.eventTimelines.performanceDrop.drums[this.drum],
-			this.triggerStrike.bind(this)
-		);
-		this.programChannel = new ToneChannel(
-			p.program.dropEventTimelines.drums[this.drum],
+		this.toneChannels = new JointToneChannel(
+			appStore.jointTimelines.drums[drum],
 			this.triggerStrike.bind(this)
 		);
 	}
