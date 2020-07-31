@@ -3,17 +3,19 @@ import { noteToVibraphoneLength } from "../../core/helpers/functions";
 import { computed, action } from "mobx";
 import { VibraphoneComponent } from "../storeComponents";
 import { VibraphoneBarStore } from "../../stores/vibraphone";
-import { ForcePulse } from "../../core/helpers/pulse";
+import { SpringPulse } from "../../core/helpers/springPulse";
 
 interface VibraphoneBarProps {
 	barStore: VibraphoneBarStore;
 }
 
 class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
-	pulse = new ForcePulse();
+	pulse = new SpringPulse();
 
 	componentDidMount() {
 		this.vibraphoneTimelines.addJointEventListener(this.animateHit);
+		this.pulse.damping = 8;
+		this.pulse.stiffness = 100;
 		// TODO disposer?
 	}
 	@computed get vibraphoneTimelines() {
@@ -23,7 +25,7 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 		return this.vibra.noteWidth * (this.props.barStore.bar - 1);
 	}
 	@computed get y() {
-		return -this.height / 2 + this.pulse.x;
+		return -this.height / 2 + this.pulse.value;
 	}
 	@computed get height() {
 		return noteToVibraphoneLength(this.props.barStore.note);
@@ -37,7 +39,7 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 	};
 
 	@action.bound animateHit() {
-		this.pulse.applyCollision(3);
+		this.pulse.applyCollision(90);
 	}
 
 	render() {
@@ -46,7 +48,7 @@ class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
 				transform={`translate(${this.x}, ${this.y})`}
 				onMouseDown={this.handlePress}
 				onMouseEnter={this.handlePress}
-				y={this.pulse.x}
+				y={this.pulse.value}
 			>
 				<rect
 					width={this.vibra.noteWidthPadded}

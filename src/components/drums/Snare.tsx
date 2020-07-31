@@ -1,16 +1,16 @@
 import React from "react";
 import { DrumsComponent } from "../storeComponents";
-import { ForcePulse } from "../../core/helpers/pulse";
+import { SpringPulse } from "../../core/helpers/springPulse";
 import { computed, action } from "mobx";
 
 class Snare_ extends DrumsComponent {
-	pulse = new ForcePulse();
+	pulse = new SpringPulse();
 
 	componentDidMount() {
 		this.snareTimelines.addJointEventListener(this.animateHit);
 
-		this.pulse.friction = 0.6;
-		this.pulse.tension = 0.5;
+		this.pulse.damping = 20;
+		this.pulse.stiffness = 300;
 	}
 
 	@computed get snareTimelines() {
@@ -23,14 +23,14 @@ class Snare_ extends DrumsComponent {
 	};
 
 	@action.bound animateHit() {
-		this.pulse.applyCollision(0.1);
+		this.pulse.applyCollision(1);
 	}
 
 	render() {
 		return (
 			<g
 				style={{
-					transform: `translate(53px, 57px) scale(${this.pulse.x + 1})`,
+					transform: `translate(53px, 57px) scale(${this.pulse.value + 1})`,
 				}}
 				onMouseDown={this.handlePress}
 			>

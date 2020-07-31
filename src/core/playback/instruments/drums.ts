@@ -47,7 +47,7 @@ class DrumsChannel implements VmmxInstrumentChannel {
 	triggerStrike(time?: number) {
 		if (
 			this.drumSynth?.loaded &&
-			this.appStore.performance.program.state.machine.mute[this.drum]
+			!this.appStore.performance.program.state.machine.mute[this.drum]
 		) {
 			this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
 		}

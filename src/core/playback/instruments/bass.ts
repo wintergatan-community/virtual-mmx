@@ -81,7 +81,7 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 	triggerStrike(time?: number) {
 		if (
 			this.bassSynth?.loaded &&
-			this.appStore.performance.program.state.machine.mute.bass
+			!this.appStore.performance.program.state.machine.mute.bass
 		) {
 			this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}

@@ -4,14 +4,14 @@ import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
-import { Provider } from "mobx-react";
+import { Provider, observer } from "mobx-react";
 import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
 import { ToneIndicator } from "./ToneIndicator";
 import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
-// import { TimeEditor } from "./timeEditor/TimeEditor";
+import { TimeEditor } from "./timeEditor/TimeEditor";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);

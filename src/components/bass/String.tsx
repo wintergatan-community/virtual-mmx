@@ -3,7 +3,7 @@ import { computed, action } from "mobx";
 import { Capo } from "./Capo";
 import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
-import { ForcePulse } from "../../core/helpers/pulse";
+import { SpringPulse } from "../../core/helpers/springPulse";
 import { bassStrings } from "../../toFutureSchema";
 
 interface StringProps {
@@ -11,7 +11,7 @@ interface StringProps {
 }
 
 export class String_ extends BassComponent<StringProps> {
-	vibrate = new ForcePulse();
+	vibrate = new SpringPulse();
 
 	@computed get x() {
 		return this.bass.stringToPixel(this.props.stringStore.string);
@@ -45,9 +45,9 @@ export class String_ extends BassComponent<StringProps> {
 					y2={this.bass.viewHeight}
 					x1={0}
 					x2={0}
-					stroke={`rgb(${this.vibrate.x * 50}, ${this.vibrate.x * 50}, ${
-						this.vibrate.x * 50
-					})`}
+					stroke={`rgb(${this.vibrate.value * 50}, ${
+						this.vibrate.value * 50
+					}, ${this.vibrate.value * 50})`}
 					strokeWidth={1.5}
 				/>
 				<line

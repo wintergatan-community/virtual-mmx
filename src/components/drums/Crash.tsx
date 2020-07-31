@@ -1,15 +1,15 @@
 import React from "react";
 import { DrumsComponent } from "../storeComponents";
-import { ForcePulse } from "../../core/helpers/pulse";
+import { SpringPulse } from "../../core/helpers/springPulse";
 import { computed, action } from "mobx";
 
 class Crash_ extends DrumsComponent {
-	pulse = new ForcePulse();
+	pulse = new SpringPulse();
 
 	componentDidMount() {
 		this.crashTimelines.addJointEventListener(this.animateHit);
-
-		this.pulse.tension = 1;
+		this.pulse.damping = 15;
+		this.pulse.stiffness = 500;
 	}
 
 	@computed get crashTimelines() {
@@ -22,14 +22,14 @@ class Crash_ extends DrumsComponent {
 	};
 
 	@action.bound animateHit() {
-		this.pulse.applyCollision(4);
+		this.pulse.applyCollision(120);
 	}
 
 	render() {
 		return (
 			<g
 				style={{
-					transform: `translate(50px, 91px) rotate(${this.pulse.x}deg)`,
+					transform: `translate(50px, 91px) rotate(${this.pulse.value}deg)`,
 				}}
 				onMouseDown={this.handlePress}
 			>

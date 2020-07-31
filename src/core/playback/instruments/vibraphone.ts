@@ -68,7 +68,7 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	triggerStrike(time?: number) {
 		if (
 			this.channelSynth?.loaded &&
-			this.appStore.performance.program.state.machine.mute.vibraphone
+			!this.appStore.performance.program.state.machine.mute.vibraphone
 		) {
 			this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}
