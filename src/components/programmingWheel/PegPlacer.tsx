@@ -2,6 +2,7 @@ import React from "react";
 import { TranslateGrid } from "./TranslateGrid";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
+import { DropEventTimeline } from "../../stores/eventTimeline";
 
 class PegPlacer_ extends WheelComponent {
 	@computed get timeline() {
@@ -18,8 +19,11 @@ class PegPlacer_ extends WheelComponent {
 		return this.timeline.events.some((e) => e.tick === m.mouseTick);
 	}
 	@action.bound addPeg() {
-		if (!this.mouse) return;
-		this.timeline?.add({ tick: this.mouse.mouseTick });
+		if (!this.mouse || !this.timeline) return;
+		this.timeline.add({
+			tick: this.mouse.mouseTick,
+			id: Math.random(),
+		});
 	}
 	@computed get height() {
 		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);

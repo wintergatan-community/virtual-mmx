@@ -1,6 +1,9 @@
 import { Part } from "tone";
-import { CoreDropEvent } from "vmmx-schema";
-import { EventTimeline, JointEventTimeline } from "../../stores/eventTimeline";
+import {
+	EventTimeline,
+	JointEventTimeline,
+	EventBase,
+} from "../../stores/eventTimeline";
 
 const partOptions = {
 	loop: true,
@@ -9,25 +12,27 @@ const partOptions = {
 	loopEnd: 240 * 4 * 16 + "i",
 };
 
-export class ToneChannel<EventData extends CoreDropEvent> {
+export class ToneChannel<EventData extends EventBase> {
 	private tonePart = new Part(partOptions);
 
 	constructor(
 		timeline: EventTimeline<EventData>,
-		triggerStrike: (time?: number) => void
+		triggerStrike?: (time?: number) => void
 	) {
 		timeline.onAdd((event) => this.tonePart.add(event?.tick + "i", event));
 		timeline.onRemove((event) => this.tonePart.remove(event?.tick + "i"));
 		this.tonePart.callback = (time, event) => {
 			timeline.triggerEvent(event, time);
 		};
-		timeline.addEventListener((_, time) => triggerStrike(time));
+		if (triggerStrike) {
+			timeline.addEventListener((_, time) => triggerStrike(time));
+		}
 
 		this.tonePart.start();
 	}
 }
 
-export class JointToneChannel<EventData extends CoreDropEvent> {
+export class JointToneChannel<EventData extends EventBase> {
 	program: ToneChannel<EventData>;
 	performance: ToneChannel<EventData>;
 

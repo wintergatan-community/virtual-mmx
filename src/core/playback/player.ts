@@ -1,10 +1,12 @@
-import { TickedDropEvent } from "vmmx-schema";
 import { Transport, context } from "tone";
 import { observable, action, autorun, computed, runInAction } from "mobx";
 import { AppStore } from "../../stores/app";
 import { VibraphoneInstrument } from "./instruments/vibraphone";
 import { BassInstrument } from "./instruments/bass";
 import { DrumsInstrument } from "./instruments/drums";
+import { ToneChannel } from "./toneChannel";
+import { forEachInNested } from "../helpers/functions";
+import { EventTimeline } from "../../stores/eventTimeline";
 
 export class VmmxPlayer {
 	appStore: AppStore;
@@ -18,6 +20,7 @@ export class VmmxPlayer {
 		bass: BassInstrument;
 		drums: DrumsInstrument;
 	};
+	eventTimelineToneChannels: ToneChannel<any>[] = [];
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
@@ -28,6 +31,15 @@ export class VmmxPlayer {
 			bass: new BassInstrument(appStore, state.bass),
 			drums: new DrumsInstrument(appStore, state.drums),
 		};
+
+		forEachInNested(
+			this.appStore.performance.eventTimelines,
+			(maybeTimeline) => maybeTimeline instanceof EventTimeline,
+			(timeline) =>
+				this.eventTimelineToneChannels.push(
+					new ToneChannel(timeline as EventTimeline<any>)
+				)
+		);
 
 		this.updateCurrentTickLoop();
 

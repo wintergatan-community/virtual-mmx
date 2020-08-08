@@ -12,8 +12,6 @@ interface GroupLeverProps {
 }
 
 class GroupLever_ extends AppComponent<GroupLeverProps> {
-	@observable muted = false;
-
 	@computed get x() {
 		const pad = 10;
 		// TODO move to local provider
@@ -22,11 +20,10 @@ class GroupLever_ extends AppComponent<GroupLeverProps> {
 
 	@computed get y() {
 		const amp = 14;
-		return this.muted ? -amp : amp;
+		return this.props.muted ? -amp : amp;
 	}
 
 	@action.bound handleToggle() {
-		this.muted = !this.muted;
 		this.props.setMuted(!this.props.muted);
 	}
 

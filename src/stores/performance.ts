@@ -8,17 +8,23 @@ import {
 } from "vmmx-schema";
 import { ProgramStore } from "./program";
 import {
-	BassBakedData,
 	bassStrings,
 	DrumTypeTOFIX,
-	DrumsBakedData,
 	drumTypes,
-	VibraphoneBakedData,
 	vibraphoneBars,
 	ChannelGroupTOFIX,
 	channelGroups,
+	BassEventSlim,
+	DrumsEventSlim,
+	VibraphoneEventSlim,
 } from "../toFutureSchema";
-import { EventTimeline, mapToEventTimelines } from "./eventTimeline";
+import {
+	EventTimeline,
+	mapToEventTimelines,
+	mapToDropEventTimelines,
+	mapToMuteEventTimelines,
+	EventBase,
+} from "./eventTimeline";
 import { Performance } from "vmmx-schema";
 
 export class PerformanceStore implements Performance {
@@ -34,31 +40,36 @@ export class PerformanceStore implements Performance {
 
 	eventTimelines = {
 		performanceDrop: {
-			bass: mapToEventTimelines<BassString, BassBakedData>(bassStrings),
-			drums: mapToEventTimelines<DrumTypeTOFIX, DrumsBakedData>(drumTypes),
-			vibraphone: mapToEventTimelines<VibraphoneChannel, VibraphoneBakedData>(
-				vibraphoneBars
-			),
+			bass: mapToDropEventTimelines<BassString, BassEventSlim>(bassStrings),
+			drums: mapToDropEventTimelines<DrumTypeTOFIX, DrumsEventSlim>(drumTypes),
+			vibraphone: mapToDropEventTimelines<
+				VibraphoneChannel,
+				VibraphoneEventSlim
+			>(vibraphoneBars),
 		},
 		machine: {
-			channelMute: mapToEventTimelines<
-				ChannelGroupTOFIX,
-				{ tick: number; mute: boolean }
-			>(channelGroups),
+			channelMute: mapToMuteEventTimelines<ChannelGroupTOFIX>(
+				channelGroups,
+				(channelGroup) => (event) => {
+					if (!event) return;
+					this.program.state.machine.setMuted(channelGroup, event.mute);
+				}
+			),
 		},
 		vibraphone: {
-			vibratoEnabled: new EventTimeline<{
-				tick: number;
-				enableVibrato: boolean;
-			}>(),
-			vibratoSpeed: new EventTimeline<{ tick: number; speed: number }>(),
+			vibratoEnabled: new EventTimeline<
+				{
+					enableVibrato: boolean;
+				} & EventBase
+			>(),
+			vibratoSpeed: new EventTimeline<{ speed: number } & EventBase>(),
 		},
-		hihatMachine: undefined, // TODO not sure what to do with this yet
+		// hihatMachine: undefined, // TODO not sure what to do with this yet
 		hihat: {
-			closed: new EventTimeline<{ tick: number; closed: boolean }>(),
+			closed: new EventTimeline<{ closed: boolean } & EventBase>(),
 		},
 		bass: {
-			capo: mapToEventTimelines<BassString, { tick: number; moveCapo: number }>(
+			capo: mapToEventTimelines<BassString, { moveCapo: number } & EventBase>(
 				bassStrings
 			),
 		},

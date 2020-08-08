@@ -30,7 +30,7 @@ export class AppComponent<Props = Record<string, unknown>> extends Component<
 	}
 
 	static sync<P>(Comp: IReactComponent<P>) {
-		return this.inject(Comp, []);
+		return this.inject(Comp, []) as IReactComponent<P>;
 	}
 }
 
@@ -53,7 +53,7 @@ export class VibraphoneComponent<
 	}
 
 	static sync<P>(Comp: IReactComponent<P>) {
-		return this.inject(Comp, []);
+		return this.inject(Comp, []) as IReactComponent<P>;
 	}
 }
 
@@ -75,7 +75,7 @@ export class DrumsComponent<
 	}
 
 	static sync<P>(Comp: IReactComponent<P>) {
-		return this.inject(Comp, []);
+		return this.inject(Comp, []) as IReactComponent<P>;
 	}
 }
 
@@ -98,7 +98,7 @@ export class WheelComponent<
 	}
 
 	static sync<P>(Comp: IReactComponent<P>) {
-		return this.inject(Comp, []);
+		return this.inject(Comp, []) as IReactComponent<P>;
 	}
 }
 
@@ -106,8 +106,7 @@ export class BassComponent<
 	Props = Record<string, unknown>
 > extends AppComponent<Props> {
 	get bass() {
-		const store = ((this.props as unknown) as { bass: BassDisplayStore })
-			.bass;
+		const store = ((this.props as unknown) as { bass: BassDisplayStore }).bass;
 		if (!store)
 			throw new Error(
 				"Bass component was either not nested under provider or you're using the dumb component"
@@ -120,6 +119,6 @@ export class BassComponent<
 	}
 
 	static sync<P>(Comp: IReactComponent<P>) {
-		return this.inject(Comp, []);
+		return this.inject(Comp, []) as IReactComponent<P>;
 	}
 }

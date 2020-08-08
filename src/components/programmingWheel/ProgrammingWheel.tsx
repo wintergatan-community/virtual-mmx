@@ -4,17 +4,25 @@ import { TranslateGrid } from "./TranslateGrid";
 import { ProgramGrid } from "./ProgramGrid";
 import { PegPlacer } from "./PegPlacer";
 import { PlaybackHead } from "./PlaybackHead";
-import { computed, action } from "mobx";
+import { computed, action, autorun } from "mobx";
 import { ProgrammingWheelDisplayStore } from "./programmingWheelDisplay";
 import { AppComponent, WheelComponent } from "../storeComponents";
 import { GearSide } from "./GearSide";
 import { BottomBar } from "./bottomBar/BottomBar";
+import { SpringPulse } from "../../core/helpers/springPulse";
 
 class ProgrammingWheel_ extends AppComponent {
 	wheel = new ProgrammingWheelDisplayStore(this.app);
+	scrollSpring = new SpringPulse();
 
 	componentDidMount() {
 		this.wheel.setSubdivision("eighth");
+		this.scrollSpring.damping = 30;
+		this.scrollSpring.stiffness = 300;
+
+		autorun(() => {
+			this.scrollSpring.moveTo(this.wheel.visibleTopTick);
+		});
 	}
 
 	svgRef = createRef<SVGSVGElement>();
@@ -47,7 +55,7 @@ class ProgrammingWheel_ extends AppComponent {
 			<Provider wheel={this.wheel}>
 				<div>
 					<div style={{ display: "flex" }}>
-						<GearSide tick={-this.wheel.visibleTopTick} />
+						<GearSide tick={-this.scrollSpring.value} />
 						<svg
 							viewBox={`0 0 ${this.wheel.visiblePixelWidth} ${this.wheel.visiblePixelHeight}`}
 							style={{
@@ -58,7 +66,7 @@ class ProgrammingWheel_ extends AppComponent {
 							onWheel={this.handleScroll}
 							ref={this.svgRef}
 						>
-							<TranslateGrid tick={-this.wheel.visibleTopTick}>
+							<TranslateGrid tick={-this.scrollSpring.value}>
 								<MovingWindow />
 								<TranslateGrid tick={this.wheel.totalTicks}>
 									{/* second MovingWindow for seemless scroll */}
@@ -75,7 +83,7 @@ class ProgrammingWheel_ extends AppComponent {
 									<SubdivisonChooser />
 								<Blur /> */}
 						</svg>
-						<GearSide tick={-this.wheel.visibleTopTick} />
+						<GearSide tick={-this.scrollSpring.value} />
 					</div>
 
 					<BottomBar />

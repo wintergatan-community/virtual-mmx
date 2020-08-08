@@ -1,12 +1,12 @@
 import { MachineState } from "vmmx-schema";
 import { AppStore } from "./app";
 import { ChannelGroupTOFIX } from "../toFutureSchema";
-import { observable } from "mobx";
+import { observable, action } from "mobx";
 
 export class MachineStore implements MachineState {
 	appStore: AppStore;
 
-	mute: Record<ChannelGroupTOFIX, boolean> = {
+	@observable mute: Record<ChannelGroupTOFIX, boolean> = {
 		bassdrum: false,
 		hihat: false,
 		snare: false,
@@ -21,7 +21,7 @@ export class MachineStore implements MachineState {
 		this.appStore = appStore;
 	}
 
-	setMuted(channelGroup: ChannelGroupTOFIX, muted: boolean) {
+	@action setMuted(channelGroup: ChannelGroupTOFIX, muted: boolean) {
 		this.mute[channelGroup] = muted;
 	}
 }

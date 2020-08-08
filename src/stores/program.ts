@@ -9,17 +9,17 @@ import {
 } from "vmmx-schema";
 import { AppStore } from "./app";
 import {
-	BassBakedData,
 	bassStrings,
 	DrumTypeTOFIX,
-	DrumsBakedData,
 	drumTypes,
-	VibraphoneBakedData,
 	vibraphoneBars,
+	BassEventSlim,
+	DrumsEventSlim,
+	VibraphoneEventSlim,
 } from "../toFutureSchema";
 import { observable } from "mobx";
 import { StateStore } from "./state";
-import { mapToEventTimelines } from "./eventTimeline";
+import { mapToDropEventTimelines } from "./eventTimeline";
 
 export class ProgramStore implements Program {
 	appStore: AppStore;
@@ -28,9 +28,9 @@ export class ProgramStore implements Program {
 	state = new StateStore(this.appStore);
 	dropEvents = []; // TODO computed get
 	dropEventTimelines = {
-		bass: mapToEventTimelines<BassString, BassBakedData>(bassStrings),
-		drums: mapToEventTimelines<DrumTypeTOFIX, DrumsBakedData>(drumTypes), // TODO might want separate drum events
-		vibraphone: mapToEventTimelines<VibraphoneChannel, VibraphoneBakedData>(
+		bass: mapToDropEventTimelines<BassString, BassEventSlim>(bassStrings),
+		drums: mapToDropEventTimelines<DrumTypeTOFIX, DrumsEventSlim>(drumTypes), // TODO might want separate drum events
+		vibraphone: mapToDropEventTimelines<VibraphoneChannel, VibraphoneEventSlim>(
 			vibraphoneBars
 		),
 	};
@@ -52,17 +52,27 @@ export class ProgramStore implements Program {
 
 			if (kind == "bass") {
 				const e = event as BassDropEvent;
-				this.dropEventTimelines[kind][e.string].add({
-					fret: e.fret,
-					tick: event.tick,
-				});
+				this.dropEventTimelines[kind][e.string].addFromJSONEvent(
+					new BassEventSlim({
+						fret: e.fret,
+						tick: event.tick,
+					})
+				);
 			} else if (kind == "drums") {
 				const e = event as DrumDropEvent;
-				this.dropEventTimelines[kind][e.drum].add({ tick: event.tick }); // TODO need something for open hat
+				this.dropEventTimelines[kind][e.drum].addFromJSONEvent(
+					new DrumsEventSlim({
+						tick: event.tick,
+					})
+				); // TODO need something for open hat
 			} else if (kind == "vibraphone") {
 				const e = event as VibraphoneDropEvent;
 				// TODO schema "channel" should be called "bar"
-				this.dropEventTimelines[kind][e.channel].add({ tick: event.tick });
+				this.dropEventTimelines[kind][e.channel].addFromJSONEvent(
+					new VibraphoneEventSlim({
+						tick: event.tick,
+					})
+				);
 			}
 		});
 

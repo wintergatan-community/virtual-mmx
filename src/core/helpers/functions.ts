@@ -25,9 +25,13 @@ export function mapValue(
 	return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 }
 
-export function insertInOrder<T>(item: T, index: number, arr: T[]) {
+export function insertInOrder<T>(
+	item: T,
+	insertAfter: (other: T) => boolean,
+	arr: T[]
+) {
 	let i;
-	for (i = 0; i < arr.length && i < index; i++);
+	for (i = 0; i < arr.length && insertAfter(arr[i]); i++);
 	arr.splice(i, 0, item);
 }
 export function removeInOrder<T>(
@@ -215,6 +219,26 @@ export function mapArrayToObj<Key extends ObjectKey, Value>(
 export interface Point {
 	x: number;
 	y: number;
+}
+
+export function entries<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
+	return Object.entries(obj) as [Key, Value][];
+}
+
+export function forEachInNested(
+	obj: Record<ObjectKey, any>,
+	shouldCallFuncOn: (obj: Record<ObjectKey, any>) => boolean,
+	func: (obj: Record<ObjectKey, any>) => void
+) {
+	if (shouldCallFuncOn(obj)) {
+		func(obj);
+		return;
+	}
+	for (const prop in obj) {
+		if (obj.hasOwnProperty(prop)) {
+			forEachInNested(obj[prop], shouldCallFuncOn, func);
+		}
+	}
 }
 
 // type Keyable = string | number;

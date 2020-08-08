@@ -4,17 +4,25 @@ import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
-import { Provider, observer } from "mobx-react";
+import { Provider } from "mobx-react";
 import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
 import { ToneIndicator } from "./ToneIndicator";
 import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
-import { TimeEditor } from "./timeEditor/TimeEditor";
+import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
+import { MuteEvent } from "./performanceEditor/other";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
+const mute = app.performance.eventTimelines.machine.channelMute;
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 200 }));
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 500 }));
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 700 }));
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 800 }));
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 900 }));
+mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 950 }));
 
 export class App extends Component {
 	render() {
@@ -48,7 +56,7 @@ export class App extends Component {
 				{/* <Move x={860} y={460}>
 					<Spinny />
 				</Move> */}
-				{/* <TimeEditor /> */}
+				<PerformanceEditor />
 			</Provider>
 		);
 	}

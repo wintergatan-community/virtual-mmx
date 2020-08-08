@@ -9,7 +9,7 @@ import {
 import { VibraphoneChannel } from "vmmx-schema";
 import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
-import { VibraphoneBakedData } from "../../../toFutureSchema";
+import { VibraphoneEventSlim } from "../../../toFutureSchema";
 
 export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 	readonly vibraphoneStore: VibraphoneStore;
@@ -45,7 +45,7 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	private appStore: AppStore;
 	private barStore: VibraphoneBarStore;
 	private channelSynth?: Sampler;
-	readonly toneChannels: JointToneChannel<VibraphoneBakedData>;
+	readonly toneChannels: JointToneChannel<VibraphoneEventSlim>;
 
 	constructor(appStore: AppStore, barStore: VibraphoneBarStore) {
 		this.appStore = appStore;

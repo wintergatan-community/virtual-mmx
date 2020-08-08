@@ -3,7 +3,7 @@ import { DrumsStore } from "../../../stores/drums";
 import { Sampler, context } from "tone";
 import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
-import { DrumTypeTOFIX, DrumsBakedData } from "../../../toFutureSchema";
+import { DrumTypeTOFIX, DrumsEventSlim } from "../../../toFutureSchema";
 
 export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 	drumsStore: DrumsStore;
@@ -30,7 +30,7 @@ export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 
 class DrumsChannel implements VmmxInstrumentChannel {
 	appStore: AppStore;
-	toneChannels: JointToneChannel<DrumsBakedData>;
+	toneChannels: JointToneChannel<DrumsEventSlim>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 

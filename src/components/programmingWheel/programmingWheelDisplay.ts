@@ -2,8 +2,8 @@ import { NoteSubdivision } from "../../core/helpers/types";
 import { observable, computed, action } from "mobx";
 import { range } from "../../core/helpers/functions";
 import { AppStore } from "../../stores/app";
-import { EventTimeline } from "../../stores/eventTimeline";
-import { VibraphoneBakedData } from "../../toFutureSchema";
+import { DropEventTimeline } from "../../stores/eventTimeline";
+import { VibraphoneEventSlim } from "../../toFutureSchema";
 
 interface WheelMousePos {
 	mouseTick: number;
@@ -27,11 +27,11 @@ export enum ChannelColor {
 /** A single VmmxInstrumentChannel with additional display related information. */
 export class DisplayChannel {
 	/** The vmmx instrument channel to display */
-	timeline: EventTimeline<VibraphoneBakedData>;
+	timeline: DropEventTimeline<any>;
 	/** The color of this channel */
 	channelColor: ChannelColor;
 
-	constructor(timeline: EventTimeline<any>, channelColor: ChannelColor) {
+	constructor(timeline: DropEventTimeline<any>, channelColor: ChannelColor) {
 		this.timeline = timeline;
 		this.channelColor = channelColor;
 	}

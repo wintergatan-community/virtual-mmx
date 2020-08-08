@@ -1,4 +1,5 @@
 import { VibraphoneChannel, BassString, DrumType } from "vmmx-schema";
+import { EventBase } from "./stores/eventTimeline";
 
 // TODO this should be part of schema, and it should be VibraphoneBar
 export const vibraphoneBars: VibraphoneChannel[] = [
@@ -35,14 +36,20 @@ export const channelGroups: ChannelGroupTOFIX[] = [
 ];
 
 // these might be replaced with the ones in schema out of the box, but don't contain redundant info
-export interface BassBakedData {
+export class BassEventSlim extends EventBase {
 	fret?: number;
-	tick: number;
+
+	constructor(data: { fret?: number; tick: number }) {
+		super(data);
+		this.fret = data.fret;
+	}
 }
-export interface DrumsBakedData {
-	closeHat?: boolean;
-	tick: number;
+export class DrumsEventSlim extends EventBase {
+	hatOpen?: number; // TODO should be number in schema
+
+	constructor(data: { hatOpen?: number; tick: number }) {
+		super(data);
+		this.hatOpen = data.hatOpen;
+	}
 }
-export interface VibraphoneBakedData {
-	tick: number;
-}
+export class VibraphoneEventSlim extends EventBase {}

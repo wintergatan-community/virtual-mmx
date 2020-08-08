@@ -42,7 +42,7 @@ class SubdivisionChooser_ extends WheelComponent {
 			>
 				{this.subdivionsOptions.map(({ division, icon }) => (
 					<SubdivisionOption
-						division={division}
+						division={division as NoteSubdivision}
 						icon={icon}
 						select={this.selectSubdivision}
 						key={division}

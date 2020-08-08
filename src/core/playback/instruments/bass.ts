@@ -6,7 +6,7 @@ import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
 import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
-import { BassBakedData } from "../../../toFutureSchema";
+import { BassEventSlim } from "../../../toFutureSchema";
 
 export class BassInstrument implements VmmxInstrument<BassString> {
 	private bassStore: BassStore;
@@ -30,7 +30,7 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 	private appStore: AppStore;
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
-	readonly toneChannels: JointToneChannel<BassBakedData>;
+	readonly toneChannels: JointToneChannel<BassEventSlim>;
 
 	constructor(appStore: AppStore, stringStore: BassStringStore) {
 		this.appStore = appStore;

@@ -2,11 +2,11 @@ import React from "react";
 import { Peg } from "./Peg";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { EventTimeline } from "../../stores/eventTimeline";
-import { VibraphoneBakedData } from "../../toFutureSchema";
+import { DropEventTimeline } from "../../stores/eventTimeline";
+import { VibraphoneEventSlim } from "../../toFutureSchema";
 
 interface ChannelPegsProps {
-	timeline: EventTimeline<VibraphoneBakedData>; // TODO not "any"?
+	timeline: DropEventTimeline<VibraphoneEventSlim>; // TODO not "any"?
 }
 
 class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
@@ -29,7 +29,7 @@ export const ChannelPegs = WheelComponent.sync(ChannelPegs_);
 
 interface MaybeRenderedPegProps {
 	pegTick: number;
-	timeline: EventTimeline<any>;
+	timeline: DropEventTimeline<any>;
 }
 
 class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
