@@ -74,7 +74,7 @@ export class ModeSelector extends React.Component<ModeSelectorProps> {
 			>
 				<div
 					style={{
-						fontSize: "22px",
+						fontSize: "19px",
 						background: "white",
 						borderRadius: "2em",
 						boxShadow: "0 0 4px rgba(0,0,0,40%)",
@@ -226,7 +226,7 @@ const OffOption = observer(function (props: {
 		display: "inline-block",
 		backgroundColor: "#f8f8f8",
 		lineHeight: "1.6em",
-		padding: "0.2em 0.5em 0",
+		padding: "0 0.5em",
 		boxShadow: "0 0 4px rgba(0,0,0,30%)",
 		borderRadius: "0 0 0.4em 0.4em",
 		cursor: "pointer",

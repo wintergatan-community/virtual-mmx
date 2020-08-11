@@ -62,7 +62,7 @@ export class App extends Component {
 				<Move x={517} y={600}>
 					<Drums />
 				</Move>
-				<Move x={670} y={660}>
+				<Move x={680} y={660}>
 					<HiHatMachine />
 				</Move>
 				<Move x={768} y={80}>
