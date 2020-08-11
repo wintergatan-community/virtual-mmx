@@ -39,10 +39,10 @@ export class TimelineTabs extends Component<TimelineTabsProps> {
 			<div style={{ display: "flex" }}>
 				{this.props.actions.map((action) => (
 					<TimelineTab
-						label={action.label}
+						label={action}
 						selected={this.props.selectedAction === action}
 						select={() => this.props.setAction(action)}
-						key={action.label}
+						key={action}
 					/>
 				))}
 			</div>

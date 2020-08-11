@@ -1,8 +1,9 @@
 import React, { createRef } from "react";
-import { computed, action } from "mobx";
+import { computed, action, autorun } from "mobx";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
+import { SpringPulse } from "../../core/helpers/springPulse";
 
 interface CapoProps {
 	stringStore: BassStringStore;
@@ -10,6 +11,16 @@ interface CapoProps {
 
 class Capo_ extends BassComponent<CapoProps> {
 	capoSVGRef = createRef<SVGRectElement>();
+	capoFluid = new SpringPulse();
+
+	componentDidMount() {
+		this.capoFluid.stiffness = 1000;
+		this.capoFluid.damping = 50;
+
+		autorun(() => {
+			this.capoFluid.moveTo(this.bass.fretToPixel(this.capo));
+		});
+	}
 
 	@computed get capo(): number {
 		return this.props.stringStore.capo;
@@ -28,7 +39,7 @@ class Capo_ extends BassComponent<CapoProps> {
 			<Draggable
 				axis="y"
 				defaultPosition={{ x: 0, y: 0 }}
-				position={{ x: 0, y: this.bass.fretToPixel(this.capo) }}
+				position={{ x: 0, y: this.capoFluid.value }}
 				// grid={[0, x]}
 				bounds={{
 					top: 0,

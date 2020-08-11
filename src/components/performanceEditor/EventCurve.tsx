@@ -1,4 +1,3 @@
-import { AppComponent } from "../storeComponents";
 import React, { Component } from "react";
 import { EventBlip } from "./EventBlip";
 import { action } from "mobx";
@@ -21,6 +20,8 @@ interface SegmentProps<E extends EventBase> {
 	setDragging: (dragging: boolean) => void;
 	shouldShow: (curve: Curve<E>) => boolean;
 	colorOf: (curve: Curve<E>) => string;
+	valueOf: (event: E) => number;
+	scale: (value: number) => number;
 }
 
 @observer
@@ -40,12 +41,17 @@ export class EventCurve<E extends EventBase> extends Component<
 
 	render() {
 		const p = this.props;
+		const y1 = this.props.scale(p.valueOf(p.curve.start));
+		// const y2 = p.curve.end ? this.props.scale(p.valueOf(p.curve.end)) : y1;
+
 		return (
 			<g>
 				{this.props.shouldShow(this.props.curve) && (
 					<line
 						x1={p.curve.start?.tick ?? 0}
 						x2={p.curve.end?.tick ?? 9000} // TODO not fixed
+						y1={-y1}
+						y2={-y1}
 						stroke={this.props.colorOf(this.props.curve)}
 						strokeWidth={3}
 					/>
@@ -59,6 +65,8 @@ export class EventCurve<E extends EventBase> extends Component<
 					setSelected={this.setStartSelected}
 					dragging={this.props.dragging}
 					setDragging={this.props.setDragging}
+					valueOf={this.props.valueOf}
+					scale={this.props.scale}
 				/>
 
 				{/* {p.curve.end && (

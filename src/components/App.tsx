@@ -12,13 +12,13 @@ import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
 import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
-import { MuteE } from "../core/eventTimelines/concrete";
+import { MuteE, CapoE } from "../core/eventTimelines/concrete";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
 const mute = app.performance.eventTimelines.machine.channelMute;
 
-const add = (m: boolean, tick: number) => {
+const addMute = (m: boolean, tick: number) => {
 	const difs = mute.vibraphone.getAddDifs(new MuteE({ mute: m, tick }));
 	if (difs) {
 		mute.vibraphone.applyDifs(difs);
@@ -27,8 +27,23 @@ const add = (m: boolean, tick: number) => {
 	}
 };
 
-add(true, 500);
-add(false, 700);
+addMute(true, 500);
+addMute(false, 700);
+
+const capo = app.performance.eventTimelines.bass.capo[1];
+const addCapo = (moveFret: number, tick: number) => {
+	const difs = capo.getAddDifs(new CapoE({ moveFret, tick }));
+	if (difs) {
+		capo.applyDifs(difs);
+	} else {
+		console.log("Cant place");
+	}
+};
+
+addCapo(7, 0);
+addCapo(2, 200);
+addCapo(15, 500);
+addCapo(8, 640);
 
 export class App extends Component {
 	render() {

@@ -8,9 +8,11 @@ import { observer } from "mobx-react";
 
 interface EventPolylineContainerProps<E extends EventBase> {
 	timeline: PolylineEventTimeline<E>;
-	color: string;
 	shouldShow: (curve: Curve<E>) => boolean;
 	colorOf: (curve: Curve<E>) => string;
+	valueOf: (event: E) => number;
+	color: string;
+	scale: (value: number) => number;
 }
 
 @observer
@@ -99,6 +101,8 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 							setDragging={this.setDragging}
 							shouldShow={this.props.shouldShow}
 							colorOf={this.props.colorOf}
+							valueOf={this.props.valueOf}
+							scale={this.props.scale}
 							key={curve.id}
 						/>
 					);

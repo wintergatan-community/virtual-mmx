@@ -70,7 +70,9 @@ export class PerformanceStore implements Performance {
 				(bassString) =>
 					new CapoEventTimeline((event) => {
 						if (!event || !event.moveFret) return;
-						this.program.state.bass.capos[bassString] = event.moveFret;
+						this.program.state.bass.stringStores[bassString].moveCapo(
+							event.moveFret
+						);
 					})
 			),
 		},

@@ -9,13 +9,13 @@ import { observer } from "mobx-react";
 @observer
 export class PerformanceEditor extends Component {
 	@observable performanceActions: PerformanceAction[] = [
-		{ label: "Muting Levers" },
-		{ label: "Bass Fretting" },
-		{ label: "Hihat Opening" },
+		"Muting Levers",
+		"Bass Capo",
+		"Hihat Opening",
 	];
 
 	@observable selectedAction: PerformanceAction | undefined = this
-		.performanceActions[2];
+		.performanceActions[1];
 
 	@action.bound setAction(action: PerformanceAction) {
 		this.selectedAction = action;

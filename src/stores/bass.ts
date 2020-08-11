@@ -1,6 +1,6 @@
 import { BassState, BassString, Note } from "vmmx-schema";
 import { AppStore } from "./app";
-import { observable, computed } from "mobx";
+import { observable, computed, action } from "mobx";
 import { fromEntries } from "../core/helpers/functions";
 import { bassStrings } from "../toFutureSchema";
 
@@ -48,7 +48,7 @@ export class BassStringStore {
 		return this.caposObj[this.string];
 	}
 
-	moveCapo(fret: number) {
+	@action.bound moveCapo(fret: number) {
 		this.caposObj[this.string] = fret;
 	}
 

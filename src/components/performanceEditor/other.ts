@@ -3,6 +3,8 @@ export interface DraggableCollisionEvent {
 	side: "left" | "right";
 }
 
-export interface PerformanceAction {
-	label: "Muting Levers" | "Bass Fretting" | "BPM" | "Hihat Opening";
-}
+export type PerformanceAction =
+	| "Muting Levers"
+	| "Bass Capo"
+	| "BPM"
+	| "Hihat Opening";

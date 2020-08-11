@@ -30,7 +30,7 @@ export class LabelAxis<T extends string | number> extends Component<
 	render() {
 		return (
 			<g>
-				{this.scaledLabels.map(({ label, fit }) => (
+				{this.scaledLabels.map(({ label, fit }, i) => (
 					// <g transform={`translate(0, ${fit})`} key={label}>
 					// 	<rect width={20} height={16} y={-8} fill="#b7b7b7" />
 					// 	<text x={5} y={4} fill="black" fontSize={11}>
@@ -39,14 +39,15 @@ export class LabelAxis<T extends string | number> extends Component<
 					// </g>
 					<g transform={`translate(0, ${fit})`} key={label}>
 						<line x2={2000} stroke="#b7b7b7" />
-						{this.childrenAsFunc && this.childrenAsFunc(label)}
+						{this.childrenAsFunc
+							? this.childrenAsFunc(label)
+							: i === this.scaledLabels.length - 1 && this.props.children}
 						<rect width={90} height={18} y={-9} x={-4} fill="#b7b7b7" rx={9} />
 						<text x={10} fontSize={11} y={4} fill="#434343">
 							{label}
 						</text>
 					</g>
 				))}
-				{!this.childrenAsFunc && this.props.children}
 			</g>
 		);
 	}

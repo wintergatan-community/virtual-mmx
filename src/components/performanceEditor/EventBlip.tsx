@@ -18,6 +18,8 @@ interface EventBlipProps<E extends EventBase> {
 	setSelected: (selected: boolean) => void;
 	dragging: boolean;
 	setDragging: (dragging: boolean) => void;
+	valueOf: (event: E) => number;
+	scale: (value: number) => number;
 }
 
 @observer
@@ -67,7 +69,10 @@ export class EventBlip<E extends EventBase> extends Component<
 		return (
 			<Draggable
 				axis="x"
-				position={{ x: this.props.curve.start.tick, y: 0 }}
+				position={{
+					x: this.props.curve.start.tick,
+					y: -this.props.scale(this.props.valueOf(this.props.curve.start)),
+				}}
 				grid={[1, 0]}
 				onDrag={this.handleDrag}
 				onStop={this.handleStop}

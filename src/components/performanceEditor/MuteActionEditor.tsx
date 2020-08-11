@@ -28,7 +28,9 @@ class MuteActionEditor_ extends AppComponent {
 						timeline={this.timelines[label]}
 						color={this.colors[label as ChannelGroupTOFIX]}
 						shouldShow={(c) => c.start.mute}
-						colorOf={() => "blue"}
+						colorOf={() => this.colors[label as ChannelGroupTOFIX]}
+						valueOf={() => 1}
+						scale={() => 0}
 					/>
 				)}
 			</LabelAxis>

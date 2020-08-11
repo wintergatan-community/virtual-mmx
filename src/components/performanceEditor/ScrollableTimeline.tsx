@@ -4,6 +4,7 @@ import { computed } from "mobx";
 import { PerformanceAction } from "./other";
 import { MuteActionEditor } from "./MuteActionEditor";
 import { HiHatOpeningActionEditor } from "./HiHatOpeningActionEditor";
+import { BassCapoActionEditor } from "./BassCapoActionEditor";
 
 interface ScrollableTimelineProps {
 	actions: PerformanceAction[];
@@ -19,14 +20,14 @@ class ScrollableTimeline_ extends AppComponent<ScrollableTimelineProps> {
 	}
 
 	@computed get actionEditor() {
-		const action = this.props.selectedAction?.label;
+		const action = this.props.selectedAction;
 		if (!action) return;
 		if (action === "Muting Levers") {
 			return <MuteActionEditor />;
 		} else if (action === "Hihat Opening") {
 			return <HiHatOpeningActionEditor />;
-		} else if (action === "BPM") {
-			return <></>;
+		} else if (action === "Bass Capo") {
+			return <BassCapoActionEditor />;
 		}
 	}
 

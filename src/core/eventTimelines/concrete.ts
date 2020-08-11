@@ -89,9 +89,9 @@ export class CapoEventTimeline extends PolylineEventTimeline<CapoE> {
 }
 
 export class CapoE extends EventBase {
-	moveFret?: number;
+	moveFret: number;
 
-	constructor(data: { moveFret?: number; tick: number }) {
+	constructor(data: { moveFret: number; tick: number }) {
 		super(data);
 		this.moveFret = data.moveFret;
 	}
