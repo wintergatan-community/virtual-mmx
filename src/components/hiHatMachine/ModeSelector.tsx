@@ -1,12 +1,13 @@
 import React from "react";
 import { observable, computed, action } from "mobx";
 import { observer } from "mobx-react";
+import { mapArrayToObj } from "../../core/helpers/functions";
 import CSS from "csstype";
 
 import { HiHatMachineMode } from "./HiHatMachine";
 
 // TODO: svg / ensure font actually supports these (though the triplet icon does need to change)
-const modeOptionIcon: { [mode in HiHatMachineMode]: string } = {
+const modeOptionIcon: Record<HiHatMachineMode, string> = {
 	beat: "𝅘𝅥 \xa0",
 	beatAndOffbeat: "•",
 	offbeat: "𝄾 𝅘𝅥𝅮  \xa0",
@@ -31,12 +32,12 @@ type OptionPosition = "left" | "middle" | "right";
 type HighlightState = OptionPosition | "bothSides";
 type HoverState = HiHatMachineMode | null;
 
-interface Props {
+interface ModeSelectorProps {
 	currentMode: HiHatMachineMode;
 	selectMode: (mode: HiHatMachineMode) => void;
 }
 @observer
-export class ModeSelector extends React.Component<Props> {
+export class ModeSelector extends React.Component<ModeSelectorProps> {
 	@observable currentHover: HoverState = null;
 	@observable mouseDown = false;
 
@@ -63,8 +64,8 @@ export class ModeSelector extends React.Component<Props> {
 	render() {
 		return (
 			<div
-				onMouseDown={this.press.bind(null, true)}
-				onMouseUp={this.press.bind(null, false)}
+				onMouseDown={() => this.press(true)}
+				onMouseUp={() => this.press(false)}
 				style={{
 					// TODO: Prefixing?
 					userSelect: "none",
@@ -141,9 +142,9 @@ const Option = observer(function (props: {
 	}
 	return (
 		<div
-			onClick={props.onClick.bind(null, props.mode)}
-			onMouseEnter={props.onHoverChange.bind(null, props.mode)}
-			onMouseLeave={props.onHoverChange.bind(null, null)}
+			onClick={() => props.onClick(props.mode)}
+			onMouseEnter={() => props.onHoverChange(props.mode)}
+			onMouseLeave={() => props.onHoverChange(null)}
 			style={style}
 		>
 			{modeOptionIcon[props.mode]}
@@ -238,9 +239,9 @@ const OffOption = observer(function (props: {
 	}
 	return (
 		<div
-			onClick={props.onClick.bind(null, "off")}
-			onMouseEnter={props.onHoverChange.bind(null, "off")}
-			onMouseLeave={props.onHoverChange.bind(null, null)}
+			onClick={() => props.onClick("off")}
+			onMouseEnter={() => props.onHoverChange("off")}
+			onMouseLeave={() => props.onHoverChange(null)}
 			style={style}
 		>
 			OFF
@@ -249,9 +250,10 @@ const OffOption = observer(function (props: {
 });
 
 function getHighlightsFromMode(mode: HiHatMachineMode | null) {
-	const highlighted = Object.fromEntries(
-		optionOrder.map((mode) => [mode, false])
-	) as { [mode in HiHatMachineMode]: HighlightState | false };
+	const highlighted = mapArrayToObj<HiHatMachineMode, HighlightState | false>(
+		optionOrder,
+		() => false
+	);
 	if (mode === "beatAndOffbeat") {
 		highlighted.beat = "left";
 		highlighted.beatAndOffbeat = "middle";
