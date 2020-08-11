@@ -3,13 +3,7 @@ import { AppComponent } from "../storeComponents";
 import { computed } from "mobx";
 import { range } from "../../core/helpers/functions";
 
-interface HiHatOpeningActionEditorProps {
-	something: string;
-}
-
-class HiHatOpeningActionEditor_ extends AppComponent<
-	HiHatOpeningActionEditorProps
-> {
+class HiHatOpeningActionEditor_ extends AppComponent {
 	@computed get timeline() {
 		return this.app.performance.eventTimelines.hihat.hatOpen;
 	}

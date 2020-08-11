@@ -6,11 +6,7 @@ import { LabelAxis } from "./LabelAxis";
 import { EventPolylineContainer } from "./EventPolylineContainer";
 import { keys } from "../../core/helpers/functions";
 
-interface MuteActionEditorProps {
-	something: string;
-}
-
-class MuteActionEditor_ extends AppComponent<MuteActionEditorProps> {
+class MuteActionEditor_ extends AppComponent {
 	@computed get timelines() {
 		return this.app.performance.eventTimelines.machine.channelMute;
 	}

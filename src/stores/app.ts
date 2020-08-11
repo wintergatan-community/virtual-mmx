@@ -4,6 +4,7 @@ import { mapArrayToObj } from "../core/helpers/functions";
 import { bassStrings, drumTypes, vibraphoneBars } from "../toFutureSchema";
 import { PerformanceStore } from "./performance";
 import { JointEventTimeline } from "../core/eventTimelines/types/other";
+import MidiUse from "../midiTesting";
 
 export class AppStore {
 	performance = new PerformanceStore(this);
@@ -35,6 +36,18 @@ export class AppStore {
 				})
 		),
 	};
+
+	midiUse = new MidiUse((note) => {
+		const barStores = Object.values(
+			this.performance.program.state.vibraphone.barStores
+		);
+		for (const barStore of barStores) {
+			if (barStore.note === note) {
+				this.jointTimelines.vibraphone[barStore.bar].performance.triggerEvent();
+				break;
+			}
+		}
+	});
 
 	player = new VmmxPlayer(this);
 
