@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from "react";
 import { TransportControls } from "./transportControls/TransportContols";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
+import { HiHatMachine } from "./hiHatMachine/HiHatMachine";
 import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
 import { Provider } from "mobx-react";
@@ -60,6 +61,9 @@ export class App extends Component {
 				</Move>
 				<Move x={517} y={600}>
 					<Drums />
+				</Move>
+				<Move x={680} y={660}>
+					<HiHatMachine />
 				</Move>
 				<Move x={768} y={80}>
 					<Bass />

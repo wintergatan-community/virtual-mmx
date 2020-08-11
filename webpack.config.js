@@ -72,7 +72,7 @@ module.exports = {
 			},
 			// file-loader to make images importable
 			{
-				test: /\.(png|jpg|gif)$/i,
+				test: /\.(png|jpg|gif|svg)$/i,
 				include: [path.resolve(__dirname, "src")],
 				use: ["file-loader"],
 			},
