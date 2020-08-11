@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { mapArrayToObj } from "../../core/helpers/functions";
 import CSS from "csstype";
 
-import { HiHatMachineMode } from "./HiHatMachine";
+import { HiHatMachineMode } from "../../toFutureSchema";
 
 import beat from "./modeIcons/beat.min.svg";
 import offbeat from "./modeIcons/offbeat.min.svg";

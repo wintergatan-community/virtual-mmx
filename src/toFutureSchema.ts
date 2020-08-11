@@ -33,3 +33,13 @@ export const channelGroups: ChannelGroupTOFIX[] = [
 	"vibraphone",
 	"bass",
 ];
+
+export type HiHatMachineMode =
+	| "beat"
+	| "beatAndOffbeat"
+	| "offbeat"
+	| "offbeatAndSixteenth"
+	| "sixteenth"
+	| "sixteenthAndTriplet"
+	| "triplet"
+	| "off";

@@ -2,18 +2,8 @@ import React from "react";
 import { observable, action } from "mobx";
 import { AppComponent } from "../storeComponents";
 
+import { HiHatMachineMode } from "../../toFutureSchema";
 import { ModeSelector } from "./ModeSelector";
-
-// Will move to schema
-export type HiHatMachineMode =
-	| "beat"
-	| "beatAndOffbeat"
-	| "offbeat"
-	| "offbeatAndSixteenth"
-	| "sixteenth"
-	| "sixteenthAndTriplet"
-	| "triplet"
-	| "off";
 
 class HiHatMachine_ extends AppComponent {
 	// Will move to store
