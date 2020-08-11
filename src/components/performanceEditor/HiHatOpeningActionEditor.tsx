@@ -1,9 +1,9 @@
 import React from "react";
-import { AppComponent } from "../storeComponents";
 import { computed } from "mobx";
 import { range } from "../../core/helpers/functions";
+import { AppComponent } from "../storeComponents";
 
-class HiHatOpeningActionEditor_ extends AppComponent {
+export class HiHatOpeningActionEditor_ extends AppComponent {
 	@computed get timeline() {
 		return this.app.performance.eventTimelines.hihat.hatOpen;
 	}

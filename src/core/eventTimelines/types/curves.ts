@@ -1,63 +1,5 @@
-import { EventBase } from "./other";
-
-// export type Curve<E extends EventBase> =
-// 	| LinearCurve<E>
-// 	| InfiniteTerminalCurve<E>;
-
-// interface CurveBase<E extends EventBase> {
-// 	encloses(event: E): Intersection;
-// 	splitAt(event: E): Curve<E>[];
-// }
-
-// export class InfiniteTerminalCurve<E extends EventBase>
-// 	implements CurveBase<E> {
-// 	start: E | null;
-// 	end: E | null;
-
-// 	constructor(start: E | null, end: E | null) {
-// 		if (start && end)
-// 			throw new Error(
-// 				"An InfiniteTerminalCurve cannot have two valid terminal points"
-// 			);
-// 		this.start = start;
-// 		this.end = end;
-// 	}
-
-// 	encloses(event: E): Intersection {
-// 		return "within";
-// 		// TODO
-// 	}
-// 	splitAt(event: E): Curve<E>[] {
-// 		const first = this.start
-// 			? new LinearCurve(this.start, event)
-// 			: new InfiniteTerminalCurve(null, event);
-// 		const second = this.end
-// 			? new LinearCurve(event, this.end)
-// 			: new InfiniteTerminalCurve(event, null);
-// 		return [first, second];
-// 	}
-// }
-
-// export class LinearCurve<E extends EventBase> implements CurveBase<E> {
-// 	start: E;
-// 	end: E;
-// 	between: E[] = [];
-
-// 	constructor(start: E, end: E) {
-// 		this.start = start;
-// 		this.end = end;
-// 	}
-
-// 	encloses(event: E): Intersection {
-// 		return "within";
-// 		// TODO
-// 	}
-// 	splitAt(event: E) {
-// 		const first = new LinearCurve(this.start, event);
-// 		const second = new LinearCurve(event, this.end);
-// 		return [first, second];
-// 	}
-// }
+import { EventBase, ChangeTrigger } from "./other";
+import { observable } from "mobx";
 
 export type Intersection = "within" | "outside" | "onEdge";
 
@@ -67,16 +9,20 @@ export interface CurvePoints<E extends EventBase> {
 }
 
 export class Curve<E extends EventBase> implements CurvePoints<E> {
-	start: E;
-	end: E | null;
+	@observable start: E;
+	@observable end: E | null;
 	id: number;
 	static currentId = 0;
+	private changeTrigger: ChangeTrigger<E>;
 
-	constructor(start: E, end: E | null) {
+	constructor(start: E, end: E | null, changeTrigger: ChangeTrigger<E>) {
 		this.start = start;
 		this.end = end;
 		this.id = Curve.currentId;
-		this.id++;
+		Curve.currentId++;
+
+		this.changeTrigger = changeTrigger;
+		changeTrigger("add", start);
 	}
 
 	encloses(event: E): Intersection {
@@ -91,6 +37,20 @@ export class Curve<E extends EventBase> implements CurvePoints<E> {
 		}
 	}
 	splitAt(event: E): Curve<E>[] {
-		return [new Curve(this.start, event), new Curve(event, this.end)];
+		return [
+			new Curve(this.start, event, this.changeTrigger),
+			new Curve(event, this.end, this.changeTrigger),
+		];
+	}
+
+	removeAllEvents() {
+		// TODO this is gonna get a lot longer
+		this.changeTrigger("remove", this.start);
+	}
+
+	modifyEvent(dif: Partial<EventBase>) {
+		// TODO dont like EventBase there ^
+		Object.assign(this.start, dif);
+		this.changeTrigger("modify", this.start);
 	}
 }

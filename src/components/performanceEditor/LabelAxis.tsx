@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import { computed } from "mobx";
 import { mapValue } from "../../core/helpers/functions";
+import { observer } from "mobx-react";
 
-interface LabelAxisProps<T extends string> {
+interface LabelAxisProps<T extends string | number> {
 	labels: T[];
 	children: ((label: T) => JSX.Element) | JSX.Element;
 }
 
-export class LabelAxis<T extends string> extends Component<LabelAxisProps<T>> {
+@observer
+export class LabelAxis<T extends string | number> extends Component<
+	LabelAxisProps<T>
+> {
 	@computed get scaledLabels() {
 		const labels = this.props.labels;
 		return labels.map((label, i) => ({

@@ -3,12 +3,17 @@ import { observable, action, computed } from "mobx";
 import { EventBase } from "../../core/eventTimelines/types/other";
 import { PolylineEventTimeline } from "../../core/eventTimelines/variations/polyline";
 import { EventCurve } from "./EventCurve";
+import { Curve } from "../../core/eventTimelines/types/curves";
+import { observer } from "mobx-react";
 
 interface EventPolylineContainerProps<E extends EventBase> {
 	timeline: PolylineEventTimeline<E>;
 	color: string;
+	shouldShow: (curve: Curve<E>) => boolean;
+	colorOf: (curve: Curve<E>) => string;
 }
 
+@observer
 export class EventPolylineContainer<E extends EventBase> extends Component<
 	EventPolylineContainerProps<E>
 > {
@@ -71,23 +76,29 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 				)}
 
 				{this.curves.map((curve, i) => {
-					const left = i > 0 ? this.curves[i - 1].end?.tick ?? 0 : 0;
-					const right =
-						i < this.curves.length - 1
-							? this.curves[i + 1].start?.tick ?? Infinity
-							: Infinity;
+					const start = {
+						left: i > 0 ? this.curves[i - 1].start.tick : 0,
+						right: curve.end?.tick ?? Infinity,
+					};
+					const end = {
+						left: curve.start.tick,
+						right:
+							i < this.curves.length - 1
+								? this.curves[i + 1].start?.tick ?? Infinity
+								: Infinity,
+					};
 
 					return (
 						<EventCurve
 							curve={curve}
-							bounds={{ left, right }}
+							bounds={{ start, end }}
 							color={this.props.color}
-							setSelected={
-								this.setSelected as (event: EventBase | undefined) => void
-							} // TODO not sure why cast is needed
+							setSelected={this.setSelected}
 							selectedEvent={this.selectedEvent}
 							dragging={this.dragging}
 							setDragging={this.setDragging}
+							shouldShow={this.props.shouldShow}
+							colorOf={this.props.colorOf}
 							key={curve.id}
 						/>
 					);

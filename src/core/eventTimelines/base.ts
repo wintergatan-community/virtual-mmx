@@ -1,10 +1,19 @@
-import { EventBase, Listener, TimelineDif } from "./types/other";
+import {
+	EventBase,
+	Listener,
+	TimelineDif,
+	EventChange,
+	ChangeListener,
+} from "./types/other";
 
 export abstract class EventTimeline<E extends EventBase> {
 	private eventListeners: Listener<E>[] = [];
 	private eventTickListeners: Record<number, Listener<E>[]> = [];
-	private addEventListeners: Listener<E>[] = [];
-	private removeEventListeners: Listener<E>[] = [];
+	private changeEventListeners: Record<EventChange, ChangeListener<E>[]> = {
+		add: [],
+		remove: [],
+		modify: [],
+	};
 
 	constructor(stateAffectingListener?: Listener<E>) {
 		stateAffectingListener && this.addEventListener(stateAffectingListener);
@@ -14,11 +23,8 @@ export abstract class EventTimeline<E extends EventBase> {
 	abstract getRemoveDifs(event: E): TimelineDif<E>[] | null;
 	abstract applyDifs(difs: TimelineDif<E>[]): void;
 
-	onAdd(listener: Listener<E>) {
-		this.addEventListeners.push(listener);
-	}
-	onRemove(listener: Listener<E>) {
-		this.removeEventListeners.push(listener);
+	on(change: EventChange, listener: ChangeListener<E>) {
+		this.changeEventListeners[change].push(listener);
 	}
 
 	triggerEvent(event?: E, time?: number) {
@@ -42,12 +48,9 @@ export abstract class EventTimeline<E extends EventBase> {
 		}
 	}
 
-	protected triggerAdd(event: E) {
-		this.addEventListeners.forEach((l) => l(event));
-	}
-	protected triggerRemove(event: E) {
-		this.removeEventListeners.forEach((l) => l(event));
-	}
+	protected triggerChange = (change: EventChange, event: E) => {
+		this.changeEventListeners[change].forEach((l) => l(event));
+	};
 
 	addFromJSONEvent(event: E) {
 		const addDifs = this.getAddDifs(event);

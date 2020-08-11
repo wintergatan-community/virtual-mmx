@@ -1,23 +1,33 @@
 import { AppComponent } from "../storeComponents";
-import React from "react";
+import React, { Component } from "react";
 import { EventBlip } from "./EventBlip";
 import { action } from "mobx";
 import { Curve } from "../../core/eventTimelines/types/curves";
 import { EventBase } from "../../core/eventTimelines/types/other";
+import { observer } from "mobx-react";
+
+export interface Bounds {
+	left: number;
+	right: number;
+}
 
 interface SegmentProps<E extends EventBase> {
 	curve: Curve<E>;
-	bounds: { left: number; right: number };
+	bounds: { start: Bounds; end: Bounds };
 	color: string;
 	selectedEvent: E | undefined;
 	setSelected: (event: E | undefined) => void;
 	dragging: boolean;
 	setDragging: (dragging: boolean) => void;
+	shouldShow: (curve: Curve<E>) => boolean;
+	colorOf: (curve: Curve<E>) => string;
 }
 
-class EventCurve_<E extends EventBase> extends AppComponent<SegmentProps<E>> {
+@observer
+export class EventCurve<E extends EventBase> extends Component<
+	SegmentProps<E>
+> {
 	@action.bound setStartSelected(shouldSelect: boolean) {
-		if (!this.props.curve.start) return;
 		this.setSelected(this.props.curve.start, shouldSelect);
 	}
 	@action.bound setEndSelected(shouldSelect: boolean) {
@@ -32,15 +42,17 @@ class EventCurve_<E extends EventBase> extends AppComponent<SegmentProps<E>> {
 		const p = this.props;
 		return (
 			<g>
-				<line
-					x1={p.curve.start?.tick ?? 0}
-					x2={p.curve.end?.tick ?? Infinity}
-					stroke={p.color}
-					strokeWidth={3}
-				/>
+				{this.props.shouldShow(this.props.curve) && (
+					<line
+						x1={p.curve.start?.tick ?? 0}
+						x2={p.curve.end?.tick ?? 9000} // TODO not fixed
+						stroke={this.props.colorOf(this.props.curve)}
+						strokeWidth={3}
+					/>
+				)}
 				<EventBlip
-					event={p.curve.start}
-					bounds={{ left: p.bounds.left, right: Infinity }}
+					curve={p.curve}
+					bounds={{ left: p.bounds.start.left, right: p.bounds.start.right }}
 					// swapEvents={p.swapSegment}
 					color={p.color}
 					selected={p.selectedEvent === p.curve.start}
@@ -49,10 +61,10 @@ class EventCurve_<E extends EventBase> extends AppComponent<SegmentProps<E>> {
 					setDragging={this.props.setDragging}
 				/>
 
-				{p.curve.end && (
+				{/* {p.curve.end && (
 					<EventBlip
 						event={p.curve.end}
-						bounds={{ left: 0, right: p.bounds.right }}
+						bounds={{ left: p.bounds.end.left, right: p.bounds.end.right }}
 						// swapEvents={p.swapSegment}
 						color={p.color}
 						selected={p.selectedEvent === p.curve.end}
@@ -60,10 +72,8 @@ class EventCurve_<E extends EventBase> extends AppComponent<SegmentProps<E>> {
 						dragging={this.props.dragging}
 						setDragging={this.props.setDragging}
 					/>
-				)}
+				)} */}
 			</g>
 		);
 	}
 }
-
-export const EventCurve = AppComponent.sync(EventCurve_);

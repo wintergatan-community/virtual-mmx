@@ -11,13 +11,26 @@ const partOptions = {
 
 export class ToneChannel<E extends EventBase> {
 	private tonePart = new Part(partOptions);
+	tickRecord: Record<number, number> = {};
 
 	constructor(
 		timeline: EventTimeline<E>,
 		triggerStrike?: (time?: number) => void
 	) {
-		timeline.onAdd((event) => this.tonePart.add(event?.tick + "i", event));
-		timeline.onRemove((event) => this.tonePart.remove(event?.tick + "i"));
+		timeline.on("add", (event) => {
+			this.tonePart.add(event.tick + "i", event);
+			this.tickRecord[event.id] = event.tick;
+		});
+		timeline.on("remove", (event) => {
+			this.tonePart.remove(event.tick + "i");
+			delete this.tickRecord[event.id];
+		});
+		timeline.on("modify", (event) => {
+			const oldTick = this.tickRecord[event.id];
+			this.tonePart.remove(oldTick + "i");
+			this.tonePart.add(event.tick + "i", event);
+			this.tickRecord[event.id] = event.tick;
+		});
 		this.tonePart.callback = (time, event) => {
 			timeline.triggerEvent(event, time);
 		};

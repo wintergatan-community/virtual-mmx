@@ -1,5 +1,4 @@
-import React from "react";
-import { AppComponent } from "../storeComponents";
+import React, { Component } from "react";
 import { PerformanceAction } from "./other";
 
 interface TimelineTabProps {
@@ -7,7 +6,7 @@ interface TimelineTabProps {
 	selected: boolean;
 	select: () => void;
 }
-class TimelineTab_ extends AppComponent<TimelineTabProps> {
+export class TimelineTab extends Component<TimelineTabProps> {
 	render() {
 		return (
 			<div
@@ -28,15 +27,13 @@ class TimelineTab_ extends AppComponent<TimelineTabProps> {
 		);
 	}
 }
-export const TimelineTab = AppComponent.sync(TimelineTab_);
-
 interface TimelineTabsProps {
 	setAction: (action: PerformanceAction) => void;
 	selectedAction: PerformanceAction | undefined;
 	actions: PerformanceAction[];
 }
 
-class TimelineTabs_ extends AppComponent<TimelineTabsProps> {
+export class TimelineTabs extends Component<TimelineTabsProps> {
 	render() {
 		return (
 			<div style={{ display: "flex" }}>
@@ -52,4 +49,3 @@ class TimelineTabs_ extends AppComponent<TimelineTabsProps> {
 		);
 	}
 }
-export const TimelineTabs = AppComponent.sync(TimelineTabs_);

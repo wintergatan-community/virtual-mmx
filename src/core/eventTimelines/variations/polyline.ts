@@ -83,18 +83,20 @@ export abstract class PolylineEventTimeline<
 	}
 
 	applyDifs(curveDifs: CurveDif<E>[]) {
-		// TODO add event handling
 		for (const dif of curveDifs) {
 			switch (dif.type) {
 				case "modify": {
+					dif.curve.modifyEvent(dif.mod);
 					break;
 				}
 				case "add": {
 					const p = dif.curvePoints;
-					this.curves.splice(dif.index, 0, new Curve(p.start, p.end));
+					const newCurve = new Curve(p.start, p.end, this.triggerChange);
+					this.curves.splice(dif.index, 0, newCurve);
 					break;
 				}
 				case "remove": {
+					dif.curve.removeAllEvents();
 					this.curves.splice(dif.index, 1);
 					this.curves[dif.index - 1].end = this.curves[dif.index].start;
 					break;

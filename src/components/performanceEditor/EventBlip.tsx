@@ -1,14 +1,17 @@
-import React, { createRef } from "react";
+import React, { createRef, Component } from "react";
 import { AppComponent } from "../storeComponents";
 import { SpringPulse } from "../../core/helpers/springPulse";
 import { action } from "mobx";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { DraggableCollisionEvent } from "./other";
 import { EventBase } from "../../core/eventTimelines/types/other";
+import { Bounds } from "./EventCurve";
+import { Curve } from "../../core/eventTimelines/types/curves";
+import { observer } from "mobx-react";
 
-interface EventBlipProps<E> {
-	event: E;
-	bounds: { left: number; right: number };
+interface EventBlipProps<E extends EventBase> {
+	curve: Curve<E>;
+	bounds: Bounds;
 	// swapEvents: () => void;
 	color: string;
 	selected: boolean;
@@ -17,7 +20,10 @@ interface EventBlipProps<E> {
 	setDragging: (dragging: boolean) => void;
 }
 
-class EventBlip_<E extends EventBase> extends AppComponent<EventBlipProps<E>> {
+@observer
+export class EventBlip<E extends EventBase> extends Component<
+	EventBlipProps<E>
+> {
 	blipRef = createRef<SVGCircleElement>();
 
 	bounce = new SpringPulse();
@@ -29,6 +35,8 @@ class EventBlip_<E extends EventBase> extends AppComponent<EventBlipProps<E>> {
 
 	@action.bound handleDrag(_: DraggableEvent, e: DraggableData) {
 		this.props.setDragging(true);
+
+		this.props.curve.modifyEvent({ tick: e.x });
 
 		if (e.deltaX !== 0) {
 			if (e.x === this.props.bounds.left) {
@@ -59,7 +67,7 @@ class EventBlip_<E extends EventBase> extends AppComponent<EventBlipProps<E>> {
 		return (
 			<Draggable
 				axis="x"
-				position={{ x: this.props.event.tick, y: 0 }}
+				position={{ x: this.props.curve.start.tick, y: 0 }}
 				grid={[1, 0]}
 				onDrag={this.handleDrag}
 				onStop={this.handleStop}
@@ -94,4 +102,3 @@ class EventBlip_<E extends EventBase> extends AppComponent<EventBlipProps<E>> {
 		);
 	}
 }
-export const EventBlip = AppComponent.sync(EventBlip_);

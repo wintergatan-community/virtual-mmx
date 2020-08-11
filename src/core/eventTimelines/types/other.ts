@@ -3,6 +3,7 @@ import { EventTimeline } from "../base";
 import { Curve, CurvePoints } from "./curves";
 
 export type Listener<EventData> = (event?: EventData, time?: number) => void;
+export type ChangeListener<EventData> = (event: EventData) => void;
 
 export class EventBase {
 	@observable tick: number;
@@ -29,7 +30,7 @@ export interface CurveRemoveDif<E extends EventBase> {
 interface CurveModifyDif<E extends EventBase> {
 	type: "modify";
 	curve: Curve<E>;
-	mod: Partial<CurvePoints<E>> | null;
+	mod: Partial<E>;
 }
 interface CurveSplitDif<E extends EventBase> {
 	type: "split";
@@ -68,3 +69,6 @@ export class JointEventTimeline<EventData extends EventBase> {
 		this.performance.addEventListener(l);
 	}
 }
+
+export type EventChange = "add" | "remove" | "modify";
+export type ChangeTrigger<E> = (change: EventChange, event: E) => void;

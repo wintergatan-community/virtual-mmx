@@ -20,15 +20,15 @@ const mute = app.performance.eventTimelines.machine.channelMute;
 
 const add = (m: boolean, tick: number) => {
 	const difs = mute.vibraphone.getAddDifs(new MuteE({ mute: m, tick }));
-	if (!difs) return;
-	mute.vibraphone.applyDifs(difs);
+	if (difs) {
+		mute.vibraphone.applyDifs(difs);
+	} else {
+		console.log("Cant place");
+	}
 };
 
-add(false, 500);
-add(true, 700);
-add(false, 800);
-add(true, 900);
-add(false, 950);
+add(true, 500);
+add(false, 700);
 
 export class App extends Component {
 	render() {

@@ -1,11 +1,13 @@
-import React from "react";
+import React, { Component } from "react";
 import { AppComponent } from "../storeComponents";
 import { ScrollableTimeline } from "./ScrollableTimeline";
 import { action, observable } from "mobx";
 import { PerformanceAction } from "./other";
 import { TimelineTabs } from "./TimelineTab";
+import { observer } from "mobx-react";
 
-class PerformanceEditor_ extends AppComponent {
+@observer
+export class PerformanceEditor extends Component {
 	@observable performanceActions: PerformanceAction[] = [
 		{ label: "Muting Levers" },
 		{ label: "Bass Fretting" },
@@ -41,5 +43,3 @@ class PerformanceEditor_ extends AppComponent {
 		);
 	}
 }
-
-export const PerformanceEditor = AppComponent.sync(PerformanceEditor_);

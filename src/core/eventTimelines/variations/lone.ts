@@ -23,10 +23,10 @@ export class LoneEventTimeline<E extends EventBase> extends EventTimeline<E> {
 			const { event, type } = dif;
 			if (type === "add") {
 				insertInOrder(event, (e) => event.tick > e.tick, this.events);
-				this.triggerAdd(event);
+				this.triggerChange("add", event);
 			} else {
 				removeInOrder((e) => e.tick === event.tick, this.events);
-				this.triggerRemove(event);
+				this.triggerChange("remove", event);
 			}
 		}
 	}
