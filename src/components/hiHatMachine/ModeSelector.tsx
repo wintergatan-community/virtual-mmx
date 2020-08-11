@@ -6,16 +6,21 @@ import CSS from "csstype";
 
 import { HiHatMachineMode } from "./HiHatMachine";
 
-// TODO: svg / ensure font actually supports these (though the triplet icon does need to change)
-const modeOptionIcon: Record<HiHatMachineMode, string> = {
-	beat: "𝅘𝅥 \xa0",
-	beatAndOffbeat: "•",
-	offbeat: "𝄾 𝅘𝅥𝅮  \xa0",
-	offbeatAndSixteenth: "•",
-	sixteenth: "𝅘𝅥𝅯  \xa0",
-	sixteenthAndTriplet: "•",
-	triplet: "𝅘𝅥 𝅘𝅥 𝅘𝅥 \xa0",
-	off: "",
+import beat from "./modeIcons/beat.min.svg";
+import offbeat from "./modeIcons/offbeat.min.svg";
+import sixteenth from "./modeIcons/sixteenth.min.svg";
+import triplet from "./modeIcons/triplet.min.svg";
+import dot from "./modeIcons/dot.min.svg";
+
+const modeOptionIcon: Record<HiHatMachineMode, any> = {
+	beat: beat,
+	beatAndOffbeat: dot,
+	offbeat: offbeat,
+	offbeatAndSixteenth: dot,
+	sixteenth: sixteenth,
+	sixteenthAndTriplet: dot,
+	triplet: triplet,
+	off: null,
 };
 
 const optionOrder: HiHatMachineMode[] = [
@@ -121,25 +126,10 @@ const Option = observer(function (props: {
 	const style: CSS.Properties = {
 		display: "inline-block",
 		position: "relative",
-		lineHeight: "1.6em",
-		padding: "0 0.2em",
+		// lineHeight: "1.6em",
+		padding: "0",
 		cursor: "pointer",
 	};
-	// TODO: This should happen in the icon svgs or be in modeOptionIcon as an additional field
-	// The props.position=== below are also icon-dependent
-	if (
-		["beatAndOffbeat", "offbeatAndSixteenth", "sixteenthAndTriplet"].includes(
-			props.mode
-		)
-	) {
-		style.padding = "0 0.4em";
-	}
-	if (props.position === "left") {
-		style.paddingLeft = "0.6em";
-	}
-	if (props.position === "right") {
-		style.paddingRight = "0.3em";
-	}
 	return (
 		<div
 			onClick={() => props.onClick(props.mode)}
@@ -147,7 +137,9 @@ const Option = observer(function (props: {
 			onMouseLeave={() => props.onHoverChange(null)}
 			style={style}
 		>
-			{modeOptionIcon[props.mode]}
+			{/* Height should be 30px by default but scalable from the ModeSelector.
+      TODO: Refactor the units. */}
+			<img src={modeOptionIcon[props.mode]} style={{ height: "1.58em" }} />
 			{props.active && (
 				<OptionHighlight
 					zIndex={-2}
