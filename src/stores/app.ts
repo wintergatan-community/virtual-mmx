@@ -2,8 +2,8 @@ import { Program } from "vmmx-schema";
 import { VmmxPlayer } from "../core/playback/player";
 import { mapArrayToObj } from "../core/helpers/functions";
 import { bassStrings, drumTypes, vibraphoneBars } from "../toFutureSchema";
-import { JointEventTimeline } from "./eventTimeline";
 import { PerformanceStore } from "./performance";
+import { JointEventTimeline } from "../core/eventTimelines/types/other";
 
 export class AppStore {
 	performance = new PerformanceStore(this);

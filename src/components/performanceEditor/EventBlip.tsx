@@ -1,14 +1,13 @@
-import { MuteEventTimeline } from "../../stores/eventTimeline";
-import { MuteEvent, DraggableCollisionEvent } from "./other";
-import { AppComponent } from "../storeComponents";
 import React, { createRef } from "react";
+import { AppComponent } from "../storeComponents";
 import { SpringPulse } from "../../core/helpers/springPulse";
 import { action } from "mobx";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
+import { DraggableCollisionEvent } from "./other";
+import { EventBase } from "../../core/eventTimelines/types/other";
 
-interface EventBlipProps {
-	timeline: MuteEventTimeline;
-	event: MuteEvent;
+interface EventBlipProps<E> {
+	event: E;
 	bounds: { left: number; right: number };
 	// swapEvents: () => void;
 	color: string;
@@ -18,7 +17,7 @@ interface EventBlipProps {
 	setDragging: (dragging: boolean) => void;
 }
 
-class EventBlip_ extends AppComponent<EventBlipProps> {
+class EventBlip_<E extends EventBase> extends AppComponent<EventBlipProps<E>> {
 	blipRef = createRef<SVGCircleElement>();
 
 	bounce = new SpringPulse();
@@ -31,10 +30,6 @@ class EventBlip_ extends AppComponent<EventBlipProps> {
 	@action.bound handleDrag(_: DraggableEvent, e: DraggableData) {
 		this.props.setDragging(true);
 
-		const didSwap = this.props.timeline.move(this.props.event, e.x);
-		// if (didSwap) {
-		// 	this.props.swapEvents();
-		// }
 		if (e.deltaX !== 0) {
 			if (e.x === this.props.bounds.left) {
 				this.onHitBounds({ velocity: -e.deltaX, side: "left" });
@@ -46,10 +41,6 @@ class EventBlip_ extends AppComponent<EventBlipProps> {
 
 	onHitBounds(e: DraggableCollisionEvent) {
 		this.bounce.applyCollision(e.velocity * 20);
-	}
-
-	@action.bound toggleMute() {
-		this.props.event.mute = !this.props.event.mute;
 	}
 
 	@action.bound handleStop() {
@@ -91,12 +82,11 @@ class EventBlip_ extends AppComponent<EventBlipProps> {
 						<g fill="white" transform="translate(0, -15)">
 							<polygon points="0,0 8,-10 -8,-10" />
 							<rect width={80} height={80} x={-40} y={-90} rx={12} />
-							<circle
+							{/* <circle
 								r={10}
 								fill={this.props.event.mute ? "red" : "green"}
 								cy={-40}
-								onClick={this.toggleMute}
-							/>
+							/> */}
 						</g>
 					)}
 				</g>

@@ -6,7 +6,8 @@ import { BassInstrument } from "./instruments/bass";
 import { DrumsInstrument } from "./instruments/drums";
 import { ToneChannel } from "./toneChannel";
 import { forEachInNested } from "../helpers/functions";
-import { EventTimeline } from "../../stores/eventTimeline";
+import { EventTimeline } from "../eventTimelines/base";
+import { EventBase } from "../eventTimelines/types/other";
 
 export class VmmxPlayer {
 	appStore: AppStore;
@@ -20,7 +21,7 @@ export class VmmxPlayer {
 		bass: BassInstrument;
 		drums: DrumsInstrument;
 	};
-	eventTimelineToneChannels: ToneChannel<any>[] = [];
+	eventTimelineToneChannels: ToneChannel<EventBase>[] = [];
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
@@ -37,7 +38,7 @@ export class VmmxPlayer {
 			(maybeTimeline) => maybeTimeline instanceof EventTimeline,
 			(timeline) =>
 				this.eventTimelineToneChannels.push(
-					new ToneChannel(timeline as EventTimeline<any>)
+					new ToneChannel(timeline as EventTimeline<EventBase>)
 				)
 		);
 

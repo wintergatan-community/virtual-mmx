@@ -2,11 +2,14 @@ import React from "react";
 import { Peg } from "./Peg";
 import { computed, action } from "mobx";
 import { WheelComponent } from "../storeComponents";
-import { DropEventTimeline } from "../../stores/eventTimeline";
-import { VibraphoneEventSlim } from "../../toFutureSchema";
+import {
+	VibraphoneDropE,
+	DropEventTimeline,
+	DropE,
+} from "../../core/eventTimelines/concrete";
 
 interface ChannelPegsProps {
-	timeline: DropEventTimeline<VibraphoneEventSlim>; // TODO not "any"?
+	timeline: DropEventTimeline<VibraphoneDropE>; // TODO not "any"?
 }
 
 class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
@@ -29,7 +32,7 @@ export const ChannelPegs = WheelComponent.sync(ChannelPegs_);
 
 interface MaybeRenderedPegProps {
 	pegTick: number;
-	timeline: DropEventTimeline<any>;
+	timeline: DropEventTimeline<DropE>;
 }
 
 class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
@@ -40,7 +43,12 @@ class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
 		);
 	}
 	@action.bound removePeg() {
-		this.props.timeline.remove(this.props.pegTick);
+		const t = this.props.timeline;
+		const event = t.events.find((e) => e.tick === this.props.pegTick);
+		if (!event) return;
+		const difs = t.getRemoveDifs(event);
+		if (!difs) return;
+		t.applyDifs(difs);
 	}
 	@computed get activeDivision() {
 		return this.props.pegTick % this.wheel.ticksPerNoteSubdivision === 0;

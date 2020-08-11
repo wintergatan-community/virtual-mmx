@@ -9,9 +9,11 @@ class PerformanceEditor_ extends AppComponent {
 	@observable performanceActions: PerformanceAction[] = [
 		{ label: "Muting Levers" },
 		{ label: "Bass Fretting" },
+		{ label: "Hihat Opening" },
 	];
 
-	@observable selectedAction: PerformanceAction | undefined;
+	@observable selectedAction: PerformanceAction | undefined = this
+		.performanceActions[2];
 
 	@action.bound setAction(action: PerformanceAction) {
 		this.selectedAction = action;

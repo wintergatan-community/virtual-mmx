@@ -1,9 +1,6 @@
 import { Part } from "tone";
-import {
-	EventTimeline,
-	JointEventTimeline,
-	EventBase,
-} from "../../stores/eventTimeline";
+import { EventBase, JointEventTimeline } from "../eventTimelines/types/other";
+import { EventTimeline } from "../eventTimelines/base";
 
 const partOptions = {
 	loop: true,
@@ -12,11 +9,11 @@ const partOptions = {
 	loopEnd: 240 * 4 * 16 + "i",
 };
 
-export class ToneChannel<EventData extends EventBase> {
+export class ToneChannel<E extends EventBase> {
 	private tonePart = new Part(partOptions);
 
 	constructor(
-		timeline: EventTimeline<EventData>,
+		timeline: EventTimeline<E>,
 		triggerStrike?: (time?: number) => void
 	) {
 		timeline.onAdd((event) => this.tonePart.add(event?.tick + "i", event));
@@ -32,12 +29,12 @@ export class ToneChannel<EventData extends EventBase> {
 	}
 }
 
-export class JointToneChannel<EventData extends EventBase> {
-	program: ToneChannel<EventData>;
-	performance: ToneChannel<EventData>;
+export class JointToneChannel<E extends EventBase> {
+	program: ToneChannel<E>;
+	performance: ToneChannel<E>;
 
 	constructor(
-		timelines: JointEventTimeline<EventData>,
+		timelines: JointEventTimeline<E>,
 		triggerStrike: (time?: number) => void
 	) {
 		this.program = new ToneChannel(timelines.program, triggerStrike);

@@ -1,31 +1,25 @@
 import { AppStore } from "./app";
-import {
-	PerformanceMetadata,
-	State,
-	TimedEvent,
-	BassString,
-	VibraphoneChannel,
-} from "vmmx-schema";
+import { PerformanceMetadata, State, TimedEvent } from "vmmx-schema";
 import { ProgramStore } from "./program";
 import {
 	bassStrings,
 	DrumTypeTOFIX,
 	drumTypes,
 	vibraphoneBars,
-	ChannelGroupTOFIX,
 	channelGroups,
-	BassEventSlim,
-	DrumsEventSlim,
-	VibraphoneEventSlim,
 } from "../toFutureSchema";
-import {
-	EventTimeline,
-	mapToEventTimelines,
-	mapToDropEventTimelines,
-	mapToMuteEventTimelines,
-	EventBase,
-} from "./eventTimeline";
 import { Performance } from "vmmx-schema";
+import { mapArrayToObj } from "../core/helpers/functions";
+import {
+	MuteEventTimeline,
+	BassDropEventTimeline,
+	DrumsDropEventTimeline,
+	HiHatDropEventTimeline,
+	DropEventTimeline,
+	VibraphoneDropEventTimeline,
+	VibraphoneVibratoEventTimeline,
+	CapoEventTimeline,
+} from "../core/eventTimelines/concrete";
 
 export class PerformanceStore implements Performance {
 	appStore: AppStore;
@@ -40,37 +34,44 @@ export class PerformanceStore implements Performance {
 
 	eventTimelines = {
 		performanceDrop: {
-			bass: mapToDropEventTimelines<BassString, BassEventSlim>(bassStrings),
-			drums: mapToDropEventTimelines<DrumTypeTOFIX, DrumsEventSlim>(drumTypes),
-			vibraphone: mapToDropEventTimelines<
-				VibraphoneChannel,
-				VibraphoneEventSlim
-			>(vibraphoneBars),
+			bass: mapArrayToObj(bassStrings, () => new BassDropEventTimeline()),
+			drums: mapArrayToObj<DrumTypeTOFIX, DrumsDropEventTimeline>(
+				drumTypes,
+				(drumType) =>
+					drumType === "hihat"
+						? new HiHatDropEventTimeline()
+						: new DropEventTimeline()
+			), // TODO might want separate drum events
+			vibraphone: mapArrayToObj(
+				vibraphoneBars,
+				() => new VibraphoneDropEventTimeline()
+			),
 		},
 		machine: {
-			channelMute: mapToMuteEventTimelines<ChannelGroupTOFIX>(
+			channelMute: mapArrayToObj(
 				channelGroups,
-				(channelGroup) => (event) => {
-					if (!event) return;
-					this.program.state.machine.setMuted(channelGroup, event.mute);
-				}
+				(channelGroup) =>
+					new MuteEventTimeline((event) => {
+						if (!event) return;
+						this.program.state.machine.setMuted(channelGroup, event.mute);
+					})
 			),
 		},
 		vibraphone: {
-			vibratoEnabled: new EventTimeline<
-				{
-					enableVibrato: boolean;
-				} & EventBase
-			>(),
-			vibratoSpeed: new EventTimeline<{ speed: number } & EventBase>(),
+			vibrato: new VibraphoneVibratoEventTimeline(),
 		},
 		// hihatMachine: undefined, // TODO not sure what to do with this yet
 		hihat: {
-			closed: new EventTimeline<{ closed: boolean } & EventBase>(),
+			hatOpen: new HiHatDropEventTimeline(),
 		},
 		bass: {
-			capo: mapToEventTimelines<BassString, { moveCapo: number } & EventBase>(
-				bassStrings
+			capo: mapArrayToObj(
+				bassStrings,
+				(bassString) =>
+					new CapoEventTimeline((event) => {
+						if (!event || !event.moveFret) return;
+						this.program.state.bass.capos[bassString] = event.moveFret;
+					})
 			),
 		},
 	};

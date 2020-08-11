@@ -40,6 +40,9 @@ export function removeInOrder<T>(
 ) {
 	let i;
 	for (i = 0; i < arr.length && !testFunc(arr[i], i); i++);
+	if (i === arr.length) {
+		return undefined;
+	}
 	return arr.splice(i, 1)[0];
 }
 
@@ -225,10 +228,13 @@ export function entries<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
 	return Object.entries(obj) as [Key, Value][];
 }
 
+interface Indexable {
+	[index: string]: any;
+}
 export function forEachInNested(
-	obj: Record<ObjectKey, any>,
-	shouldCallFuncOn: (obj: Record<ObjectKey, any>) => boolean,
-	func: (obj: Record<ObjectKey, any>) => void
+	obj: Indexable,
+	shouldCallFuncOn: (obj: Indexable) => boolean,
+	func: (obj: Indexable) => void
 ) {
 	if (shouldCallFuncOn(obj)) {
 		func(obj);
@@ -239,6 +245,10 @@ export function forEachInNested(
 			forEachInNested(obj[prop], shouldCallFuncOn, func);
 		}
 	}
+}
+
+export function keys<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
+	return Object.keys(obj) as Key[];
 }
 
 // type Keyable = string | number;

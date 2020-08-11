@@ -12,17 +12,23 @@ import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
 import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
-import { MuteEvent } from "./performanceEditor/other";
+import { MuteE } from "../core/eventTimelines/concrete";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
 const mute = app.performance.eventTimelines.machine.channelMute;
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 200 }));
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 500 }));
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 700 }));
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 800 }));
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: true, tick: 900 }));
-mute.vibraphone.addTerminalEvent(new MuteEvent({ mute: false, tick: 950 }));
+
+const add = (m: boolean, tick: number) => {
+	const difs = mute.vibraphone.getAddDifs(new MuteE({ mute: m, tick }));
+	if (!difs) return;
+	mute.vibraphone.applyDifs(difs);
+};
+
+add(false, 500);
+add(true, 700);
+add(false, 800);
+add(true, 900);
+add(false, 950);
 
 export class App extends Component {
 	render() {

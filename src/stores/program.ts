@@ -1,25 +1,32 @@
 import {
 	Program,
-	BassString,
-	VibraphoneChannel,
 	BassDropEvent,
 	DrumDropEvent,
 	VibraphoneDropEvent,
 	ProgramMetadata,
+	HihatEvent,
 } from "vmmx-schema";
 import { AppStore } from "./app";
 import {
 	bassStrings,
-	DrumTypeTOFIX,
 	drumTypes,
 	vibraphoneBars,
-	BassEventSlim,
-	DrumsEventSlim,
-	VibraphoneEventSlim,
+	DrumTypeTOFIX,
 } from "../toFutureSchema";
 import { observable } from "mobx";
 import { StateStore } from "./state";
-import { mapToDropEventTimelines } from "./eventTimeline";
+import { mapArrayToObj } from "../core/helpers/functions";
+import {
+	BassDropEventTimeline,
+	HiHatDropEventTimeline,
+	VibraphoneDropEventTimeline,
+	BassDropE,
+	VibraphoneDropE,
+	DropEventTimeline,
+	DrumsDropEventTimeline,
+	HiHatDropE,
+	DropE,
+} from "../core/eventTimelines/concrete";
 
 export class ProgramStore implements Program {
 	appStore: AppStore;
@@ -28,10 +35,17 @@ export class ProgramStore implements Program {
 	state = new StateStore(this.appStore);
 	dropEvents = []; // TODO computed get
 	dropEventTimelines = {
-		bass: mapToDropEventTimelines<BassString, BassEventSlim>(bassStrings),
-		drums: mapToDropEventTimelines<DrumTypeTOFIX, DrumsEventSlim>(drumTypes), // TODO might want separate drum events
-		vibraphone: mapToDropEventTimelines<VibraphoneChannel, VibraphoneEventSlim>(
-			vibraphoneBars
+		bass: mapArrayToObj(bassStrings, () => new BassDropEventTimeline()),
+		drums: mapArrayToObj<DrumTypeTOFIX, DrumsDropEventTimeline>(
+			drumTypes,
+			(drumType) =>
+				drumType === "hihat"
+					? new HiHatDropEventTimeline()
+					: new DropEventTimeline()
+		), // TODO might want separate drum events
+		vibraphone: mapArrayToObj(
+			vibraphoneBars,
+			() => new VibraphoneDropEventTimeline()
 		),
 	};
 
@@ -53,25 +67,20 @@ export class ProgramStore implements Program {
 			if (kind == "bass") {
 				const e = event as BassDropEvent;
 				this.dropEventTimelines[kind][e.string].addFromJSONEvent(
-					new BassEventSlim({
-						fret: e.fret,
-						tick: event.tick,
-					})
+					new BassDropE(event)
 				);
 			} else if (kind == "drums") {
 				const e = event as DrumDropEvent;
 				this.dropEventTimelines[kind][e.drum].addFromJSONEvent(
-					new DrumsEventSlim({
-						tick: event.tick,
-					})
+					((event as unknown) as HihatEvent).closed !== undefined
+						? new HiHatDropE(event)
+						: new DropE(event)
 				); // TODO need something for open hat
 			} else if (kind == "vibraphone") {
 				const e = event as VibraphoneDropEvent;
 				// TODO schema "channel" should be called "bar"
 				this.dropEventTimelines[kind][e.channel].addFromJSONEvent(
-					new VibraphoneEventSlim({
-						tick: event.tick,
-					})
+					new VibraphoneDropE(event)
 				);
 			}
 		});
