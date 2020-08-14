@@ -99,7 +99,16 @@ export abstract class PolylineEventTimeline<
 				case "remove": {
 					dif.curve.removeAllEvents();
 					this.curves.splice(dif.index, 1);
-					this.curves[dif.index - 1].end = this.curves[dif.index].start;
+					const toLinkRight =
+						dif.index < this.curves.length ? this.curves[dif.index] : null;
+					const toLinkLeft = dif.index > 0 ? this.curves[dif.index - 1] : null;
+					if (toLinkLeft) {
+						if (toLinkRight) {
+							toLinkLeft.end = toLinkRight.start;
+						} else {
+							toLinkLeft.end = null;
+						}
+					}
 					break;
 				}
 				case "split": {

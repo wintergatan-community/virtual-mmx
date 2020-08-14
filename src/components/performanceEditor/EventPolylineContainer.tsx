@@ -24,6 +24,7 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 	@observable hovering = false;
 	mouse = new MouseTracker();
 	wholeRef = createRef<SVGRectElement>();
+	@observable selectedEvent: E | undefined;
 
 	componentDidMount() {
 		if (!this.wholeRef.current) return;
@@ -34,6 +35,20 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 				this.applySplit();
 			}
 		});
+
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Backspace" || e.key === "Delete") {
+				this.removeSelected();
+			}
+		});
+	}
+
+	@action removeSelected() {
+		if (!this.selectedEvent) return;
+		const difs = this.props.timeline.getRemoveDifs(this.selectedEvent);
+		if (!difs) return;
+		this.props.timeline.applyDifs(difs);
+		this.selectedEvent = undefined;
 	}
 
 	@computed get curves() {
@@ -52,7 +67,6 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 	) {
 		this.mouse.update(e);
 	}
-	@observable selectedEvent: E | undefined;
 
 	@action.bound setSelected(event: E | undefined) {
 		this.selectedEvent = event;
@@ -67,19 +81,16 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 	}
 
 	@computed get curvesFromSplit() {
-		if (!this.mouse.mousePos) return;
+		if (!this.mouse.mousePos || this.selectedEvent) return;
 		const tick = this.mouse.mousePos.x;
 		const pad = 20;
 		const val = mapValue(this.mouse.mousePos.y, 150 - pad, pad, 0, 20);
 
-		const difs = this.props.timeline.getAddDifs(
-			this.props.newEventAt(tick, val)
-		);
-		return difs;
+		return this.props.timeline.getAddDifs(this.props.newEventAt(tick, val));
 	}
 
 	@action.bound applySplit() {
-		if (!this.curvesFromSplit) return;
+		if (!this.curvesFromSplit || this.dragging) return;
 		this.props.timeline.applyDifs(this.curvesFromSplit);
 	}
 
@@ -95,14 +106,12 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 					onMouseLeave={this.handleMouseLeave}
 					onMouseMove={this.handleMouseMove}
 				/>
-
-				{this.mouse.mousePos && (
+				{this.selectedEvent && (
 					<circle
-						cx={this.mouse.mousePos.x}
-						cy={this.mouse.mousePos.y}
-						r={8}
-						fill={this.props.colorOf(null) + "66"}
-						pointerEvents="none"
+						r={12}
+						cx={this.selectedEvent.tick}
+						cy={this.props.valToPixel(this.props.value(this.selectedEvent))}
+						fill={this.props.colorOf(null) + "33"}
 					/>
 				)}
 
@@ -136,38 +145,48 @@ export class EventPolylineContainer<E extends EventBase> extends Component<
 					);
 				})}
 
-				{this.curvesFromSplit &&
-					this.curvesFromSplit.map((curveDif) => {
-						if (curveDif.type !== "split") return;
-						const c = curveDif.curve;
-						const y = (event: E) => {
-							return this.props.valToPixel(this.props.value(event));
-						};
-						const yAt = y(curveDif.at);
+				{this.curvesFromSplit && this.mouse.mousePos && !this.dragging && (
+					<>
+						<circle
+							cx={this.mouse.mousePos.x}
+							cy={this.mouse.mousePos.y}
+							r={8}
+							fill={this.props.colorOf(null) + "33"}
+							pointerEvents="none"
+						/>
+						{this.curvesFromSplit.map((curveDif) => {
+							if (curveDif.type !== "split") return;
+							const c = curveDif.curve;
+							const y = (event: E) => {
+								return this.props.valToPixel(this.props.value(event));
+							};
+							const yAt = y(curveDif.at);
 
-						return (
-							<g key={curveDif.index}>
-								<line
-									x1={c.start.tick}
-									y1={y(c.start)}
-									x2={curveDif.at.tick}
-									y2={yAt}
-									stroke={this.props.colorOf(null) + "33"}
-									strokeWidth={3}
-									pointerEvents="none"
-								/>
-								<line
-									x1={curveDif.at.tick}
-									y1={yAt}
-									x2={c.end?.tick ?? 9000} // TODO not fixed
-									y2={c.end ? y(c.end) : yAt}
-									stroke={this.props.colorOf(null) + "33"}
-									strokeWidth={3}
-									pointerEvents="none"
-								/>
-							</g>
-						);
-					})}
+							return (
+								<g key={curveDif.index}>
+									<line
+										x1={c.start.tick}
+										y1={y(c.start)}
+										x2={curveDif.at.tick}
+										y2={yAt}
+										stroke={this.props.colorOf(null) + "33"}
+										strokeWidth={3}
+										pointerEvents="none"
+									/>
+									<line
+										x1={curveDif.at.tick}
+										y1={yAt}
+										x2={c.end?.tick ?? 9000} // TODO not fixed
+										y2={c.end ? y(c.end) : yAt}
+										stroke={this.props.colorOf(null) + "33"}
+										strokeWidth={3}
+										pointerEvents="none"
+									/>
+								</g>
+							);
+						})}
+					</>
+				)}
 			</g>
 		);
 	}
