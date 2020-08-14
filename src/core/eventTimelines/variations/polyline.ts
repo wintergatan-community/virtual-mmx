@@ -1,11 +1,12 @@
 import { EventTimeline } from "../base";
 import { EventBase, CurveDif, CurveRemoveDif } from "../types/other";
 import { Curve } from "../types/curves";
+import { observable } from "mobx";
 
 export abstract class PolylineEventTimeline<
 	E extends EventBase
 > extends EventTimeline<E> {
-	curves: Curve<E>[] = [];
+	@observable curves: Curve<E>[] = [];
 
 	abstract eventCanBePlacedOnCurve(event: E, curve: Curve<E> | null): boolean;
 

@@ -10,23 +10,22 @@ export interface Bounds {
 	right: number;
 }
 
-interface SegmentProps<E extends EventBase> {
+interface EventCurveProps<E extends EventBase> {
 	curve: Curve<E>;
 	bounds: { start: Bounds; end: Bounds };
-	color: string;
 	selectedEvent: E | undefined;
 	setSelected: (event: E | undefined) => void;
 	dragging: boolean;
 	setDragging: (dragging: boolean) => void;
 	shouldShow: (curve: Curve<E>) => boolean;
-	colorOf: (curve: Curve<E>) => string;
-	valueOf: (event: E) => number;
-	scale: (value: number) => number;
+	colorOf: (curve: Curve<E> | null) => string;
+	value: (event: E) => number;
+	valToPixel: (value: number) => number;
 }
 
 @observer
 export class EventCurve<E extends EventBase> extends Component<
-	SegmentProps<E>
+	EventCurveProps<E>
 > {
 	@action.bound setStartSelected(shouldSelect: boolean) {
 		this.setSelected(this.props.curve.start, shouldSelect);
@@ -41,39 +40,38 @@ export class EventCurve<E extends EventBase> extends Component<
 
 	render() {
 		const p = this.props;
-		const y1 = this.props.scale(p.valueOf(p.curve.start));
-		// const y2 = p.curve.end ? this.props.scale(p.valueOf(p.curve.end)) : y1;
+		const y1 = p.valToPixel(p.value(p.curve.start));
+		const y2 = p.curve.end ? p.valToPixel(p.value(p.curve.end)) : y1;
 
 		return (
 			<g>
-				{this.props.shouldShow(this.props.curve) && (
+				{p.shouldShow(p.curve) && (
 					<line
 						x1={p.curve.start?.tick ?? 0}
 						x2={p.curve.end?.tick ?? 9000} // TODO not fixed
-						y1={-y1}
-						y2={-y1}
-						stroke={this.props.colorOf(this.props.curve)}
+						y1={y1}
+						y2={y2}
+						stroke={p.colorOf(p.curve)}
 						strokeWidth={3}
 					/>
 				)}
 				<EventBlip
 					curve={p.curve}
 					bounds={{ left: p.bounds.start.left, right: p.bounds.start.right }}
-					// swapEvents={p.swapSegment}
-					color={p.color}
 					selected={p.selectedEvent === p.curve.start}
 					setSelected={this.setStartSelected}
-					dragging={this.props.dragging}
-					setDragging={this.props.setDragging}
-					valueOf={this.props.valueOf}
-					scale={this.props.scale}
+					dragging={p.dragging}
+					setDragging={p.setDragging}
+					colorOf={p.colorOf}
+					value={p.value}
+					valToPixel={p.valToPixel}
 				/>
 
 				{/* {p.curve.end && (
 					<EventBlip
 						event={p.curve.end}
 						bounds={{ left: p.bounds.end.left, right: p.bounds.end.right }}
-						// swapEvents={p.swapSegment}
+						// swapEvents={p.swapEventCurve}
 						color={p.color}
 						selected={p.selectedEvent === p.curve.end}
 						setSelected={this.setEndSelected}

@@ -12,14 +12,13 @@ import { observer } from "mobx-react";
 interface EventBlipProps<E extends EventBase> {
 	curve: Curve<E>;
 	bounds: Bounds;
-	// swapEvents: () => void;
-	color: string;
+	colorOf: (curve: Curve<E> | null) => string;
 	selected: boolean;
 	setSelected: (selected: boolean) => void;
 	dragging: boolean;
 	setDragging: (dragging: boolean) => void;
-	valueOf: (event: E) => number;
-	scale: (value: number) => number;
+	value: (event: E) => number;
+	valToPixel: (value: number) => number;
 }
 
 @observer
@@ -71,7 +70,7 @@ export class EventBlip<E extends EventBase> extends Component<
 				axis="x"
 				position={{
 					x: this.props.curve.start.tick,
-					y: -this.props.scale(this.props.valueOf(this.props.curve.start)),
+					y: this.props.valToPixel(this.props.value(this.props.curve.start)),
 				}}
 				grid={[1, 0]}
 				onDrag={this.handleDrag}
@@ -83,11 +82,11 @@ export class EventBlip<E extends EventBase> extends Component<
 				<g>
 					<circle
 						r={8 + Math.max(this.bounce.value, 0)}
-						fill={this.props.color + "44"}
+						fill={this.props.colorOf(null) + "44"}
 					/>
 					<circle
 						r={8}
-						fill={this.props.color}
+						fill={this.props.colorOf(null)}
 						ref={this.blipRef}
 						onClick={this.handleClick}
 					/>

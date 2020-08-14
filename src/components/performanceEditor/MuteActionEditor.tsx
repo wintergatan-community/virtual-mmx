@@ -2,9 +2,10 @@ import React from "react";
 import { AppComponent } from "../storeComponents";
 import { ChannelGroupTOFIX } from "../../toFutureSchema";
 import { computed } from "mobx";
-import { LabelAxis } from "./LabelAxis";
 import { EventPolylineContainer } from "./EventPolylineContainer";
 import { keys } from "../../core/helpers/functions";
+import { StackedTimeline } from "./StackedTimelines";
+import { MuteE } from "../../core/eventTimelines/concrete";
 
 class MuteActionEditor_ extends AppComponent {
 	@computed get timelines() {
@@ -22,18 +23,18 @@ class MuteActionEditor_ extends AppComponent {
 
 	render() {
 		return (
-			<LabelAxis labels={keys(this.timelines)}>
+			<StackedTimeline labels={keys(this.timelines)}>
 				{(label) => (
 					<EventPolylineContainer
 						timeline={this.timelines[label]}
-						color={this.colors[label as ChannelGroupTOFIX]}
 						shouldShow={(c) => c.start.mute}
-						colorOf={() => this.colors[label as ChannelGroupTOFIX]}
-						valueOf={() => 1}
-						scale={() => 0}
+						colorOf={() => this.colors[label]}
+						value={() => 1}
+						valToPixel={() => 0}
+						newEventAt={(tick) => new MuteE({ mute: true, tick })}
 					/>
 				)}
-			</LabelAxis>
+			</StackedTimeline>
 		);
 	}
 }
