@@ -3,9 +3,6 @@ import { AppComponent } from "../storeComponents";
 import { computed } from "mobx";
 
 class Crank_ extends AppComponent {
-	width = 160;
-	height = 160;
-
 	@computed get y() {
 		const tick = this.app.player.currentTick;
 		const tpq = this.app.performance.program.metadata.tpq;
@@ -19,8 +16,8 @@ class Crank_ extends AppComponent {
 			<svg
 				viewBox={`-50 -50 ${100} ${100}`}
 				style={{
-					width: this.width,
-					height: this.height,
+					width: "100%",
+					height: "100%",
 				}}
 			>
 				<rect x={-26} y={-35} width={6} height={70} fill="rgb(83, 83, 83)" />

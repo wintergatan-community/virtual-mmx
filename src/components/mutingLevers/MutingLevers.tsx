@@ -7,9 +7,6 @@ import { computed } from "mobx";
 import { ChannelGroupTOFIX } from "../../toFutureSchema";
 
 class MutingLevers_ extends AppComponent {
-	width = 160;
-	height = 160;
-
 	@computed get levers() {
 		// TODO not so efficient
 		const machine = this.app.performance.program.state.machine;
@@ -32,10 +29,10 @@ class MutingLevers_ extends AppComponent {
 	render() {
 		return (
 			<svg
-				viewBox={`-50 -50 ${100} ${100}`}
+				viewBox={`-150 -50 ${300} ${100}`}
 				style={{
-					width: this.width,
-					height: this.height,
+					width: "100%",
+					height: "100%",
 				}}
 			>
 				{range(0, 5).map((offset) => (

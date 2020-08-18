@@ -9,8 +9,6 @@ import { DrumsDisplayStore } from "./drumsDisplay";
 
 class Drums_ extends AppComponent {
 	drums = new DrumsDisplayStore();
-	width = 160;
-	height = 160;
 
 	render() {
 		return (
@@ -18,8 +16,8 @@ class Drums_ extends AppComponent {
 				<svg
 					viewBox={`0 0 ${100} ${100}`}
 					style={{
-						width: this.width,
-						height: this.height,
+						width: "100%",
+						height: "100%",
 					}}
 				>
 					<Snare />

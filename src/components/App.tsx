@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from "react";
-import { TransportControls } from "./transportControls/TransportContols";
+import { TransportControls } from "./transportControls/TransportControls";
 import { Vibraphone } from "./vibraphone/Vibraphone";
 import { Drums } from "./drums/Drums";
 import { HiHatMachine } from "./hiHatMachine/HiHatMachine";
@@ -14,6 +14,8 @@ import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
 import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 import { MuteE, CapoE } from "../core/eventTimelines/concrete";
+import template from "./template.png";
+import { range } from "../core/helpers/functions";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
@@ -47,41 +49,56 @@ debugAddCapo(15, 500);
 debugAddCapo(8, 640);
 
 export class App extends Component {
+	headerPercent = 6;
+
 	render() {
 		return (
 			<Provider app={app}>
-				{/* <MockupLayout /> */}
-				<ToneIndicator />
+				{/* <img
+					style={{ zIndex: -1, position: "absolute", width: "100%" }}
+					src={template}
+				/> */}
+				<div style={{ position: "absolute", width: "100%", height: "100%" }}>
+					<VmmxHeader headerPercent={this.headerPercent} />
 
-				<Move x={78} y={82}>
-					<ProgrammingWheel />
-				</Move>
-				<Move x={100} y={600}>
-					<Vibraphone />
-				</Move>
-				<Move x={517} y={600}>
-					<Drums />
-				</Move>
-				<Move x={680} y={660}>
-					<HiHatMachine />
-				</Move>
-				<Move x={768} y={80}>
-					<Bass />
-				</Move>
-				<Move x={890} y={231}>
-					<Crank />
-				</Move>
-				<Move x={890} y={81}>
-					<MutingLevers />
-				</Move>
-				<Move x={889} y={624}>
-					<TransportControls />
-				</Move>
-
-				{/* <Move x={860} y={460}>
-					<Spinny />
-				</Move> */}
-				<PerformanceEditor />
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "33% 14% 14% 15% 24%",
+							gridTemplateRows: "18% 28% 23% 31%",
+							height: `${100 - this.headerPercent}%`,
+							backgroundColor: "#f3f3f3ff",
+						}}
+					>
+						<GridLayout col="1/4" row="1/4">
+							<ProgrammingWheel />
+						</GridLayout>
+						<GridLayout col="1/2" row="4/5">
+							<Vibraphone />
+						</GridLayout>
+						<GridLayout col="2/3" row="4/5">
+							<Drums />
+						</GridLayout>
+						<GridLayout col="3/4" row="4/5">
+							<HiHatMachine />
+						</GridLayout>
+						<GridLayout col="4/5" row="1/5">
+							<Bass />
+						</GridLayout>
+						<GridLayout col="5/6" row="1/2">
+							<MutingLevers />
+						</GridLayout>
+						<GridLayout col="5/6" row="2/3">
+							<Crank />
+						</GridLayout>
+						<GridLayout col="5/6" row="3/4">
+							<></>
+						</GridLayout>
+						<GridLayout col="5/6" row="4/5">
+							<TransportControls />
+						</GridLayout>
+					</div>
+				</div>
 			</Provider>
 		);
 	}
@@ -105,3 +122,79 @@ function Move(props: MoveProps) {
 		</div>
 	);
 }
+
+interface GridLayoutProps {
+	col: string;
+	row: string;
+	children?: ReactNode;
+}
+
+const GridLayout = (props: GridLayoutProps) => (
+	<div
+		style={{
+			display: "flex",
+			background: "none",
+			padding: "0px",
+			border: "#cccccc 1px solid",
+			gridColumn: props.col,
+			gridRow: props.row,
+			alignContent: "center",
+			justifyContent: "center",
+			alignItems: "center",
+			justifyItems: "center",
+		}}
+	>
+		{props.children}
+	</div>
+);
+
+function VmmxHeader(props: { headerPercent: number }) {
+	return (
+		<div
+			style={{
+				display: "flex",
+				width: "100%",
+				height: `${props.headerPercent}%`,
+				backgroundColor: "#ccc",
+				alignItems: "center",
+			}}
+		>
+			<p
+				style={{
+					fontSize: 25,
+					paddingLeft: 20,
+					paddingRight: 20,
+				}}
+			>
+				Virtual Marble Machine X
+			</p>
+			<NavButtonBreak />
+			<NavButton text="Share" />
+			<NavButtonBreak />
+			<NavButton text="View" />
+			<NavButtonBreak />
+		</div>
+	);
+}
+
+interface NavButtonProps {
+	text: string;
+}
+const NavButton = (props: NavButtonProps) => (
+	<div
+		style={{
+			height: "80%",
+			fontSize: 22,
+			paddingLeft: 20,
+			paddingRight: 20,
+			color: "#434343",
+			cursor: "pointer",
+		}}
+	>
+		{props.text}
+	</div>
+);
+
+const NavButtonBreak = () => (
+	<span style={{ width: 1.5, height: "80%", backgroundColor: "#b7b7b7" }} />
+);

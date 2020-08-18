@@ -17,7 +17,7 @@ class Connector_ extends AppComponent<ConnectorProps> {
 	}
 
 	@computed get height() {
-		return 6 / (this.props.offset + 1);
+		return 30 / (this.props.offset + 3);
 	}
 
 	render() {
@@ -38,5 +38,5 @@ export const Connector = AppComponent.sync(Connector_);
 export function offsetToPixel(offset: number) {
 	// TODO move to local provider
 	const pad = 10;
-	return mapValue(offset, 0, 5, pad, 100 - pad) - 50;
+	return mapValue(offset, 0, 5, pad, 200 - pad) - 100;
 }

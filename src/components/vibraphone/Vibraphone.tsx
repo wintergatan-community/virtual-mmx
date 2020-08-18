@@ -19,8 +19,8 @@ class Vibraphone_ extends AppComponent {
 				<svg
 					viewBox={`0 0 ${this.vibra.wholeWidth} ${this.height}`}
 					style={{
-						width: this.vibra.wholeWidth,
-						height: this.height,
+						width: "100%",
+						height: "100%",
 					}}
 				>
 					<g
