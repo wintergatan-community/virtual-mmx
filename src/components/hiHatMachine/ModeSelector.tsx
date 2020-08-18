@@ -139,7 +139,11 @@ const Option = observer(function (props: {
 		>
 			{/* Height should be 30px by default but scalable from the ModeSelector.
       TODO: Refactor the units. */}
-			<img src={modeOptionIcon[props.mode]} style={{ height: "1.58em" }} />
+			<img
+				src={modeOptionIcon[props.mode]}
+				style={{ height: "1.58em" }}
+				draggable={false}
+			/>
 			{props.active && (
 				<OptionHighlight
 					zIndex={-2}

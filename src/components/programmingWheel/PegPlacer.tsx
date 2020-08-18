@@ -20,7 +20,11 @@ class PegPlacer_ extends WheelComponent {
 	}
 	@action.bound addPeg() {
 		if (!this.mouse || !this.timeline) return;
-		this.timeline.getAddDifs(new DropE({ tick: this.mouse.mouseTick }));
+		const difs = this.timeline.getAddDifs(
+			new DropE({ tick: this.mouse.mouseTick })
+		);
+		if (!difs) return;
+		this.timeline.applyDifs(difs);
 	}
 	@computed get height() {
 		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);

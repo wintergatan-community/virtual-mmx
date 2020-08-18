@@ -37,13 +37,7 @@ export abstract class PolylineEventTimeline<
 				if (!this.eventCanBePlacedOnCurve(event, curve)) return null;
 
 				return [{ type: "split", curve, at: event, index: i }];
-				// addFunc = () => this.curves.splice(i, 1, ...curve.splitAt(event));
-			} // else if (curve.start.tick > event.tick) {
-			// 	// curve to place goes right before current curve
-			// 	if (!this.eventCanBePlacedOnCurve(event, curve, true)) return null;
-			// 	addFunc = () => this.curves.splice(i, 0, new Curve(event, curve.start));
-			// 	break;
-			// }
+			}
 		}
 		return null;
 	}
@@ -53,33 +47,13 @@ export abstract class PolylineEventTimeline<
 			const curve = this.curves[i];
 			if (curve.start === event) {
 				return this.onRemoveCurve({ type: "remove", curve, index: i });
-
-				// return () => {
-				// 	this.curves.splice(i, 1);
-				// 	this.triggerRemove(curve.start);
-				// 	if (i !== 0) {
-				// 		this.curves[i - 1].end = curve.end;
-				// 	}
-
-				// curve.end && this.triggerRemove(curve.end);
 			}
-		} // else if (curve.end === event) {
-		// 	if (i < this.curves.length - 1) {
-		// 		return () => {
-		// 			curve.end = this.curves[i + 1].start;
-		// 			this.triggerRemove(event);
-		// 		};
-		// 	} else {
-		// 		return () => {
-		// 			curve.end = null;
-		// 			this.triggerRemove(event);
-		// 		};
-		// 	}
-		// }
+		}
 		return null;
 	}
 
 	onRemoveCurve(curveRemoveDif: CurveRemoveDif<E>) {
+		// logic for chain reaction when removing events. Can be overrided by subclasses
 		return [curveRemoveDif];
 	}
 
