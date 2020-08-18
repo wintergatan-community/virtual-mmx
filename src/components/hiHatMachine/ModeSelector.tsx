@@ -74,7 +74,9 @@ export class ModeSelector extends React.Component<ModeSelectorProps> {
 				style={{
 					// TODO: Prefixing?
 					userSelect: "none",
-					textAlign: "center",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
 				}}
 			>
 				<div
@@ -86,7 +88,7 @@ export class ModeSelector extends React.Component<ModeSelectorProps> {
 						padding: "3px",
 						// Be above the off button _and_ start a new stacking context
 						// for highlights
-						zIndex: 1,
+						zIndex: 2,
 						position: "relative",
 					}}
 				>
@@ -226,6 +228,8 @@ const OffOption = observer(function (props: {
 		boxShadow: "0 0 4px rgba(0,0,0,30%)",
 		borderRadius: "0 0 0.4em 0.4em",
 		cursor: "pointer",
+		// Be above HiHatMachineBrass
+		zIndex: 1,
 	};
 	if (props.hover) {
 		style.backgroundColor = "#f1f1f1";
