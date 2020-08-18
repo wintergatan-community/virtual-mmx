@@ -4,6 +4,7 @@ import { AppComponent } from "../storeComponents";
 
 import { HiHatMachineMode } from "../../toFutureSchema";
 import { ModeSelector } from "./ModeSelector";
+import { HiHatMachineBrass } from "./HiHatMachineBrass";
 
 class HiHatMachine_ extends AppComponent {
 	// Will move to store
@@ -15,7 +16,10 @@ class HiHatMachine_ extends AppComponent {
 
 	render() {
 		return (
-			<ModeSelector currentMode={this.currentMode} selectMode={this.select} />
+			<div>
+				<ModeSelector currentMode={this.currentMode} selectMode={this.select} />
+				<HiHatMachineBrass angle={0} />
+			</div>
 		);
 	}
 }
