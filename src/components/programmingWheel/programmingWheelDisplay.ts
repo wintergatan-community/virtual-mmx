@@ -229,7 +229,7 @@ export class ProgrammingWheelDisplayStore
 		return tick >= this.visibleTopTick && tick <= this.visibleBottomTick;
 	}
 	@computed get subdivisionLines() {
-		return range(0, this.totalTicks, this.ticksPerNoteSubdivision / 2);
+		return range(0, this.totalTicks, this.ticksPerNoteSubdivision);
 	}
 	@computed get playbackHeadTick() {
 		return this.appStore.player.currentTick % this.totalTicks;

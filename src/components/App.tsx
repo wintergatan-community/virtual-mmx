@@ -93,6 +93,7 @@ export class App extends Component {
 							<TransportControls />
 						</GridLayout>
 					</div>
+					<PerformanceEditor />
 				</div>
 			</Provider>
 		);

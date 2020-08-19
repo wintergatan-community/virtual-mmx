@@ -250,6 +250,9 @@ export function forEachInNested(
 export function keys<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
 	return Object.keys(obj) as Key[];
 }
+export function values<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
+	return Object.values(obj) as Value[];
+}
 
 // type Keyable = string | number;
 

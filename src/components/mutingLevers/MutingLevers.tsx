@@ -5,15 +5,24 @@ import { range } from "../../core/helpers/functions";
 import { Connector } from "./Connector";
 import { computed } from "mobx";
 import { ChannelGroupTOFIX } from "../../toFutureSchema";
+import { MuteE } from "../../core/eventTimelines/concrete";
 
 class MutingLevers_ extends AppComponent {
+	@computed get timelines() {
+		return this.app.performance.eventTimelines.machine.channelMute;
+	}
 	@computed get levers() {
 		// TODO not so efficient
 		const machine = this.app.performance.program.state.machine;
 		const muted = machine.mute;
 		const muteInfo = (channelGroup: ChannelGroupTOFIX) => ({
 			muted: muted[channelGroup],
-			setMuted: (muted: boolean) => machine.setMuted(channelGroup, muted),
+			setMuted: (muted: boolean) => {
+				this.timelines[channelGroup].triggerEvent(
+					new MuteE({ mute: muted, tick: -1 })
+				);
+				machine.setMuted(channelGroup, muted);
+			},
 		});
 
 		return {

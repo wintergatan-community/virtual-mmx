@@ -31,12 +31,14 @@ interface TimelineTabsProps {
 	setAction: (action: PerformanceAction) => void;
 	selectedAction: PerformanceAction | undefined;
 	actions: PerformanceAction[];
+	toggleShow: () => void;
+	show: () => void;
 }
 
 export class TimelineTabs extends Component<TimelineTabsProps> {
 	render() {
 		return (
-			<div style={{ display: "flex" }}>
+			<div style={{ display: "flex" }} onClick={this.props.show}>
 				{this.props.actions.map((action) => (
 					<TimelineTab
 						label={action}
@@ -45,6 +47,17 @@ export class TimelineTabs extends Component<TimelineTabsProps> {
 						key={action}
 					/>
 				))}
+				<div
+					style={{
+						width: 30,
+						backgroundColor: "blue",
+						borderRadius: "20px 20px 0px 0px",
+					}}
+					onClick={(e) => {
+						e.stopPropagation();
+						this.props.toggleShow();
+					}}
+				/>
 			</div>
 		);
 	}

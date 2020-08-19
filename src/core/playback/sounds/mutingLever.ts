@@ -2,22 +2,25 @@ import { VmmxSoundChannel } from "../types";
 import { ToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { Sampler, context, Volume, Destination } from "tone";
+import { values } from "../../helpers/functions";
 
 export class MutingLeverSound implements VmmxSoundChannel {
 	mutingLeverSample?: Sampler;
 
 	constructor(appStore: AppStore) {
-		appStore.performance.eventTimelines.hiHatMachine.mode.addEventListener(
-			(_, time) => this.triggerStrike(time)
-		);
+		for (const timeline of values(
+			appStore.performance.eventTimelines.machine.channelMute
+		)) {
+			timeline.addEventListener((_, time) => this.triggerStrike(time));
+		}
 	}
 
-	triggerStrike(time?: number | undefined): void {
+	triggerStrike(time?: number | undefined) {
 		if (this.mutingLeverSample?.loaded) {
 			this.mutingLeverSample.triggerAttack("C5", time ?? context.currentTime);
 		}
 	}
-	onToneLoad(): void {
+	onToneLoad() {
 		const mutingLeverSample = new Sampler(
 			{
 				C5: "C5.wav",
