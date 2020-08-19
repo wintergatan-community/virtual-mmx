@@ -8,6 +8,8 @@ import { ToneChannel } from "./toneChannel";
 import { forEachInNested } from "../helpers/functions";
 import { EventTimeline } from "../eventTimelines/base";
 import { EventBase } from "../eventTimelines/types/other";
+import { HiHatMachineSound } from "./sounds/hiHatMachine";
+import { MutingLeverSound } from "./sounds/mutingLever";
 
 export class VmmxPlayer {
 	appStore: AppStore;
@@ -21,16 +23,25 @@ export class VmmxPlayer {
 		bass: BassInstrument;
 		drums: DrumsInstrument;
 	};
+	sounds: {
+		hiHatMachine: HiHatMachineSound;
+		mutingLever: MutingLeverSound;
+	};
 	eventTimelineToneChannels: ToneChannel<EventBase>[] = [];
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
 
 		const state = this.program.state;
+
 		this.instruments = {
 			vibraphone: new VibraphoneInstrument(appStore, state.vibraphone),
 			bass: new BassInstrument(appStore, state.bass),
 			drums: new DrumsInstrument(appStore, state.drums),
+		};
+		this.sounds = {
+			hiHatMachine: new HiHatMachineSound(appStore),
+			mutingLever: new MutingLeverSound(appStore),
 		};
 
 		forEachInNested(

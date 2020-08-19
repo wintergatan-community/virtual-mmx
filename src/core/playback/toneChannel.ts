@@ -15,7 +15,8 @@ export class ToneChannel<E extends EventBase> {
 
 	constructor(
 		timeline: EventTimeline<E>,
-		triggerStrike?: (time?: number) => void
+		triggerStrike?: (time?: number) => void,
+		muted?: () => boolean
 	) {
 		timeline.on("add", (event) => {
 			this.tonePart.add(event.tick + "i", event);
@@ -32,7 +33,9 @@ export class ToneChannel<E extends EventBase> {
 			this.tickRecord[event.id] = event.tick;
 		});
 		this.tonePart.callback = (time, event) => {
-			timeline.triggerEvent(event, time);
+			if (muted != undefined && !muted()) {
+				timeline.triggerEvent(event, time);
+			}
 		};
 		if (triggerStrike) {
 			timeline.addEventListener((_, time) => triggerStrike(time));
@@ -48,9 +51,18 @@ export class JointToneChannel<E extends EventBase> {
 
 	constructor(
 		timelines: JointEventTimeline<E>,
-		triggerStrike: (time?: number) => void
+		triggerStrike: (time?: number) => void,
+		programMuted: () => boolean
 	) {
-		this.program = new ToneChannel(timelines.program, triggerStrike);
-		this.performance = new ToneChannel(timelines.performance, triggerStrike);
+		this.program = new ToneChannel(
+			timelines.program,
+			triggerStrike,
+			programMuted
+		);
+		this.performance = new ToneChannel(
+			timelines.performance,
+			triggerStrike,
+			programMuted
+		);
 	}
 }

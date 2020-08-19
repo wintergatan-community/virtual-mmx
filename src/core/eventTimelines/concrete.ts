@@ -3,6 +3,7 @@ import { EventBase } from "./types/other";
 import { SegmentEventTimeline } from "./variations/segment";
 import { PolylineEventTimeline } from "./variations/polyline";
 import { Curve } from "./types/curves";
+import { HiHatMachineMode } from "../../toFutureSchema";
 
 // Drop
 
@@ -94,5 +95,24 @@ export class CapoE extends EventBase {
 	constructor(data: { moveFret: number; tick: number }) {
 		super(data);
 		this.moveFret = data.moveFret;
+	}
+}
+
+// Hi Hat Machine
+
+export class HiHatMachineModeEventTimeline extends PolylineEventTimeline<
+	HiHatMachineModeE
+> {
+	eventCanBePlacedOnCurve(): boolean {
+		return true;
+	}
+}
+
+export class HiHatMachineModeE extends EventBase {
+	mode: HiHatMachineMode;
+
+	constructor(data: { mode: HiHatMachineMode; tick: number }) {
+		super(data);
+		this.mode = data.mode;
 	}
 }

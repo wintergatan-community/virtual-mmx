@@ -51,9 +51,11 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 		this.appStore = appStore;
 		this.barStore = barStore;
 
+		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.vibraphone[barStore.bar],
-			this.triggerStrike.bind(this)
+			this.triggerStrike.bind(this),
+			() => muted.vibraphone
 		);
 	}
 
@@ -66,10 +68,7 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		if (
-			this.channelSynth?.loaded &&
-			!this.appStore.performance.program.state.machine.mute.vibraphone
-		) {
+		if (this.channelSynth?.loaded) {
 			this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}
 	}

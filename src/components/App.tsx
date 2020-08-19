@@ -7,15 +7,14 @@ import { Bass } from "./bass/Bass";
 import { AppStore } from "../stores/app";
 import { Provider } from "mobx-react";
 import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
-import { ToneIndicator } from "./ToneIndicator";
 import sampleProgram from "../sampleProgram.json";
 import { Program } from "vmmx-schema";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
-import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 import { MuteE, CapoE } from "../core/eventTimelines/concrete";
-import template from "./template.png";
-import { range } from "../core/helpers/functions";
+import { VmmxHeader } from "./programmingWheel/VmmxHeader/VmmxHeader";
+import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
+import { ToneIndicator } from "./ToneIndicator";
 
 const app = new AppStore();
 app.loadProgram(sampleProgram as Program);
@@ -54,10 +53,6 @@ export class App extends Component {
 	render() {
 		return (
 			<Provider app={app}>
-				{/* <img
-					style={{ zIndex: -1, position: "absolute", width: "100%" }}
-					src={template}
-				/> */}
 				<div style={{ position: "absolute", width: "100%", height: "100%" }}>
 					<VmmxHeader headerPercent={this.headerPercent} />
 
@@ -104,25 +99,6 @@ export class App extends Component {
 	}
 }
 
-interface MoveProps {
-	children: ReactNode;
-	x: number;
-	y: number;
-}
-
-function Move(props: MoveProps) {
-	return (
-		<div
-			style={{
-				position: "absolute",
-				transform: `translate(${props.x}px, ${props.y}px)`,
-			}}
-		>
-			{props.children}
-		</div>
-	);
-}
-
 interface GridLayoutProps {
 	col: string;
 	row: string;
@@ -146,55 +122,4 @@ const GridLayout = (props: GridLayoutProps) => (
 	>
 		{props.children}
 	</div>
-);
-
-function VmmxHeader(props: { headerPercent: number }) {
-	return (
-		<div
-			style={{
-				display: "flex",
-				width: "100%",
-				height: `${props.headerPercent}%`,
-				backgroundColor: "#ccc",
-				alignItems: "center",
-			}}
-		>
-			<p
-				style={{
-					fontSize: 25,
-					paddingLeft: 20,
-					paddingRight: 20,
-				}}
-			>
-				Virtual Marble Machine X
-			</p>
-			<NavButtonBreak />
-			<NavButton text="Share" />
-			<NavButtonBreak />
-			<NavButton text="View" />
-			<NavButtonBreak />
-		</div>
-	);
-}
-
-interface NavButtonProps {
-	text: string;
-}
-const NavButton = (props: NavButtonProps) => (
-	<div
-		style={{
-			height: "80%",
-			fontSize: 22,
-			paddingLeft: 20,
-			paddingRight: 20,
-			color: "#434343",
-			cursor: "pointer",
-		}}
-	>
-		{props.text}
-	</div>
-);
-
-const NavButtonBreak = () => (
-	<span style={{ width: 1.5, height: "80%", backgroundColor: "#b7b7b7" }} />
 );

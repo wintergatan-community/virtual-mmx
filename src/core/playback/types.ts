@@ -1,4 +1,4 @@
-import { JointToneChannel } from "./toneChannel";
+import { JointToneChannel, ToneChannel } from "./toneChannel";
 
 export interface VmmxInstrument<ChannelType extends string | number | symbol> {
 	channels: Record<ChannelType, VmmxInstrumentChannel>;
@@ -8,4 +8,10 @@ export interface VmmxInstrument<ChannelType extends string | number | symbol> {
 export interface VmmxInstrumentChannel {
 	toneChannels: JointToneChannel<any>; // TODO maybe not "any", not sure yet
 	triggerStrike(time?: number): void;
+}
+
+export interface VmmxSoundChannel {
+	toneChannel?: ToneChannel<any>; // TODO maybe not "any", not sure yet
+	triggerStrike(time?: number): void;
+	onToneLoad(): void;
 }

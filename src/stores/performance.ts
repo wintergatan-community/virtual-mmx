@@ -19,6 +19,7 @@ import {
 	VibraphoneDropEventTimeline,
 	VibraphoneVibratoEventTimeline,
 	CapoEventTimeline,
+	HiHatMachineModeEventTimeline,
 } from "../core/eventTimelines/concrete";
 
 export class PerformanceStore implements Performance {
@@ -75,6 +76,9 @@ export class PerformanceStore implements Performance {
 						);
 					})
 			),
+		},
+		hiHatMachine: {
+			mode: new HiHatMachineModeEventTimeline(),
 		},
 	};
 

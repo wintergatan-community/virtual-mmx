@@ -36,9 +36,11 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 		this.appStore = appStore;
 		this.stringStore = stringStore;
 
+		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.bass[stringStore.string],
-			this.triggerStrike.bind(this)
+			this.triggerStrike.bind(this),
+			() => muted.bass
 		);
 	}
 
@@ -79,10 +81,7 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 	}
 
 	triggerStrike(time?: number) {
-		if (
-			this.bassSynth?.loaded &&
-			!this.appStore.performance.program.state.machine.mute.bass
-		) {
+		if (this.bassSynth?.loaded) {
 			this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}
 	}

@@ -39,17 +39,16 @@ class DrumsChannel implements VmmxInstrumentChannel {
 		this.appStore = appStore;
 		this.drum = drum;
 
+		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.drums[drum],
-			this.triggerStrike.bind(this)
+			this.triggerStrike.bind(this),
+			() => muted[drum]
 		);
 	}
 
 	triggerStrike(time?: number) {
-		if (
-			this.drumSynth?.loaded &&
-			!this.appStore.performance.program.state.machine.mute[this.drum]
-		) {
+		if (this.drumSynth?.loaded) {
 			this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
 		}
 	}
