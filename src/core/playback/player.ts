@@ -5,7 +5,7 @@ import { VibraphoneInstrument } from "./instruments/vibraphone";
 import { BassInstrument } from "./instruments/bass";
 import { DrumsInstrument } from "./instruments/drums";
 import { ToneChannel } from "./toneChannel";
-import { forEachInNested } from "../helpers/functions";
+import { forEachInNested, values } from "../helpers/functions";
 import { EventTimeline } from "../eventTimelines/base";
 import { EventBase } from "../eventTimelines/types/other";
 import { HiHatMachineSound } from "./sounds/hiHatMachine";
@@ -68,7 +68,8 @@ export class VmmxPlayer {
 			"mousedown",
 			() => {
 				console.log("Tone Instruments Loaded");
-				Object.values(this.instruments).forEach((i) => i.onToneLoad());
+				values(this.instruments).forEach((i) => i.onToneLoad());
+				values(this.sounds).forEach((i) => i.onToneLoad());
 				runInAction(() => (this.toneLoaded = true));
 			},
 			{ once: true }

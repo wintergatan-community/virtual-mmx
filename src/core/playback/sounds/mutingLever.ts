@@ -1,5 +1,4 @@
 import { VmmxSoundChannel } from "../types";
-import { ToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { Sampler, context, Volume, Destination } from "tone";
 import { values } from "../../helpers/functions";
@@ -23,10 +22,10 @@ export class MutingLeverSound implements VmmxSoundChannel {
 	onToneLoad() {
 		const mutingLeverSample = new Sampler(
 			{
-				C5: "C5.wav",
+				C5: "flip.wav",
 			},
 			undefined,
-			"./samples/mutingLever/flip.wav"
+			"./samples/mutingLever/"
 		);
 		this.mutingLeverSample = mutingLeverSample;
 

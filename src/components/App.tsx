@@ -31,6 +31,7 @@ const debugAddMute = (m: boolean, tick: number) => {
 
 debugAddMute(true, 500);
 debugAddMute(false, 700);
+console.log(mute);
 
 const capo = app.performance.eventTimelines.bass.capo[1];
 const debugAddCapo = (moveFret: number, tick: number) => {
