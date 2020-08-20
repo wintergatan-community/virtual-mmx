@@ -7,7 +7,7 @@ export const HiHatMachineBrass = (props: { angle: number }) => (
 			width: "100%",
 			position: "absolute",
 			marginTop: "-50%",
-			top: "19px",
+			top: "25%",
 			zIndex: 0,
 		}}
 	>

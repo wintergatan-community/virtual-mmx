@@ -81,11 +81,11 @@ export class ModeSelector extends React.Component<ModeSelectorProps> {
 			>
 				<div
 					style={{
-						fontSize: "19px",
 						background: "white",
-						borderRadius: "2em",
+						borderRadius: "100vmax",
 						boxShadow: "0 0 4px rgba(0,0,0,40%)",
 						padding: "3px",
+						display: "flex",
 						// Be above the off button _and_ start a new stacking context
 						// for highlights
 						zIndex: 2,
@@ -126,9 +126,8 @@ const Option = observer(function (props: {
 	mouseDown: boolean;
 }) {
 	const style: CSS.Properties = {
-		display: "inline-block",
+		display: "flex",
 		position: "relative",
-		// lineHeight: "1.6em",
 		padding: "0",
 		cursor: "pointer",
 	};
@@ -143,7 +142,7 @@ const Option = observer(function (props: {
       TODO: Refactor the units. */}
 			<img
 				src={modeOptionIcon[props.mode]}
-				style={{ height: "1.58em" }}
+				style={{ width: "100%" }}
 				draggable={false}
 			/>
 			{props.active && (
@@ -172,12 +171,12 @@ const OptionHighlight = observer(function (props: {
 	position: OptionPosition;
 	highlightPosition: HighlightState;
 }) {
-	const highlightEdgeRadius = "0.15em",
-		panelEdgeRadius = "1em";
+	const highlightEdgeRadius = "3px", // can't do % here, so just something sensible
+		panelEdgeRadius = "16px";
 	let leftRadius = "0";
 	let rightRadius = "0";
 	let leftExpand = false;
-	let rightExpand = false;
+	const rightExpand = false;
 	if (
 		props.highlightPosition === "left" ||
 		props.highlightPosition === "bothSides"
@@ -190,22 +189,19 @@ const OptionHighlight = observer(function (props: {
 		props.highlightPosition === "bothSides"
 	) {
 		rightRadius = highlightEdgeRadius;
-		rightExpand = true;
 	}
 	if (props.position === "left") {
 		leftRadius = panelEdgeRadius;
-		leftExpand = false;
 	}
 	if (props.position === "right") {
 		rightRadius = panelEdgeRadius;
-		rightExpand = false;
 	}
 	const style: CSS.Properties = {
 		position: "absolute",
 		top: 0,
 		bottom: 0,
-		left: leftExpand ? "-0.2em" : 0,
-		right: rightExpand ? "-0.2em" : 0,
+		left: 0,
+		right: 0,
 		pointerEvents: "none",
 		zIndex: props.zIndex,
 		backgroundColor: props.color,

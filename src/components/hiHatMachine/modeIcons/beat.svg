@@ -10,9 +10,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="beat.svg"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   width="30"
+   width="32"
    height="30"
-   viewBox="0 0 30 30"
+   viewBox="0 0 32 30"
    version="1.1"
    id="SVGRoot">
   <defs
@@ -39,14 +39,14 @@
      inkscape:window-maximized="1"
      inkscape:window-y="24"
      inkscape:window-x="0"
-     inkscape:window-height="1388"
-     inkscape:window-width="2556"
+     inkscape:window-height="1028"
+     inkscape:window-width="1916"
      showgrid="true"
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="10.081944"
-     inkscape:cx="1.9179473"
+     inkscape:cy="16.986706"
+     inkscape:cx="15.727471"
      inkscape:zoom="22.4"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -66,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

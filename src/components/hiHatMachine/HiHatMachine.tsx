@@ -38,7 +38,7 @@ class HiHatMachine_ extends AppComponent {
 
 	render() {
 		return (
-			<div style={{ position: "relative" }}>
+			<div style={{ position: "relative", width: "80%" }}>
 				<ModeSelector currentMode={this.currentMode} selectMode={this.select} />
 				<HiHatMachineBrass angle={this.rotationSpring.value} />
 			</div>
