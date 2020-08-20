@@ -10,6 +10,7 @@ import { EventTimeline } from "../eventTimelines/base";
 import { EventBase } from "../eventTimelines/types/other";
 import { HiHatMachineSound } from "./sounds/hiHatMachine";
 import { MutingLeverSound } from "./sounds/mutingLever";
+import { Tone } from "tone/build/esm/core/Tone";
 
 export class VmmxPlayer {
 	appStore: AppStore;

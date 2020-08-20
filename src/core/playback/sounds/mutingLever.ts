@@ -2,23 +2,27 @@ import { VmmxSoundChannel } from "../types";
 import { AppStore } from "../../../stores/app";
 import { Sampler, context, Volume, Destination } from "tone";
 import { values } from "../../helpers/functions";
+import { MuteE } from "../../eventTimelines/concrete";
+import { ToneChannel } from "../toneChannel";
 
-export class MutingLeverSound implements VmmxSoundChannel {
+export class MutingLeverSound extends VmmxSoundChannel<MuteE> {
+	muteChannels: ToneChannel<MuteE>[];
 	mutingLeverSample?: Sampler;
 
 	constructor(appStore: AppStore) {
-		for (const timeline of values(
-			appStore.performance.eventTimelines.machine.channelMute
-		)) {
-			timeline.addEventListener((_, time) => this.triggerStrike(time));
-		}
+		super();
+
+		const mutes = appStore.performance.eventTimelines.machine.channelMute;
+		this.muteChannels = values(mutes).map(
+			(mute) => new ToneChannel(mute, this.triggerStrike)
+		);
 	}
 
-	triggerStrike(time?: number | undefined) {
+	triggerStrike = (_?: MuteE, time?: number) => {
 		if (this.mutingLeverSample?.loaded) {
 			this.mutingLeverSample.triggerAttack("C5", time ?? context.currentTime);
 		}
-	}
+	};
 	onToneLoad() {
 		const mutingLeverSample = new Sampler(
 			{

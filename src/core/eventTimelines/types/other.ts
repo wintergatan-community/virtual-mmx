@@ -2,8 +2,11 @@ import { observable } from "mobx";
 import { EventTimeline } from "../base";
 import { Curve, CurvePoints } from "./curves";
 
-export type Listener<EventData> = (event?: EventData, time?: number) => void;
-export type ChangeListener<EventData> = (event: EventData) => void;
+export type VmmxEventListener<E extends EventBase> = (
+	event?: E,
+	time?: number
+) => void;
+export type VmmxEventChangeListener<E> = (event: E) => void;
 
 export class EventBase {
 	@observable tick: number;
@@ -52,19 +55,19 @@ export type CurveDif<E extends EventBase> =
 	| CurveRemoveDif<E>
 	| CurveSplitDif<E>;
 
-export class JointEventTimeline<EventData extends EventBase> {
-	program: EventTimeline<EventData>;
-	performance: EventTimeline<EventData>;
+export class JointEventTimeline<E extends EventBase> {
+	program: EventTimeline<E>;
+	performance: EventTimeline<E>;
 
 	constructor(timelines: {
-		program: EventTimeline<EventData>;
-		performance: EventTimeline<EventData>;
+		program: EventTimeline<E>;
+		performance: EventTimeline<E>;
 	}) {
 		this.program = timelines.program;
 		this.performance = timelines.performance;
 	}
 
-	addJointEventListener(l: Listener<EventData>) {
+	addJointEventListener(l: VmmxEventListener<E>) {
 		this.program.addEventListener(l);
 		this.performance.addEventListener(l);
 	}

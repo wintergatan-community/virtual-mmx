@@ -1,5 +1,9 @@
 import { Part } from "tone";
-import { EventBase, JointEventTimeline } from "../eventTimelines/types/other";
+import {
+	EventBase,
+	JointEventTimeline,
+	VmmxEventListener,
+} from "../eventTimelines/types/other";
 import { EventTimeline } from "../eventTimelines/base";
 
 const partOptions = {
@@ -15,7 +19,7 @@ export class ToneChannel<E extends EventBase> {
 
 	constructor(
 		timeline: EventTimeline<E>,
-		triggerStrike?: (time?: number) => void,
+		onEvent?: VmmxEventListener<E>,
 		muted?: () => boolean
 	) {
 		timeline.on("add", (event) => {
@@ -33,12 +37,12 @@ export class ToneChannel<E extends EventBase> {
 			this.tickRecord[event.id] = event.tick;
 		});
 		this.tonePart.callback = (time, event) => {
-			if (muted != undefined && !muted()) {
+			if (muted === undefined || !muted()) {
 				timeline.triggerEvent(event, time);
 			}
 		};
-		if (triggerStrike) {
-			timeline.addEventListener((_, time) => triggerStrike(time));
+		if (onEvent) {
+			timeline.addEventListener(onEvent);
 		}
 
 		this.tonePart.start();
@@ -51,17 +55,13 @@ export class JointToneChannel<E extends EventBase> {
 
 	constructor(
 		timelines: JointEventTimeline<E>,
-		triggerStrike: (time?: number) => void,
+		onEvent: VmmxEventListener<E>,
 		programMuted: () => boolean
 	) {
-		this.program = new ToneChannel(
-			timelines.program,
-			triggerStrike,
-			programMuted
-		);
+		this.program = new ToneChannel(timelines.program, onEvent, programMuted);
 		this.performance = new ToneChannel(
 			timelines.performance,
-			triggerStrike,
+			onEvent,
 			programMuted
 		);
 	}

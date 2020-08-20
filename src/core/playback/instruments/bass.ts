@@ -8,7 +8,7 @@ import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { BassDropE } from "../../eventTimelines/concrete";
 
-export class BassInstrument implements VmmxInstrument<BassString> {
+export class BassInstrument implements VmmxInstrument<BassString, BassDropE> {
 	private bassStore: BassStore;
 	readonly channels: Record<BassString, BassStringChannel>;
 
@@ -26,20 +26,21 @@ export class BassInstrument implements VmmxInstrument<BassString> {
 	}
 }
 
-export class BassStringChannel implements VmmxInstrumentChannel {
+export class BassStringChannel extends VmmxInstrumentChannel<BassDropE> {
 	private appStore: AppStore;
 	private stringStore: BassStringStore;
 	private bassSynth?: Sampler;
 	readonly toneChannels: JointToneChannel<BassDropE>;
 
 	constructor(appStore: AppStore, stringStore: BassStringStore) {
+		super();
 		this.appStore = appStore;
 		this.stringStore = stringStore;
 
 		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.bass[stringStore.string],
-			this.triggerStrike.bind(this),
+			this.triggerStrike,
 			() => muted.bass
 		);
 	}
@@ -80,9 +81,9 @@ export class BassStringChannel implements VmmxInstrumentChannel {
 		return this.stringStore.tuning;
 	}
 
-	triggerStrike(time?: number) {
+	triggerStrike = (_?: BassDropE, time?: number) => {
 		if (this.bassSynth?.loaded) {
 			this.bassSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}
-	}
+	};
 }

@@ -11,7 +11,8 @@ import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { VibraphoneDropE } from "../../eventTimelines/concrete";
 
-export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
+export class VibraphoneInstrument
+	implements VmmxInstrument<VibraphoneChannel, VibraphoneDropE> {
 	readonly vibraphoneStore: VibraphoneStore;
 	readonly channels: Record<VibraphoneChannel, VibraphoneBarChannel>;
 
@@ -41,20 +42,23 @@ export class VibraphoneInstrument implements VmmxInstrument<VibraphoneChannel> {
 }
 
 // TODO shema needs to replace use of "channel" and "note"
-export class VibraphoneBarChannel implements VmmxInstrumentChannel {
+export class VibraphoneBarChannel extends VmmxInstrumentChannel<
+	VibraphoneDropE
+> {
 	private appStore: AppStore;
 	private barStore: VibraphoneBarStore;
 	private channelSynth?: Sampler;
 	readonly toneChannels: JointToneChannel<VibraphoneDropE>;
 
 	constructor(appStore: AppStore, barStore: VibraphoneBarStore) {
+		super();
 		this.appStore = appStore;
 		this.barStore = barStore;
 
 		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.vibraphone[barStore.bar],
-			this.triggerStrike.bind(this),
+			this.triggerStrike,
 			() => muted.vibraphone
 		);
 	}
@@ -67,9 +71,9 @@ export class VibraphoneBarChannel implements VmmxInstrumentChannel {
 		return this.barStore.note;
 	}
 
-	triggerStrike(time?: number) {
+	triggerStrike = (_?: VibraphoneDropE, time?: number) => {
 		if (this.channelSynth?.loaded) {
 			this.channelSynth.triggerAttack(this.note, time ?? context.currentTime);
 		}
-	}
+	};
 }

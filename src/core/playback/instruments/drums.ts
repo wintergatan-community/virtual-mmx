@@ -6,7 +6,8 @@ import { AppStore } from "../../../stores/app";
 import { DrumTypeTOFIX } from "../../../toFutureSchema";
 import { DrumsDropE } from "../../eventTimelines/concrete";
 
-export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
+export class DrumsInstrument
+	implements VmmxInstrument<DrumTypeTOFIX, DrumsDropE> {
 	drumsStore: DrumsStore;
 
 	channels: Record<DrumTypeTOFIX, DrumsChannel>;
@@ -29,29 +30,30 @@ export class DrumsInstrument implements VmmxInstrument<DrumTypeTOFIX> {
 	}
 }
 
-class DrumsChannel implements VmmxInstrumentChannel {
+class DrumsChannel extends VmmxInstrumentChannel<DrumsDropE> {
 	appStore: AppStore;
 	toneChannels: JointToneChannel<DrumsDropE>;
 	private drumSynth?: Sampler;
 	drum: DrumTypeTOFIX;
 
 	constructor(appStore: AppStore, drum: DrumTypeTOFIX) {
+		super();
 		this.appStore = appStore;
 		this.drum = drum;
 
 		const muted = this.appStore.performance.program.state.machine.mute;
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.drums[drum],
-			this.triggerStrike.bind(this),
+			this.triggerStrike,
 			() => muted[drum]
 		);
 	}
 
-	triggerStrike(time?: number) {
+	triggerStrike = (_?: DrumsDropE, time?: number) => {
 		if (this.drumSynth?.loaded) {
 			this.drumSynth.triggerAttack("A1", time ?? context.currentTime);
 		}
-	}
+	};
 
 	onToneLoad() {
 		this.drumSynth = new Sampler({

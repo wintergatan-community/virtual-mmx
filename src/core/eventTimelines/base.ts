@@ -1,21 +1,24 @@
 import {
 	EventBase,
-	Listener,
 	TimelineDif,
 	EventChange,
-	ChangeListener,
+	VmmxEventChangeListener,
+	VmmxEventListener,
 } from "./types/other";
 
 export abstract class EventTimeline<E extends EventBase> {
-	private eventListeners: Listener<E>[] = [];
-	private eventTickListeners: Record<number, Listener<E>[]> = [];
-	private changeEventListeners: Record<EventChange, ChangeListener<E>[]> = {
+	private eventListeners: VmmxEventListener<E>[] = [];
+	private eventTickListeners: Record<number, VmmxEventListener<E>[]> = [];
+	private changeEventListeners: Record<
+		EventChange,
+		VmmxEventChangeListener<E>[]
+	> = {
 		add: [],
 		remove: [],
 		modify: [],
 	};
 
-	constructor(stateAffectingListener?: Listener<E>) {
+	constructor(stateAffectingListener?: VmmxEventListener<E>) {
 		stateAffectingListener && this.addEventListener(stateAffectingListener);
 	}
 
@@ -23,7 +26,7 @@ export abstract class EventTimeline<E extends EventBase> {
 	abstract getRemoveDifs(event: E): TimelineDif<E>[] | null;
 	abstract applyDifs(difs: TimelineDif<E>[]): void;
 
-	on(change: EventChange, listener: ChangeListener<E>) {
+	on(change: EventChange, listener: VmmxEventChangeListener<E>) {
 		this.changeEventListeners[change].push(listener);
 	}
 
@@ -39,7 +42,7 @@ export abstract class EventTimeline<E extends EventBase> {
 		}
 	}
 
-	addEventListener(listener: Listener<E>, tick?: number) {
+	addEventListener(listener: VmmxEventListener<E>, tick?: number) {
 		if (tick == undefined) {
 			this.eventListeners.push(listener);
 		} else {
