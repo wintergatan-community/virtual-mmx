@@ -175,14 +175,11 @@ const OptionHighlight = observer(function (props: {
 		panelEdgeRadius = "16px";
 	let leftRadius = "0";
 	let rightRadius = "0";
-	let leftExpand = false;
-	const rightExpand = false;
 	if (
 		props.highlightPosition === "left" ||
 		props.highlightPosition === "bothSides"
 	) {
 		leftRadius = highlightEdgeRadius;
-		leftExpand = true;
 	}
 	if (
 		props.highlightPosition === "right" ||
