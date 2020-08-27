@@ -1,43 +1,34 @@
-import React from "react";
-import { Provider } from "mobx-react";
-import { AppComponent } from "../storeComponents";
 import { VibraphoneBar } from "./VibraphoneBar";
+import { createContext, useContext, For } from "solid-js";
+import { VibraphoneDisplayStore } from "./vibraphoneDisplay";
+import { AppContext } from "../../stores/app";
+import { values } from "../../core/helpers/functions";
+import { TranslateGroup } from "../Translate";
 
-export class VibraphoneDisplayStore {
-	wholeWidth = 400;
-	noteWidth = this.wholeWidth / 11;
-	noteWidthPadded = this.noteWidth * 0.9;
-}
+export const VibraphoneContext = createContext<{
+	vibra: VibraphoneDisplayStore;
+}>();
 
-class Vibraphone_ extends AppComponent {
-	vibra = new VibraphoneDisplayStore();
-	height = 160;
+export const Vibraphone = () => {
+	const app = useContext(AppContext);
+	const vibra = new VibraphoneDisplayStore();
+	const barStores = values(app.performance.program.state.vibraphone.barStores);
 
-	render() {
-		return (
-			<Provider vibra={this.vibra}>
-				<svg
-					viewBox={`0 0 ${this.vibra.wholeWidth} ${this.height}`}
-					style={{
-						width: "100%",
-						height: "100%",
-					}}
-				>
-					<g
-						style={{
-							transform: `translateY(${this.height / 2}px)`,
-						}}
-					>
-						{Object.values(
-							this.app.performance.program.state.vibraphone.barStores
-						).map((barStore) => (
-							<VibraphoneBar barStore={barStore} key={barStore.bar} />
-						))}
-					</g>
-				</svg>
-			</Provider>
-		);
-	}
-}
-
-export const Vibraphone = AppComponent.sync(Vibraphone_);
+	return (
+		<VibraphoneContext.Provider value={{ vibra }}>
+			<svg
+				viewBox={`0 0 ${vibra.wholeWidth} ${vibra.height}`}
+				style={{
+					width: "100%",
+					height: "100%",
+				}}
+			>
+				<TranslateGroup y={() => vibra.height / 2}>
+					<For each={barStores}>
+						{(barStore) => <VibraphoneBar barStore={barStore} />}
+					</For>
+				</TranslateGroup>
+			</svg>
+		</VibraphoneContext.Provider>
+	);
+};

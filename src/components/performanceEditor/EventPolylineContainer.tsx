@@ -1,12 +1,11 @@
-import React, { Component, createRef } from "react";
-import { observable, action, computed } from "mobx";
-import { EventBase } from "../../core/eventTimelines/types/other";
+import { EventBase, CurveDif } from "../../core/eventTimelines/types/other";
 import { PolylineEventTimeline } from "../../core/eventTimelines/variations/polyline";
 import { EventCurve } from "./EventCurve";
 import { Curve } from "../../core/eventTimelines/types/curves";
-import { observer } from "mobx-react";
-import { MouseTracker } from "../bass/MouseTracker";
 import { mapValue } from "../../core/helpers/functions";
+import { signal } from "../../core/helpers/solid";
+import { MouseTracker } from "../../core/helpers/MouseTracker";
+import { For, Show } from "solid-js";
 
 interface EventPolylineContainerProps<E extends EventBase> {
 	timeline: PolylineEventTimeline<E>;
@@ -17,177 +16,167 @@ interface EventPolylineContainerProps<E extends EventBase> {
 	newEventAt: (tick: number, value: number) => E;
 }
 
-@observer
-export class EventPolylineContainer<E extends EventBase> extends Component<
-	EventPolylineContainerProps<E>
-> {
-	@observable hovering = false;
-	mouse = new MouseTracker();
-	wholeRef = createRef<SVGRectElement>();
-	@observable selectedEvent: E | undefined;
+export function EventPolylineContainer<E extends EventBase>(
+	props: EventPolylineContainerProps<E>
+) {
+	const hovering = signal(false);
+	const mouse = new MouseTracker();
+	const dragging = signal(false);
+	const selectedEvent = signal<E | undefined>(undefined);
+	const curves = props.timeline.curves;
 
-	componentDidMount() {
-		if (!this.wholeRef.current) return;
-		this.mouse.setElement(this.wholeRef.current);
+	document.addEventListener("click", () => {
+		if (curvesFromSplit()) {
+			applySplit();
+		}
+	});
 
-		document.addEventListener("click", () => {
-			if (this.curvesFromSplit) {
-				this.applySplit();
-			}
-		});
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Backspace" || e.key === "Delete") {
+			removeSelected();
+		}
+	});
 
-		document.addEventListener("keydown", (e) => {
-			if (e.key === "Backspace" || e.key === "Delete") {
-				this.removeSelected();
-			}
-		});
-	}
-
-	@action removeSelected() {
-		if (!this.selectedEvent) return;
-		const difs = this.props.timeline.getRemoveDifs(this.selectedEvent);
+	function removeSelected() {
+		if (!selectedEvent) return;
+		const difs = props.timeline.getRemoveDifs(selectedEvent() as E);
 		if (!difs) return;
-		this.props.timeline.applyDifs(difs);
-		this.selectedEvent = undefined;
+		props.timeline.applyDifs(difs);
+		selectedEvent(undefined);
 	}
 
-	@computed get curves() {
-		return this.props.timeline.curves;
+	function handleMouseEnter() {
+		hovering(true);
+	}
+	function handleMouseLeave() {
+		hovering(false);
 	}
 
-	@action.bound handleMouseEnter() {
-		this.hovering = true;
-	}
-	@action.bound handleMouseLeave() {
-		this.hovering = false;
-		this.mouse.leave();
-	}
-	@action.bound handleMouseMove(
-		e: React.MouseEvent<SVGRectElement, MouseEvent>
-	) {
-		this.mouse.update(e);
+	function setSelected(event: E | undefined) {
+		selectedEvent(event);
 	}
 
-	@action.bound setSelected(event: E | undefined) {
-		this.selectedEvent = event;
-	}
-
-	@observable dragging = false;
-	@action.bound setDragging(dragging: boolean) {
-		this.dragging = dragging;
+	function setDragging(dragging: boolean) {
+		dragging = dragging;
 		if (dragging === true) {
-			this.selectedEvent = undefined;
+			selectedEvent(undefined);
 		}
 	}
 
-	@computed get curvesFromSplit() {
-		if (!this.mouse.mousePos || this.selectedEvent) return;
-		const tick = this.mouse.mousePos.x;
+	const curvesFromSplit = () => {
+		const m = mouse.mousePos();
+		if (!m || selectedEvent) return null;
+		const tick = m.x;
 		const pad = 20;
-		const val = mapValue(this.mouse.mousePos.y, 150 - pad, pad, 0, 20);
+		const val = mapValue(m.y, 150 - pad, pad, 0, 20);
 
-		return this.props.timeline.getAddDifs(this.props.newEventAt(tick, val));
+		return props.timeline.getAddDifs(props.newEventAt(tick, val));
+	};
+
+	function applySplit() {
+		if (!curvesFromSplit || dragging) return;
+		props.timeline.applyDifs(curvesFromSplit() as CurveDif<E>[]);
 	}
 
-	@action.bound applySplit() {
-		if (!this.curvesFromSplit || this.dragging) return;
-		this.props.timeline.applyDifs(this.curvesFromSplit);
-	}
-
-	render() {
-		return (
-			<g>
-				<rect
-					ref={this.wholeRef}
-					width={9000}
-					height={150}
-					fill="#0000"
-					onMouseEnter={this.handleMouseEnter}
-					onMouseLeave={this.handleMouseLeave}
-					onMouseMove={this.handleMouseMove}
+	let wholeRef!: SVGRectElement;
+	const jsx = (
+		<g>
+			<rect
+				ref={wholeRef}
+				width={9000}
+				height={150}
+				fill="#0000"
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+			/>
+			<Show when={selectedEvent()}>
+				<circle
+					r={12}
+					cx={selectedEvent()?.tick()}
+					cy={props.valToPixel(props.value(selectedEvent()!))}
+					fill={props.colorOf(null) + "33"}
 				/>
-				{this.selectedEvent && (
-					<circle
-						r={12}
-						cx={this.selectedEvent.tick}
-						cy={this.props.valToPixel(this.props.value(this.selectedEvent))}
-						fill={this.props.colorOf(null) + "33"}
-					/>
-				)}
+			</Show>
 
-				{this.curves.map((curve, i) => {
+			<For each={curves}>
+				{(curve, ind) => {
+					const i = ind();
 					const start = {
-						left: i > 0 ? this.curves[i - 1].start.tick : 0,
+						left: i > 0 ? curves[i - 1].start.tick : 0,
 						right: curve.end?.tick ?? Infinity,
 					};
 					const end = {
 						left: curve.start.tick,
 						right:
-							i < this.curves.length - 1
-								? this.curves[i + 1].start?.tick ?? Infinity
+							i < curves.length - 1
+								? curves[i + 1].start?.tick ?? Infinity
 								: Infinity,
 					};
 
 					return (
-						<EventCurve
-							curve={curve}
-							bounds={{ start, end }}
-							setSelected={this.setSelected}
-							selectedEvent={this.selectedEvent}
-							dragging={this.dragging}
-							setDragging={this.setDragging}
-							shouldShow={this.props.shouldShow}
-							colorOf={this.props.colorOf}
-							value={this.props.value}
-							valToPixel={this.props.valToPixel}
-							key={curve.id}
-						/>
+						<></>
+						// <EventCurve
+						// 	curve={curve}
+						// 	bounds={{ start, end }}
+						// 	setSelected={setSelected}
+						// 	selectedEvent={selectedEvent()}
+						// 	dragging={dragging()}
+						// 	setDragging={setDragging}
+						// 	shouldShow={props.shouldShow}
+						// 	colorOf={props.colorOf}
+						// 	value={props.value}
+						// 	valToPixel={props.valToPixel}
+						// />
 					);
-				})}
+				}}
+			</For>
 
-				{this.curvesFromSplit && this.mouse.mousePos && !this.dragging && (
-					<>
-						<circle
-							cx={this.mouse.mousePos.x}
-							cy={this.mouse.mousePos.y}
-							r={8}
-							fill={this.props.colorOf(null) + "33"}
-							pointerEvents="none"
-						/>
-						{this.curvesFromSplit.map((curveDif) => {
+			{curvesFromSplit && mouse.mousePos && !dragging && (
+				<>
+					<circle
+						cx={mouse.mousePos()?.x}
+						cy={mouse.mousePos()?.y}
+						r={8}
+						fill={props.colorOf(null) + "33"}
+						pointerEvents="none"
+					/>
+					<For each={curvesFromSplit() || []}>
+						{(curveDif) => {
 							if (curveDif.type !== "split") return;
 							const c = curveDif.curve;
 							const y = (event: E) => {
-								return this.props.valToPixel(this.props.value(event));
+								return props.valToPixel(props.value(event));
 							};
 							const yAt = y(curveDif.at);
 
 							return (
-								<g key={curveDif.index}>
+								<g>
 									<line
-										x1={c.start.tick}
+										x1={c.start.tick()}
 										y1={y(c.start)}
-										x2={curveDif.at.tick}
+										x2={curveDif.at.tick()}
 										y2={yAt}
-										stroke={this.props.colorOf(null) + "33"}
+										stroke={props.colorOf(null) + "33"}
 										strokeWidth={3}
 										pointerEvents="none"
 									/>
 									<line
-										x1={curveDif.at.tick}
+										x1={curveDif.at.tick()}
 										y1={yAt}
-										x2={c.end?.tick ?? 9000} // TODO not fixed
+										x2={c.end?.tick() ?? 9000} // TODO not fixed
 										y2={c.end ? y(c.end) : yAt}
-										stroke={this.props.colorOf(null) + "33"}
+										stroke={props.colorOf(null) + "33"}
 										strokeWidth={3}
 										pointerEvents="none"
 									/>
 								</g>
 							);
-						})}
-					</>
-				)}
-			</g>
-		);
-	}
+						}}
+					</For>
+				</>
+			)}
+		</g>
+	);
+	mouse.setElement(wholeRef);
+	return jsx;
 }

@@ -1,5 +1,4 @@
 import { Transport, context } from "tone";
-import { observable, action, autorun, computed, runInAction } from "mobx";
 import { AppStore } from "../../stores/app";
 import { VibraphoneInstrument } from "./instruments/vibraphone";
 import { BassInstrument } from "./instruments/bass";
@@ -10,14 +9,15 @@ import { EventTimeline } from "../eventTimelines/base";
 import { EventBase } from "../eventTimelines/types/other";
 import { HiHatMachineSound } from "./sounds/hiHatMachine";
 import { MutingLeverSound } from "./sounds/mutingLever";
-import { Tone } from "tone/build/esm/core/Tone";
+import { signal } from "../helpers/solid";
+import { createEffect } from "solid-js";
 
 export class VmmxPlayer {
 	appStore: AppStore;
 
-	@observable running = false;
-	@observable currentTick = 0; // TODO cant i just make this computed?
-	@observable toneLoaded = false;
+	running = signal(false);
+	currentTick = signal(0);
+	toneLoaded = signal(false);
 
 	instruments: {
 		vibraphone: VibraphoneInstrument;
@@ -57,10 +57,10 @@ export class VmmxPlayer {
 		this.updateCurrentTickLoop();
 
 		// TODO gotta remove with dynamic bpm
-		autorun(() => {
-			Transport.bpm.value = this.program.state.machine.bpm;
+		createEffect(() => {
+			Transport.bpm.value = this.program.state.machine.bpm();
 		});
-		autorun(() => {
+		createEffect(() => {
 			Transport.PPQ = this.program.metadata.tpq;
 		});
 		// TODO disposers?
@@ -71,36 +71,36 @@ export class VmmxPlayer {
 				console.log("Tone Instruments Loaded");
 				values(this.instruments).forEach((i) => i.onToneLoad());
 				values(this.sounds).forEach((i) => i.onToneLoad());
-				runInAction(() => (this.toneLoaded = true));
+				this.toneLoaded(true);
 			},
 			{ once: true }
 		);
 	}
 
-	@computed get program() {
+	get program() {
 		return this.appStore.performance.program;
 	}
 
-	@action.bound updateCurrentTickLoop() {
+	updateCurrentTickLoop = () => {
 		requestAnimationFrame(this.updateCurrentTickLoop);
-		this.currentTick = Transport.ticks;
+		this.currentTick(Transport.ticks);
 		// TODO disposer?
-	}
+	};
 
-	@action play() {
-		this.running = true;
+	play() {
+		this.running(true);
 		if (context.state !== "running") {
 			context.resume();
 		}
 		Transport.start();
 	}
 
-	@action pause() {
-		this.running = false;
+	pause() {
+		this.running(false);
 		Transport.pause();
 	}
 
-	@action restart() {
+	restart() {
 		Transport.position = 0;
 	}
 }

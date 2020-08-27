@@ -1,22 +1,12 @@
-import React from "react";
-import { computed } from "mobx";
 import { range } from "../../core/helpers/functions";
-import { AppComponent } from "../storeComponents";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-export class HiHatOpeningActionEditor_ extends AppComponent {
-	@computed get timeline() {
-		return this.app.performance.eventTimelines.hihat.hatOpen;
-	}
+export const HiHatOpeningActionEditor = () => {
+	const app = useContext(AppContext);
 
-	@computed get axisValues() {
-		return range(0, 60, 10);
-	}
+	const timeline = app.performance.eventTimelines.hihat.hatOpen;
+	const axisValues = range(0, 60, 10);
 
-	render() {
-		return <g>{/* <LabelAxis axisValues={this.axisValues} /> */}</g>;
-	}
-}
-
-export const HiHatOpeningActionEditor = AppComponent.sync(
-	HiHatOpeningActionEditor_
-);
+	return <g>{/* <LabelAxis axisValues={this.axisValues} /> */}</g>;
+};

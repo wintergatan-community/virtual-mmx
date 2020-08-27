@@ -31,7 +31,7 @@ While the issue is the place to discuss the feature, the PR is the place to disc
 
 ## Contributing
 
-We use [TypeScript](https://www.typescriptlang.org/), [React](https://reactjs.org/) and [Bootstrap](https://getbootstrap.com/)
+We use [TypeScript](https://www.typescriptlang.org/) and [Solid](https://github.com/ryansolid/solid/)
 
 To aid our eyes, we use [Prettier](https://prettier.io/docs/en/editors.html) with the following `.prettierrc` configuration:
 

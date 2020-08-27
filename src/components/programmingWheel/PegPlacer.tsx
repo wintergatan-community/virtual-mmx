@@ -1,51 +1,66 @@
-import React from "react";
-import { TranslateGrid } from "./TranslateGrid";
-import { computed, action } from "mobx";
-import { WheelComponent } from "../storeComponents";
 import { DropE } from "../../core/eventTimelines/concrete";
+import { useContext, Show } from "solid-js";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
+import { TranslateOnScroll } from "../Scroll";
 
-class PegPlacer_ extends WheelComponent {
-	@computed get timeline() {
-		const channelNumber = this.wheel.gridSnappedMousePos?.mouseChannel;
-		if (channelNumber === undefined) return null;
-		return this.wheel.instrumentChannels[channelNumber].timeline;
-	}
-	@computed get mouse() {
-		return this.wheel.gridSnappedMousePos;
-	}
-	@computed get alreadyPlaced() {
-		if (!this.mouse || !this.timeline) return true;
-		const m = this.mouse;
-		return this.timeline.events.some((e) => e.tick === m.mouseTick);
-	}
-	@action.bound addPeg() {
-		if (!this.mouse || !this.timeline) return;
-		const difs = this.timeline.getAddDifs(
-			new DropE({ tick: this.mouse.mouseTick })
-		);
+export const PegPlacer = () => {
+	const { wheel, scroll, mouse } = useContext(ProgrammingWheelContext);
+
+	const mouseSnapped = () => {
+		const m = mouse.mousePos();
+		if (!m) return;
+		const div = wheel.ticksPerNoteSubdivision();
+		const modded = m.y % wheel.totalTicks();
+		const mouseTick = Math.floor(modded / div) * div;
+		const mouseChannel = Math.floor(m.x);
+		return { mouseTick, mouseChannel };
+	};
+
+	const timeline = () => {
+		const channelNumber = mouseSnapped()?.mouseChannel;
+		if (channelNumber === undefined || channelNumber === Infinity) return null;
+		return wheel.instrumentChannels()[channelNumber].timeline;
+	};
+	const alreadyPlaced = () => {
+		const t = timeline();
+		const mouseTick = mouseSnapped()?.mouseTick;
+		if (!mouseTick || !t) return true;
+		return t.events().some((e) => e.tick() === mouseTick);
+	};
+
+	function addPeg() {
+		const t = timeline();
+		const mouseTick = mouseSnapped()?.mouseTick;
+		if (!mouseTick || !t) return;
+		const difs = t.getAddDifs(new DropE({ tick: mouseTick }));
 		if (!difs) return;
-		this.timeline.applyDifs(difs);
+		t.applyDifs(difs);
 	}
-	@computed get height() {
-		return this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision);
+	function height() {
+		return scroll.y.toPixel(wheel.ticksPerNoteSubdivision());
 	}
 
-	render() {
-		return this.alreadyPlaced || !this.mouse ? null : (
-			<TranslateGrid
-				tick={this.mouse.mouseTick}
-				channel={this.mouse.mouseChannel}
+	return (
+		<Show when={mouseSnapped() && !alreadyPlaced()}>
+			<TranslateOnScroll
+				scroll={scroll}
+				axis="x"
+				by={() => mouseSnapped()?.mouseChannel ?? -1}
 			>
-				<rect
-					onMouseDown={this.addPeg}
-					onMouseMove={(e) => e.buttons === 1 && this.addPeg()}
-					width={this.wheel.channelToPixel(1)}
-					height={this.height}
-					fill="#0004"
-				/>
-			</TranslateGrid>
-		);
-	}
-}
-
-export const PegPlacer = WheelComponent.sync(PegPlacer_);
+				<TranslateOnScroll
+					scroll={scroll}
+					axis="y"
+					by={() => mouseSnapped()?.mouseTick ?? -1}
+				>
+					<rect
+						onMouseDown={addPeg}
+						onMouseMove={(e) => e.buttons === 1 && addPeg()}
+						width={scroll.x.toPixel(1)}
+						height={height()}
+						fill="#0004"
+					/>
+				</TranslateOnScroll>
+			</TranslateOnScroll>
+		</Show>
+	);
+};

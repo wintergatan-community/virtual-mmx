@@ -1,70 +1,70 @@
-import React from "react";
 import { Peg } from "./Peg";
-import { computed, action } from "mobx";
-import { WheelComponent } from "../storeComponents";
 import {
 	VibraphoneDropE,
 	DropEventTimeline,
 	DropE,
 } from "../../core/eventTimelines/concrete";
+import { For, useContext, createEffect } from "solid-js";
+import { Signal } from "../../core/helpers/solid";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
+import { TranslateOnScroll } from "../Scroll";
 
 interface ChannelPegsProps {
-	timeline: DropEventTimeline<VibraphoneDropE>; // TODO not "any"?
+	timeline: DropEventTimeline<VibraphoneDropE>;
 }
 
-class ChannelPegs_ extends WheelComponent<ChannelPegsProps> {
-	render() {
-		return (
-			<>
-				{this.props.timeline.events.map((peg) => (
-					<MaybeRenderedPeg
-						pegTick={peg.tick}
-						timeline={this.props.timeline}
-						key={peg.tick}
-					/>
-				))}
-			</>
-		);
-	}
-}
+export const ChannelPegs = (props: ChannelPegsProps) => {
+	const { scroll } = useContext(ProgrammingWheelContext);
+	// const visiblePegs = scroll.y.visibleArrayOf(props.timeline.events, (e) =>
+	// 	e ? e.tick() : 0
+	// );
 
-export const ChannelPegs = WheelComponent.sync(ChannelPegs_);
+	return (
+		<>
+			<For each={props.timeline.events()}>
+				{(peg) => (
+					<MaybeRenderedPeg pegTick={peg.tick} timeline={props.timeline} />
+				)}
+			</For>
+			<TranslateOnScroll scroll={scroll} axis="y" by={scroll.y.total}>
+				<For each={props.timeline.events()}>
+					{(peg) => (
+						<MaybeRenderedPeg pegTick={peg.tick} timeline={props.timeline} />
+					)}
+				</For>
+			</TranslateOnScroll>
+		</>
+	);
+};
 
 interface MaybeRenderedPegProps {
-	pegTick: number;
+	pegTick: Signal<number>;
 	timeline: DropEventTimeline<DropE>;
 }
 
-class MaybeRenderedPeg_ extends WheelComponent<MaybeRenderedPegProps> {
-	@computed get visible() {
-		return (
-			this.props.pegTick > this.wheel.visibleTopTick ||
-			this.props.pegTick < this.wheel.visibleBottomTick
-		);
-	}
-	@action.bound removePeg() {
-		const t = this.props.timeline;
-		const event = t.events.find((e) => e.tick === this.props.pegTick);
+export const MaybeRenderedPeg = (props: MaybeRenderedPegProps) => {
+	const { wheel, scroll } = useContext(ProgrammingWheelContext);
+
+	function removePeg() {
+		const t = props.timeline;
+		const event = t.events().find((e) => e.tick() === props.pegTick());
 		if (!event) return;
 		const difs = t.getRemoveDifs(event);
 		if (!difs) return;
 		t.applyDifs(difs);
 	}
-	@computed get activeDivision() {
-		return this.props.pegTick % this.wheel.ticksPerNoteSubdivision === 0;
+	function activeDivision() {
+		return props.pegTick() % wheel.ticksPerNoteSubdivision() === 0;
 	}
 
-	render() {
-		return this.visible ? (
+	return (
+		<TranslateOnScroll scroll={scroll} axis="y" by={props.pegTick}>
 			<Peg
-				pegTick={this.props.pegTick}
-				activeDivision={this.activeDivision}
+				pegTick={props.pegTick}
+				activeDivision={activeDivision()}
 				spawnsEvent={true}
-				click={this.removePeg}
-				key={this.props.pegTick}
+				click={removePeg}
 			/>
-		) : null;
-	}
-}
-
-const MaybeRenderedPeg = WheelComponent.sync(MaybeRenderedPeg_);
+		</TranslateOnScroll>
+	);
+};

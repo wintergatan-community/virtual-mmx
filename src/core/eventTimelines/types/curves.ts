@@ -1,5 +1,4 @@
 import { EventBase, ChangeTrigger } from "./other";
-import { observable } from "mobx";
 
 export type Intersection = "within" | "outside" | "onEdge";
 
@@ -9,8 +8,8 @@ export interface CurvePoints<E extends EventBase> {
 }
 
 export class Curve<E extends EventBase> implements CurvePoints<E> {
-	@observable start: E;
-	@observable end: E | null;
+	start: E;
+	end: E | null;
 	id: number;
 	static currentId = 0;
 	private changeTrigger: ChangeTrigger<E>;

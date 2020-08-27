@@ -1,41 +1,24 @@
-import React from "react";
-import { WheelComponent } from "../storeComponents";
-import { computed } from "mobx";
 import gearSideImg from "./woodgear_tileable.png";
+import { useContext } from "solid-js";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
 
-interface GearSideProps {
-	tick: number;
-}
+export const GearSide = () => {
+	const { scroll } = useContext(ProgrammingWheelContext);
 
-class GearSide_ extends WheelComponent<GearSideProps> {
-	@computed get y() {
-		return this.wheel.tickToPixel(this.props.tick);
-	}
-	@computed get height() {
-		return this.wheel.visiblePixelHeight;
-	}
-	width = 26;
+	const y = () => scroll.y.toPixel(-scroll.y.visibleLeast()) + 1;
+	const scale = () => scroll.y.pixelsPerUnit() * 280 * 3;
 
-	render() {
-		return (
+	return (
+		<div style={{ overflow: "hidden" }}>
 			<div
-				style={{ width: this.width, height: this.height, overflow: "hidden" }}
-			>
-				<div
-					style={{
-						transform: `scaleY(1.1)`,
-						backgroundImage: `url("${gearSideImg}")`,
-						backgroundSize: this.width,
-						width: this.width,
-						height: this.height,
-						backgroundPositionY: this.y,
-						// backgroundRepeat: "repeat-y",
-						overflow: "hidden",
-					}}
-				/>
-			</div>
-		);
-	}
-}
-
-export const GearSide = WheelComponent.sync(GearSide_);
+				style={{
+					transform: `scaleY(${1})`,
+					"background-image": `url("${gearSideImg}")`,
+					"background-size": `100% ${scale()}%`,
+					height: "100%",
+					"background-position": "0px " + y() + "px",
+				}}
+			/>
+		</div>
+	);
+};

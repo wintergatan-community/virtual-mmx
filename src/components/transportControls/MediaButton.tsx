@@ -1,5 +1,3 @@
-import React from "react";
-
 interface MediaButtonProps {
 	click: () => void;
 	color: string;
@@ -10,13 +8,13 @@ export const MediaButton = (props: MediaButtonProps) => (
 	<div
 		style={{
 			display: "flex",
-			width: 35,
-			height: 35,
-			backgroundColor: props.color,
-			borderRadius: 6,
-			margin: 2,
+			width: "35px",
+			height: "35px",
+			"background-color": props.color,
+			"border-radius": "6px",
+			margin: "2px",
 			cursor: "pointer",
-			userSelect: "none",
+			"user-select": "none",
 			transition: "0.1s",
 		}}
 		onClick={props.click}

@@ -1,7 +1,6 @@
-import { WheelComponent } from "../../storeComponents";
-import React from "react";
-import { NoteSubdivision } from "../../../core/helpers/types";
-import { action, computed } from "mobx";
+import { useContext } from "solid-js";
+import { NoteSubdivision } from "../programmingWheelDisplay";
+import { ProgrammingWheelContext } from "../ProgrammingWheel";
 
 interface SubdivisionOptionProps {
 	division: NoteSubdivision;
@@ -9,36 +8,35 @@ interface SubdivisionOptionProps {
 	select: (division: NoteSubdivision) => void;
 }
 
-class SubdivisionOption_ extends WheelComponent<SubdivisionOptionProps> {
-	@action.bound select() {
-		this.props.select(this.props.division);
+export const SubdivisionOption = (props: SubdivisionOptionProps) => {
+	const { wheel } = useContext(ProgrammingWheelContext);
+
+	function select() {
+		props.select(props.division);
 	}
 
-	@computed get selected() {
-		return this.wheel.subdivision === this.props.division;
+	function selected() {
+		return wheel.subdivision() === props.division;
 	}
 
-	render() {
-		return (
-			<div
-				style={{
-					display: "flex",
-					width: 20,
-					backgroundColor: this.selected
-						? "rgb(106, 180, 250)"
-						: "rgb(193, 193, 193)",
-					border: "1px rgb(166, 166, 166) solid",
-					borderTop: 0,
-					borderBottom: 0,
-					cursor: "pointer",
-					userSelect: "none",
-				}}
-				onClick={this.select}
-			>
-				<img src={this.props.icon} style={{ width: "100%", height: "100%" }} />
-			</div>
-		);
-	}
-}
-
-export const SubdivisionOption = WheelComponent.sync(SubdivisionOption_);
+	return (
+		<div
+			style={{
+				display: "flex",
+				width: "20px",
+				"background-color": selected()
+					? "rgb(106, 180, 250)"
+					: "rgb(193, 193, 193)",
+				border: "1px rgb(166, 166, 166) solid",
+				"border-top": "0px",
+				"border-bottom": "0px",
+				cursor: "pointer",
+				"user-select": "none",
+			}}
+			onClick={select}
+		>
+			<div style={{ width: "10px", height: "10px", background: "black" }} />
+			<img src={props.icon} style={{ width: "100%", height: "100%" }} />
+		</div>
+	);
+};

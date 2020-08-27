@@ -1,39 +1,24 @@
-import React from "react";
-import { AppComponent } from "../storeComponents";
 import { mapValue } from "../../core/helpers/functions";
-import { computed } from "mobx";
 
 interface ConnectorProps {
 	offset: number;
 }
 
-class Connector_ extends AppComponent<ConnectorProps> {
-	@computed get x() {
-		return offsetToPixel(this.props.offset);
-	}
+export const Connector = (props: ConnectorProps) => {
+	const x = () => offsetToPixel(props.offset);
+	const width = () => offsetToPixel(1) - offsetToPixel(0);
+	const height = () => 30 / (props.offset + 3);
 
-	@computed get width() {
-		return offsetToPixel(1) - offsetToPixel(0);
-	}
-
-	@computed get height() {
-		return 30 / (this.props.offset + 3);
-	}
-
-	render() {
-		return (
-			<rect
-				x={this.x}
-				y={-this.height / 2}
-				width={this.width}
-				height={this.height}
-				fill="rgb(159, 159, 159)"
-			/>
-		);
-	}
-}
-
-export const Connector = AppComponent.sync(Connector_);
+	return (
+		<rect
+			x={x()}
+			y={-height() / 2}
+			width={width()}
+			height={height()}
+			fill="rgb(159, 159, 159)"
+		/>
+	);
+};
 
 export function offsetToPixel(offset: number) {
 	// TODO move to local provider

@@ -1,38 +1,28 @@
-import React from "react";
 import { ChannelPegs } from "./ChannelPegs";
-import { TranslateGrid } from "./TranslateGrid";
-import { computed } from "mobx";
-import { WheelComponent } from "../storeComponents";
 import { ChannelColor, DisplayChannel } from "./programmingWheelDisplay";
+import { useContext } from "solid-js";
+import { Signal } from "../../core/helpers/solid";
+import { TranslateOnScroll } from "../Scroll";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
 
 interface WheelChannelProps {
 	displayChannel: DisplayChannel;
-	channelNumber: number;
+	channelNumber: Signal<number>;
 	channelColor: ChannelColor;
 }
 
-class WheelChannel_ extends WheelComponent<WheelChannelProps> {
-	@computed get width() {
-		return this.wheel.tickToPixel(this.wheel.totalTicks);
-	}
-	@computed get channelOne() {
-		// TODO move this away from this component
-		return this.wheel.channelToPixel(1);
-	}
+export const WheelChannel = (props: WheelChannelProps) => {
+	const { wheel, scroll } = useContext(ProgrammingWheelContext);
 
-	render() {
-		return (
-			<TranslateGrid channel={this.props.channelNumber}>
-				<rect
-					width={this.channelOne}
-					height={this.width}
-					fill={this.props.channelColor}
-					stroke="rgb(47, 47, 47)"
-				/>
-				<ChannelPegs timeline={this.props.displayChannel.timeline} />
-			</TranslateGrid>
-		);
-	}
-}
-
-export const WheelChannel = WheelComponent.sync(WheelChannel_);
+	return (
+		<TranslateOnScroll scroll={scroll} axis="x" by={props.channelNumber}>
+			<rect
+				width={scroll.x.toPixel(1)}
+				height={scroll.y.toPixel(wheel.totalTicks()) * 2}
+				fill={props.channelColor}
+				stroke="rgb(47, 47, 47)"
+			/>
+			<ChannelPegs timeline={props.displayChannel.timeline} />
+		</TranslateOnScroll>
+	);
+};

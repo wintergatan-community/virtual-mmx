@@ -1,5 +1,3 @@
-import React from "react";
-
 export const VmmxHeader = (props: { headerPercent: number }) => {
 	return (
 		<div
@@ -7,15 +5,15 @@ export const VmmxHeader = (props: { headerPercent: number }) => {
 				display: "flex",
 				width: "100%",
 				height: `${props.headerPercent}%`,
-				backgroundColor: "#ccc",
-				alignItems: "center",
+				"background-color": "#ccc",
+				"align-items": "center",
 			}}
 		>
 			<p
 				style={{
-					fontSize: 25,
-					paddingLeft: 20,
-					paddingRight: 20,
+					"font-size": "25px",
+					"padding-left": "20px",
+					"padding-right": "20px",
 				}}
 			>
 				Virtual Marble Machine X
@@ -32,15 +30,18 @@ export const VmmxHeader = (props: { headerPercent: number }) => {
 interface NavButtonProps {
 	text: string;
 }
+
 const NavButton = (props: NavButtonProps) => (
 	<div
 		style={{
+			display: "flex",
 			height: "80%",
-			fontSize: 22,
-			paddingLeft: 20,
-			paddingRight: 20,
+			"font-size": "22px",
+			"padding-left": "20px",
+			"padding-right": "20px",
 			color: "#434343",
 			cursor: "pointer",
+			"align-items": "center",
 		}}
 	>
 		{props.text}
@@ -48,5 +49,7 @@ const NavButton = (props: NavButtonProps) => (
 );
 
 const NavButtonBreak = () => (
-	<span style={{ width: 1.5, height: "80%", backgroundColor: "#b7b7b7" }} />
+	<span
+		style={{ width: "1.5px", height: "80%", "background-color": "#b7b7b7" }}
+	/>
 );

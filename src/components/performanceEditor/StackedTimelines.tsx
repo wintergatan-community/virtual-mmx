@@ -1,36 +1,33 @@
-import React, { Component } from "react";
-import { computed } from "mobx";
 import { mapValue } from "../../core/helpers/functions";
-import { observer } from "mobx-react";
 import { RunningTimeline } from "./RunningTimeline";
+import { For } from "solid-js";
 
 interface StackedTimelineProps<T> {
 	labels: T[];
 	children: (label: T) => JSX.Element;
 }
 
-@observer
-export class StackedTimeline<T extends string | number> extends Component<
-	StackedTimelineProps<T>
-> {
-	@computed get scaledLabels() {
-		const labels = this.props.labels;
+export function StackedTimeline<T extends string | number>(
+	props: StackedTimelineProps<T>
+) {
+	const scaledLabels = () => {
+		const labels = props.labels;
 		const pad = 20;
 		return labels.map((label, i) => ({
 			label,
 			fit: mapValue(i, 0, labels.length - 1, pad, 150 - pad), // TODO not fixed value
 		}));
-	}
+	};
 
-	render() {
-		return (
-			<g>
-				{this.scaledLabels.map(({ label, fit }) => (
-					<RunningTimeline label={label} y={fit} key={label}>
-						<div></div>
+	return (
+		<g>
+			<For each={scaledLabels()}>
+				{({ label, fit }) => (
+					<RunningTimeline label={label} y={fit}>
+						{props.children(label)}
 					</RunningTimeline>
-				))}
-			</g>
-		);
-	}
+				)}
+			</For>
+		</g>
+	);
 }

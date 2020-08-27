@@ -1,34 +1,31 @@
-import React from "react";
-import { BassComponent } from "../storeComponents";
-import { computed } from "mobx";
+import { useContext } from "solid-js";
+import { BassContext } from "./Bass";
 
-class FretFinger_ extends BassComponent {
-	@computed get x() {
-		const mouseX = this.bass.mouseTracker.mousePos?.x;
+export const FretFinger = () => {
+	const { bass, mouse } = useContext(BassContext);
+
+	const x = () => {
+		const mouseX = mouse.mousePos()?.x;
 		if (!mouseX) return 0;
-		return this.bass.stringToPixel(Math.round(this.bass.pixelToString(mouseX)));
-	}
-	@computed get y() {
-		const mouseY = this.bass.mouseTracker.mousePos?.y;
+		return bass.stringToPixel(Math.round(bass.pixelToString(mouseX)));
+	};
+	const y = () => {
+		const mouseY = mouse.mousePos()?.y;
 		if (!mouseY) return 0;
 
 		return (
-			this.bass.fretToPixel(Math.ceil(this.bass.pixelToFret(mouseY))) -
-			this.bass.fretHeight / 2
+			bass.fretToPixel(Math.ceil(bass.pixelToFret(mouseY))) -
+			bass.fretHeight() / 2
 		);
-	}
+	};
 
-	render() {
-		return (
-			<circle
-				style={{ pointerEvents: "none", transition: `0.2s` }}
-				cx={this.x}
-				cy={this.y}
-				r={10}
-				fill={true ? "black" : "white"}
-			/>
-		);
-	}
-}
-
-export const FretFinger = BassComponent.sync(FretFinger_);
+	return (
+		<circle
+			style={{ "pointer-events": "none", transition: `0.2s` }}
+			cx={x()}
+			cy={y()}
+			r={10}
+			fill={true ? "black" : "white"}
+		/>
+	);
+};

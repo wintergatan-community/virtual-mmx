@@ -1,20 +1,19 @@
 import { BassState, BassString, Note } from "vmmx-schema";
 import { AppStore } from "./app";
-import { observable, computed, action } from "mobx";
 import { fromEntries } from "../core/helpers/functions";
 import { bassStrings } from "../toFutureSchema";
 
 export class BassStore implements BassState {
 	appStore: AppStore;
 
-	@observable capos: Record<BassString, number> = {
+	capos: Record<BassString, number> = {
 		// TODO should use Record and prevent optional in schema
 		1: 0,
 		2: 0,
 		3: 0,
 		4: 0,
 	};
-	@observable tuning: Record<BassString, Note> = {
+	tuning: Record<BassString, Note> = {
 		// TODO should use Record and prevent optional in schema
 		1: "E2",
 		2: "A2",
@@ -23,7 +22,7 @@ export class BassStore implements BassState {
 	};
 
 	// TODO would be nice if this were prettier
-	@observable stringStores: Record<BassString, BassStringStore> = fromEntries(
+	stringStores: Record<BassString, BassStringStore> = fromEntries(
 		bassStrings.map((string) => [
 			string,
 			new BassStringStore(string, this.tuning, this.capos),
@@ -41,14 +40,14 @@ export class BassStringStore {
 
 	string: BassString;
 
-	@computed get tuning(): Note {
+	get tuning() {
 		return this.tuningObj[this.string];
 	}
-	@computed get capo(): number {
+	get capo() {
 		return this.caposObj[this.string];
 	}
 
-	@action.bound moveCapo(fret: number) {
+	moveCapo(fret: number) {
 		this.caposObj[this.string] = fret;
 	}
 

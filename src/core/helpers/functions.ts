@@ -224,10 +224,6 @@ export interface Point {
 	y: number;
 }
 
-export function entries<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
-	return Object.entries(obj) as [Key, Value][];
-}
-
 interface Indexable {
 	[index: string]: any;
 }
@@ -252,6 +248,9 @@ export function keys<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
 }
 export function values<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
 	return Object.values(obj) as Value[];
+}
+export function entries<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
+	return Object.entries(obj) as [Key, Value][];
 }
 
 // type Keyable = string | number;
@@ -284,3 +283,33 @@ export function values<Key extends ObjectKey, Value>(obj: Record<Key, Value>) {
 // 	}
 // 	return result
 // }
+
+export function findEnhanced<T>(
+	array: T[],
+	foundFunc: (element: T) => boolean,
+	startIndex?: number,
+	direction?: "forward" | "backward"
+): [T | null, number | null] {
+	startIndex = startIndex ?? 0;
+	if (direction === "backward") {
+		for (let i = startIndex; i >= 0; i--) {
+			const element = array[i];
+			if (foundFunc(element)) return [element, i];
+		}
+	} else {
+		for (let i = startIndex; i < array.length; i++) {
+			const element = array[i];
+			if (foundFunc(element)) return [element, i];
+		}
+	}
+	return [null, null];
+}
+
+export function findIndexEnhanced<T>(
+	array: T[],
+	foundFunc: (element: T) => boolean,
+	startIndex?: number,
+	direction?: "forward" | "backward"
+): number | null {
+	return findEnhanced(array, foundFunc, startIndex, direction)[1];
+}

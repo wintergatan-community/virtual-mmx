@@ -1,23 +1,19 @@
-import React from "react";
-import { WheelComponent } from "../../storeComponents";
 import { SubdivisionChooser } from "./SubdivisionChooser";
+import { useContext } from "solid-js";
+import { ProgrammingWheelContext } from "../ProgrammingWheel";
 
-class BottomBar_ extends WheelComponent {
-	render() {
-		return (
-			<div
-				style={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "flex-end",
-					padding: 3,
-					backgroundColor: "rgb(210, 210, 210)",
-				}}
-			>
-				<SubdivisionChooser />
-			</div>
-		);
-	}
-}
-
-export const BottomBar = WheelComponent.sync(BottomBar_);
+export const BottomBar = () => {
+	return (
+		<div
+			style={{
+				display: "flex",
+				"align-items": "center",
+				"justify-content": "flex-end",
+				"background-color": "rgb(210, 210, 210)",
+				width: "100%",
+			}}
+		>
+			<SubdivisionChooser />
+		</div>
+	);
+};

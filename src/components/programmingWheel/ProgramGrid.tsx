@@ -1,52 +1,62 @@
-import React from "react";
 import { WheelChannel } from "./WheelChannel";
 import { SubdivisionLine } from "./SubdivisionLine";
-import { WheelComponent } from "../storeComponents";
+import { useContext, For } from "solid-js";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
+import { TranslateOnScroll } from "../Scroll";
 
-class ProgramGrid_ extends WheelComponent {
-	render() {
-		return (
-			<>
-				<WheelChannels />
-				<SubdivisionLines />
-			</>
-		);
-	}
-}
+export const ProgramGrid = () => {
+	return (
+		<>
+			<WheelChannels />
+			<SubdivisionLines />
+		</>
+	);
+};
 
-export const ProgramGrid = WheelComponent.sync(ProgramGrid_);
+export const SubdivisionLines = () => {
+	const { wheel, scroll } = useContext(ProgrammingWheelContext);
 
-class SubdivisionLines_ extends WheelComponent {
-	render() {
-		return (
-			<g>
-				{this.wheel.subdivisionLines.map((tick) => (
-					<SubdivisionLine tick={tick} key={tick} />
-				))}
-			</g>
-		);
-	}
-}
+	const linesVisible = scroll.y.visibleArrayOf(
+		wheel.subdivisionLines,
+		(s) => s
+	);
 
-const SubdivisionLines = WheelComponent.sync(SubdivisionLines_);
+	const circularLinesVisible = scroll.y.visibleArrayOf(
+		wheel.subdivisionLines,
+		(s) => s,
+		"circular"
+	);
 
-class WheelChannels_ extends WheelComponent {
-	render() {
-		return (
-			<g>
-				{this.wheel.instrumentChannels.map((channel, channelNumber) => {
-					return (
-						<WheelChannel
-							displayChannel={channel}
-							channelNumber={channelNumber}
-							key={channelNumber}
-							channelColor={channel.channelColor}
-						/>
-					);
-				})}
-			</g>
-		);
-	}
-}
+	return (
+		<g>
+			<For each={linesVisible()}>
+				{(tick) => <SubdivisionLine tick={tick} />}
+			</For>
+			<TranslateOnScroll scroll={scroll} axis="y" by={scroll.y.total}>
+				<For each={circularLinesVisible()}>
+					{(tick) => <SubdivisionLine tick={tick} />}
+				</For>
+			</TranslateOnScroll>
+		</g>
+	);
+};
 
-const WheelChannels = WheelComponent.sync(WheelChannels_);
+export const WheelChannels = () => {
+	const { wheel } = useContext(ProgrammingWheelContext);
+
+	// const dataVisible = scroll.x.visibleArray(wheel.instrumentChannels, (_, i) => i);
+
+	return (
+		<g>
+			<For each={wheel.instrumentChannels()}>
+				{(channel, channelNumber) => (
+					<WheelChannel
+						displayChannel={channel}
+						channelNumber={channelNumber}
+						channelColor={channel.channelColor}
+					/>
+				)}
+			</For>
+		</g>
+	);
+};

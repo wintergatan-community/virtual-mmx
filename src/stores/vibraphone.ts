@@ -1,8 +1,7 @@
-import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 import { AppStore } from "./app";
-import { observable, computed } from "mobx";
 import { mapArrayToObj } from "../core/helpers/functions";
 import { vibraphoneBars } from "../toFutureSchema";
+import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 
 export class VibraphoneStore implements VibraphoneState {
 	appStore: AppStore;
@@ -25,10 +24,7 @@ export class VibraphoneStore implements VibraphoneState {
 		11: "E6",
 	};
 
-	@observable barStores: Record<
-		VibraphoneChannel,
-		VibraphoneBarStore
-	> = mapArrayToObj(
+	barStores: Record<VibraphoneChannel, VibraphoneBarStore> = mapArrayToObj(
 		vibraphoneBars,
 		(bar) => new VibraphoneBarStore(bar, this.notes)
 	);
@@ -42,7 +38,7 @@ export class VibraphoneBarStore {
 	notesObj: Record<VibraphoneChannel, Note>;
 	bar: VibraphoneChannel;
 
-	@computed get note() {
+	get note() {
 		return this.notesObj[this.bar];
 	}
 

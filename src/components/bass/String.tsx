@@ -1,69 +1,55 @@
-import React from "react";
-import { computed, action } from "mobx";
-import { Capo } from "./Capo";
-import { BassComponent } from "../storeComponents";
 import { BassStringStore } from "../../stores/bass";
 import { SpringPulse } from "../../core/helpers/springPulse";
 import { bassStrings } from "../../toFutureSchema";
+import { useContext } from "solid-js";
+import { BassContext } from "./Bass";
+import { AppContext } from "../../stores/app";
+import { TranslateGroup } from "../Translate";
 
 interface StringProps {
 	stringStore: BassStringStore;
 }
 
-export class String_ extends BassComponent<StringProps> {
-	vibrate = new SpringPulse();
+export const String = (props: StringProps) => {
+	const app = useContext(AppContext);
+	const { bass } = useContext(BassContext);
 
-	@computed get x() {
-		return this.bass.stringToPixel(this.props.stringStore.string);
+	const vibrate = new SpringPulse();
+
+	const x = () => bass.stringToPixel(props.stringStore.string);
+	const width = () => bass.viewWidth / bassStrings.length - 2;
+	const bassStringTimelines = () =>
+		app.jointTimelines.bass[props.stringStore.string];
+
+	function handleScroll(/*e: React.WheelEvent<SVGRectElement>*/) {
+		// bass.strings[props.string].capoPos += e.deltaY / 20;
 	}
 
-	@computed get width() {
-		return this.bass.viewWidth / bassStrings.length - 2;
-	}
-
-	@action.bound handleScroll(/*e: React.WheelEvent<SVGRectElement>*/) {
-		// bass.strings[this.props.string].capoPos += e.deltaY / 20;
-	}
-
-	@action.bound strum(e: React.MouseEvent<SVGLineElement, MouseEvent>) {
+	function strum(e: MouseEvent) {
 		if (e.buttons === 1) {
-			this.bassStringTimelines.performance.triggerEvent();
-			this.vibrate.applyCollision(1);
+			bassStringTimelines().performance.triggerEvent();
+			vibrate.applyCollision(1);
 		}
 	}
 
-	get bassStringTimelines() {
-		return this.app.jointTimelines.bass[this.props.stringStore.string];
-	}
-
-	render() {
-		return (
-			<g style={{ transform: `translateX(${this.x}px)` }}>
-				<line
-					// string
-					y1={0}
-					y2={this.bass.viewHeight}
-					x1={0}
-					x2={0}
-					stroke={`rgb(${this.vibrate.value * 50}, ${
-						this.vibrate.value * 50
-					}, ${this.vibrate.value * 50})`}
-					strokeWidth={1.5}
-				/>
-				<line
-					// strum hit box
-					y1={0}
-					y2={this.bass.viewHeight}
-					x1={0}
-					x2={0}
-					stroke="#0000"
-					strokeWidth={6}
-					onMouseEnter={this.strum}
-				/>
-				<Capo stringStore={this.props.stringStore} />
-			</g>
-		);
-	}
-}
-
-export const String = BassComponent.sync(String_);
+	return (
+		<TranslateGroup x={x}>
+			<line
+				// string
+				y2={bass.viewHeight}
+				stroke={`rgb(${vibrate.value * 50}, ${vibrate.value * 50}, ${
+					vibrate.value * 50
+				})`}
+				strokeWidth={1.5}
+			/>
+			<line
+				// strum hit box
+				y2={bass.viewHeight}
+				stroke="#0000"
+				strokeWidth={6}
+				onMouseEnter={strum}
+			/>
+			{/* <Capo stringStore={props.stringStore} /> */}
+		</TranslateGroup>
+	);
+};

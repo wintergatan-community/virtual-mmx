@@ -45,7 +45,7 @@ class DrumsChannel extends VmmxInstrumentChannel<DrumsDropE> {
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.drums[drum],
 			this.triggerStrike,
-			() => muted[drum]
+			() => muted[drum]() ?? false
 		);
 	}
 

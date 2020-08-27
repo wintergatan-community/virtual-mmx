@@ -13,7 +13,6 @@ import {
 	vibraphoneBars,
 	DrumTypeTOFIX,
 } from "../toFutureSchema";
-import { observable } from "mobx";
 import { StateStore } from "./state";
 import { mapArrayToObj } from "../core/helpers/functions";
 import {
@@ -28,7 +27,7 @@ import {
 	DropE,
 } from "../core/eventTimelines/concrete";
 
-export class ProgramStore implements Program {
+export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
 	appStore: AppStore;
 
 	metadata = new ProgramMetadataStore(this.appStore);
@@ -86,7 +85,7 @@ export class ProgramStore implements Program {
 		});
 
 		// TODO gonna have to deal with this when using dynamic bpm
-		this.state.machine.bpm = program.state.machine.bpm;
+		this.state.machine.bpm(program.state.machine.bpm);
 		this.metadata.tpq = program.metadata.tpq;
 	}
 }
@@ -96,7 +95,7 @@ class ProgramMetadataStore implements ProgramMetadata {
 
 	title = "Untitled";
 	author = "Unknown Author";
-	@observable tpq: 240 = 240; // TODO interface in schema shouldn't force 240
+	tpq: 240 = 240; // TODO interface in schema shouldn't force 240
 	version = "0.1.0-beta";
 	readonly length = 61440;
 	procrastination = 69420;

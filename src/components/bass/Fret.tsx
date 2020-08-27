@@ -1,46 +1,37 @@
-import React from "react";
-import { computed } from "mobx";
-import { BassComponent } from "../storeComponents";
+import { useContext, For } from "solid-js";
+import { BassContext } from "./Bass";
+import { TranslateGroup } from "../Translate";
 
 interface FretProps {
 	fret: number;
 	markings: number[];
 }
 
-class Fret_ extends BassComponent<FretProps> {
-	@computed get y() {
-		return this.props.fret * this.bass.fretHeight;
-	}
-	@computed get midFret() {
-		return -this.bass.fretHeight / 2;
-	}
+export const Fret = (props: FretProps) => {
+	const { bass } = useContext(BassContext);
 
-	render() {
-		return (
-			<g
-				style={{
-					transform: `translateY(${this.y}px)`,
-				}}
-			>
-				<line
-					x1={1}
-					x2={this.bass.viewWidth}
-					y1={0}
-					y2={0}
-					stroke="rgb(239, 239, 239)"
-				/>
-				{this.props.markings.map((marking) => (
+	const y = () => props.fret * bass.fretHeight();
+	const midFret = () => -bass.fretHeight / 2;
+
+	return (
+		<TranslateGroup y={y}>
+			<line
+				x1={1}
+				x2={bass.viewWidth}
+				y1={0}
+				y2={0}
+				stroke="rgb(239, 239, 239)"
+			/>
+			<For each={props.markings}>
+				{(marking) => (
 					<circle
-						cx={this.bass.stringToPixel(marking)}
-						cy={this.midFret}
+						cx={bass.stringToPixel(marking)}
+						cy={midFret()}
 						r={5}
 						fill="rgb(96, 90, 80)"
-						key={marking}
 					/>
-				))}
-			</g>
-		);
-	}
-}
-
-export const Fret = BassComponent.sync(Fret_);
+				)}
+			</For>
+		</TranslateGroup>
+	);
+};

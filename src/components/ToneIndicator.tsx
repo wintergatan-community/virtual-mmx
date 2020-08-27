@@ -1,29 +1,23 @@
-import React from "react";
-import { AppComponent } from "./storeComponents";
-import { computed } from "mobx";
+import { useContext } from "solid-js";
+import { AppContext } from "../stores/app";
 
-class ToneIndicator_ extends AppComponent {
-	@computed get loaded() {
-		return this.app.player.toneLoaded;
-	}
+export const ToneIndicator = () => {
+	const app = useContext(AppContext);
+	const loaded = app.player.toneLoaded;
 
-	render() {
-		return (
-			<div
-				style={{
-					position: "absolute",
-					background: this.loaded ? "lime" : "red",
-					fontSize: 12,
-					padding: 5,
-					borderRadius: 8,
-					transition: "0.5s",
-					userSelect: "none",
-				}}
-			>
-				{this.loaded ? "Tone Loaded" : "Tone Not Loaded"}
-			</div>
-		);
-	}
-}
-
-export const ToneIndicator = AppComponent.sync(ToneIndicator_);
+	return (
+		<div
+			style={{
+				position: "absolute",
+				background: loaded() ? "lime" : "red",
+				fontSize: 12,
+				padding: 5,
+				borderRadius: 8,
+				transition: "0.5s",
+				userSelect: "none",
+			}}
+		>
+			{loaded() ? "Tone Loaded" : "Tone Not Loaded"}
+		</div>
+	);
+};

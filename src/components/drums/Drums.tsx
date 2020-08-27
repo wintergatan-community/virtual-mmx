@@ -1,33 +1,29 @@
-import React from "react";
 import { Snare } from "./Snare";
-import { Bassdrum } from "./Bassdrum";
 import { HiHat } from "./HiHat";
 import { Crash } from "./Crash";
-import { AppComponent } from "../storeComponents";
-import { Provider } from "mobx-react";
 import { DrumsDisplayStore } from "./drumsDisplay";
+import { createContext } from "solid-js";
+import { Bassdrum } from "./Bassdrum";
 
-class Drums_ extends AppComponent {
-	drums = new DrumsDisplayStore();
+export const DrumsContext = createContext<{ drums: DrumsDisplayStore }>();
 
-	render() {
-		return (
-			<Provider drums={this.drums}>
-				<svg
-					viewBox={`0 0 ${100} ${100}`}
-					style={{
-						width: "100%",
-						height: "100%",
-					}}
-				>
-					<Snare />
-					<Bassdrum />
-					<HiHat />
-					<Crash />
-				</svg>
-			</Provider>
-		);
-	}
-}
+export const Drums = () => {
+	const drums = new DrumsDisplayStore();
 
-export const Drums = AppComponent.sync(Drums_);
+	return (
+		<DrumsContext.Provider value={{ drums }}>
+			<svg
+				viewBox="0 0 100 100"
+				style={{
+					width: "100%",
+					height: "100%",
+				}}
+			>
+				<Snare />
+				<Bassdrum />
+				<HiHat />
+				<Crash />
+			</svg>
+		</DrumsContext.Provider>
+	);
+};

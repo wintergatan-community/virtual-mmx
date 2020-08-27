@@ -1,49 +1,41 @@
-import React from "react";
-import { DrumsComponent } from "../storeComponents";
 import { SpringPulse } from "../../core/helpers/springPulse";
-import { computed, action } from "mobx";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-class HiHat_ extends DrumsComponent {
-	pulse = new SpringPulse();
+export const HiHat = () => {
+	const app = useContext(AppContext);
 
-	componentDidMount() {
-		this.hihatTimelines.addJointEventListener(this.animateHit);
+	const pulse = new SpringPulse();
+	const hihatTimelines = app.jointTimelines.drums.hihat;
 
-		this.pulse.damping = 20;
-		this.pulse.stiffness = 300;
+	hihatTimelines.addJointEventListener(animateHit);
+
+	pulse.damping = 20;
+	pulse.stiffness = 300;
+
+	function handlePress() {
+		hihatTimelines.performance.triggerEvent();
+		animateHit();
 	}
 
-	@computed get hihatTimelines() {
-		return this.app.jointTimelines.drums.hihat;
+	function animateHit() {
+		pulse.applyCollision(1);
 	}
 
-	handlePress = () => {
-		this.hihatTimelines.performance.triggerEvent();
-		this.animateHit();
-	};
-
-	@action.bound animateHit() {
-		this.pulse.applyCollision(1);
-	}
-
-	render() {
-		return (
-			<g
-				style={{
-					transform: `translate(59.5px, 21.5px) scale(${this.pulse.value + 1})`,
-				}}
-				onMouseDown={this.handlePress}
-			>
-				<circle
-					r={19.5}
-					fill="rgb(253, 227, 165)"
-					stroke="rgb(209, 179, 107)"
-					strokeWidth={1}
-				/>
-				<circle r={2.5} fill="rgb(125, 125, 125)" />
-			</g>
-		);
-	}
-}
-
-export const HiHat = DrumsComponent.sync(HiHat_);
+	return (
+		<g
+			style={{
+				transform: `translate(59.5px, 21.5px) scale(${pulse.value + 1})`,
+			}}
+			onMouseDown={handlePress}
+		>
+			<circle
+				r={19.5}
+				fill="rgb(253, 227, 165)"
+				stroke="rgb(209, 179, 107)"
+				strokeWidth={1}
+			/>
+			<circle r={2.5} fill="rgb(125, 125, 125)" />
+		</g>
+	);
+};

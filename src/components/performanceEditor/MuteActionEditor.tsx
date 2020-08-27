@@ -1,18 +1,16 @@
-import React from "react";
-import { AppComponent } from "../storeComponents";
 import { ChannelGroupTOFIX } from "../../toFutureSchema";
-import { computed } from "mobx";
 import { EventPolylineContainer } from "./EventPolylineContainer";
 import { keys } from "../../core/helpers/functions";
 import { StackedTimeline } from "./StackedTimelines";
 import { MuteE } from "../../core/eventTimelines/concrete";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-class MuteActionEditor_ extends AppComponent {
-	@computed get timelines() {
-		return this.app.performance.eventTimelines.machine.channelMute;
-	}
+export const MuteActionEditor = () => {
+	const app = useContext(AppContext);
 
-	colors: Record<ChannelGroupTOFIX, string> = {
+	const timelines = app.performance.eventTimelines.machine.channelMute;
+	const colors: Record<ChannelGroupTOFIX, string> = {
 		bass: "#85200c",
 		vibraphone: "#1155cc",
 		bassdrum: "#bf9000",
@@ -21,22 +19,18 @@ class MuteActionEditor_ extends AppComponent {
 		crash: "#00ff00",
 	};
 
-	render() {
-		return (
-			<StackedTimeline labels={keys(this.timelines)}>
-				{(label) => (
-					<EventPolylineContainer
-						timeline={this.timelines[label]}
-						shouldShow={(c) => c.start.mute}
-						colorOf={() => this.colors[label]}
-						value={() => 1}
-						valToPixel={() => 0}
-						newEventAt={(tick) => new MuteE({ mute: true, tick })}
-					/>
-				)}
-			</StackedTimeline>
-		);
-	}
-}
-
-export const MuteActionEditor = AppComponent.sync(MuteActionEditor_);
+	return (
+		<StackedTimeline labels={keys(timelines)}>
+			{(label) => (
+				<EventPolylineContainer
+					timeline={timelines[label]}
+					shouldShow={(c) => c.start.mute}
+					colorOf={() => colors[label]}
+					value={() => 1}
+					valToPixel={() => 0}
+					newEventAt={(tick) => new MuteE({ mute: true, tick })}
+				/>
+			)}
+		</StackedTimeline>
+	);
+};

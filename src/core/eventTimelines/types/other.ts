@@ -1,6 +1,6 @@
-import { observable } from "mobx";
 import { EventTimeline } from "../base";
 import { Curve, CurvePoints } from "./curves";
+import { Signal, signal } from "../../helpers/solid";
 
 export type VmmxEventListener<E extends EventBase> = (
 	event?: E,
@@ -9,13 +9,13 @@ export type VmmxEventListener<E extends EventBase> = (
 export type VmmxEventChangeListener<E> = (event: E) => void;
 
 export class EventBase {
-	@observable tick: number;
 	id: number;
+	tick: Signal<number>;
 
 	static untakenId = 0;
 
 	constructor(data: { tick: number }) {
-		this.tick = data.tick;
+		this.tick = signal(data.tick);
 		this.id = EventBase.untakenId++;
 	}
 }
@@ -55,19 +55,19 @@ export type CurveDif<E extends EventBase> =
 	| CurveRemoveDif<E>
 	| CurveSplitDif<E>;
 
-export class JointEventTimeline<E extends EventBase> {
-	program: EventTimeline<E>;
-	performance: EventTimeline<E>;
+export class JointEventTimeline<EventData extends EventBase> {
+	program: EventTimeline<EventData>;
+	performance: EventTimeline<EventData>;
 
 	constructor(timelines: {
-		program: EventTimeline<E>;
-		performance: EventTimeline<E>;
+		program: EventTimeline<EventData>;
+		performance: EventTimeline<EventData>;
 	}) {
 		this.program = timelines.program;
 		this.performance = timelines.performance;
 	}
 
-	addJointEventListener(l: VmmxEventListener<E>) {
+	addJointEventListener(l: VmmxEventListener<EventData>) {
 		this.program.addEventListener(l);
 		this.performance.addEventListener(l);
 	}

@@ -1,58 +1,49 @@
-import React from "react";
-import { computed, action, observable } from "mobx";
-import { AppComponent } from "../storeComponents";
 import { PlayPauseButton } from "./PlayPauseButton";
 import { RestartButton } from "./RestartButton";
 import { RecordButton } from "./RecordButton";
+import { signal } from "../../core/helpers/solid";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-class TransportControls_ extends AppComponent {
-	@observable recording = false;
-	@computed get player() {
-		return this.app.player;
-	}
-	@action.bound togglePlay() {
-		if (this.player.running) {
-			this.player.pause();
+export const TransportControls = () => {
+	const app = useContext(AppContext);
+	const recording = signal(false);
+	const player = app.player;
+
+	function togglePlay() {
+		if (player.running()) {
+			player.pause();
 		} else {
-			this.player.play();
+			player.play();
 		}
 	}
-	@action.bound toggleRecord() {
-		this.recording = !this.recording;
+	function toggleRecord() {
+		recording(!recording());
 	}
-	render() {
-		return (
+
+	return (
+		<div
+			style={{
+				"background-color": "rgb(225, 225, 225)",
+				// border: "1px solid rgb(195, 195, 195)",
+				"border-radius": "10px",
+				width: "92%",
+				height: "92%",
+				padding: "10px",
+			}}
+		>
 			<div
 				style={{
-					backgroundColor: "rgb(225, 225, 225)",
-					// border: "1px solid rgb(195, 195, 195)",
-					borderRadius: 10,
-					width: "92%",
-					height: "92%",
-					padding: 10,
+					display: "flex",
+					"background-color": "#ccccccff",
+					"border-radius": "8px",
+					padding: "5px",
 				}}
 			>
-				<div
-					style={{
-						display: "flex",
-						backgroundColor: "#ccccccff",
-						borderRadius: 8,
-						padding: 5,
-					}}
-				>
-					<PlayPauseButton
-						togglePlay={this.togglePlay}
-						running={this.player.running}
-					/>
-					<RecordButton
-						toggleRecord={this.toggleRecord}
-						recording={this.recording}
-					/>
-					<RestartButton restart={this.player.restart} />
-				</div>
+				<PlayPauseButton togglePlay={togglePlay} running={player.running()} />
+				<RecordButton toggleRecord={toggleRecord} recording={recording()} />
+				<RestartButton restart={player.restart} />
 			</div>
-		);
-	}
-}
-
-export const TransportControls = AppComponent.sync(TransportControls_);
+		</div>
+	);
+};

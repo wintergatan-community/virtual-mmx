@@ -1,145 +1,127 @@
-import React, { createRef } from "react";
-import { Provider } from "mobx-react";
-import { TranslateGrid } from "./TranslateGrid";
 import { ProgramGrid } from "./ProgramGrid";
 import { PegPlacer } from "./PegPlacer";
 import { PlaybackHead } from "./PlaybackHead";
-import { computed, action, autorun } from "mobx";
 import { ProgrammingWheelDisplayStore } from "./programmingWheelDisplay";
-import { AppComponent, WheelComponent } from "../storeComponents";
 import { GearSide } from "./GearSide";
 import { BottomBar } from "./bottomBar/BottomBar";
-import { SpringPulse } from "../../core/helpers/springPulse";
+import { useContext, createContext } from "solid-js";
+import { AppContext } from "../../stores/app";
+import { ScrollContainerStore } from "../scrollContainerStore";
+import { MouseTracker } from "../../core/helpers/MouseTracker";
+import { ScrollBody } from "../Scroll";
+import { signal } from "../../core/helpers/solid";
+import { mapValue } from "../../core/helpers/functions";
+import ResizeObserver from "resize-observer-polyfill";
 
-class ProgrammingWheel_ extends AppComponent {
-	wheel = new ProgrammingWheelDisplayStore(this.app);
-	scrollSpring = new SpringPulse();
+export const ProgrammingWheelContext = createContext<{
+	wheel: ProgrammingWheelDisplayStore;
+	scroll: ScrollContainerStore;
+	mouse: MouseTracker;
+}>();
 
-	componentDidMount() {
-		this.wheel.setSubdivision("eighth");
-		this.scrollSpring.damping = 30;
-		this.scrollSpring.stiffness = 300;
+export const ProgrammingWheel = () => {
+	const app = useContext(AppContext);
 
-		autorun(() => {
-			this.scrollSpring.moveTo(this.wheel.visibleTopTick);
-		});
-	}
+	const pixelsPerTick = signal(0.2);
+	const mouse = new MouseTracker();
+	const wheel = new ProgrammingWheelDisplayStore(app);
+	const scroll = new ScrollContainerStore({
+		x: {
+			pixelsPerUnit: () =>
+				wheel.visiblePixelWidth() / wheel.instrumentChannels().length,
+			visiblePixelRange: wheel.visiblePixelWidth,
+		},
+		y: {
+			pixelsPerUnit: pixelsPerTick,
+			visiblePixelRange: wheel.visiblePixelHeight,
+			total: wheel.totalTicks,
+		},
+		circular: true,
+	});
+	// const scrollSpring = new SpringPulse();
+	mouse.scale({
+		x: scroll.x.fromPixel,
+		y: (v) => scroll.y.fromPixel(v) + scroll.y.visibleLeast(),
+	});
 
-	svgRef = createRef<SVGSVGElement>();
+	// scrollSpring.damping = 30;
+	// scrollSpring.stiffness = 300;
 
-	@action.bound handleMouseMove(
-		e: React.MouseEvent<SVGSVGElement, MouseEvent>
-	) {
-		if (!this.svgRef.current) return;
-		const svgBound = this.svgRef.current.getBoundingClientRect();
-		const x = e.clientX - svgBound.left;
-		const mouseChannel = this.wheel.pixelToChannel(x);
-		const y = e.clientY - svgBound.top;
-		const mouseTick = this.wheel.pixelToTick(y) + this.wheel.visibleTopTick;
-		if (mouseChannel < 0 || mouseChannel >= this.wheel.totalChannels) return;
-		this.wheel.moveMouse(mouseTick, mouseChannel);
-	}
-	@action.bound handleScroll(e: React.WheelEvent<SVGSVGElement>) {
+	function handleScroll(e: WheelEvent) {
 		if (e.shiftKey) {
-			this.wheel.zoom(e.deltaY / 20);
+			const factor = mapValue(e.deltaY, -10, 10, 1.1, 0.9);
+			scroll.y.zoom(factor, mouse.mousePos()?.y ?? 0);
 		} else {
-			this.wheel.scroll(e.deltaY / 5);
+			scroll.y.scroll(e.deltaY);
 		}
-	}
-	@computed get seemlessWheelOffset() {
-		return this.wheel.tickToPixel(this.wheel.totalTicks);
+		mouse.forceUpdate(e);
 	}
 
-	render() {
-		return (
-			<Provider wheel={this.wheel}>
-				<div>
-					<div style={{ display: "flex" }}>
-						<GearSide tick={-this.scrollSpring.value} />
+	let mouseRef!: SVGSVGElement;
+	const jsx = (
+		<ProgrammingWheelContext.Provider value={{ wheel, scroll, mouse }}>
+			<div
+				style={{
+					display: "grid",
+					width: "100%",
+					height: "100%",
+					"place-items": "center",
+				}}
+			>
+				<div
+					style={{
+						display: "grid",
+						height: "90%",
+						width: "90%",
+						"grid-template-rows": "1fr 12fr 1fr",
+					}}
+				>
+					<div style={{ background: "#ccc" }}></div>
+					<div
+						style={{ display: "grid", "grid-template-columns": "1fr 18fr 1fr" }}
+					>
+						<GearSide />
 						<svg
-							viewBox={`0 0 ${this.wheel.visiblePixelWidth} ${this.wheel.visiblePixelHeight}`}
-							style={{
-								width: this.wheel.visiblePixelWidth,
-								height: this.wheel.visiblePixelHeight,
-							}}
-							onMouseMove={this.handleMouseMove}
-							onWheel={this.handleScroll}
-							ref={this.svgRef}
+							style={{ width: "100%", height: "100%" }}
+							onWheel={handleScroll}
+							ref={mouseRef}
 						>
-							<TranslateGrid tick={-this.scrollSpring.value}>
-								<MovingWindow />
-								<TranslateGrid tick={this.wheel.totalTicks}>
-									{/* second MovingWindow for seemless scroll */}
-									<MovingWindow />
-								</TranslateGrid>
-							</TranslateGrid>
-
-							{/* {this.wheel.instrumentChannels.map((channel, channelNumber) => (
-									<TranslateGrid channel={channelNumber} key={channelNumber}>
-									<NoteLabel tuning={channel.note ?? "None"} />
-									</TranslateGrid>
-									))}
-									
-									<SubdivisonChooser />
-								<Blur /> */}
+							<MovingWindow />
 						</svg>
-						<GearSide tick={-this.scrollSpring.value} />
+						<GearSide />
 					</div>
-
 					<BottomBar />
 				</div>
-			</Provider>
-		);
-	}
-}
+			</div>
+		</ProgrammingWheelContext.Provider>
+	);
 
-export const ProgrammingWheel = AppComponent.sync(ProgrammingWheel_);
+	mouse.setElement(mouseRef);
+	new ResizeObserver(() => {
+		// this API sucks and doesn't work right
+		const box = mouseRef.getBoundingClientRect();
+		wheel.visiblePixelWidth(box.width);
+		wheel.visiblePixelHeight(box.height);
+	}).observe(mouseRef);
 
-class MovingWindow_ extends WheelComponent {
-	render() {
-		return (
-			<>
-				<ProgramGrid />
-				<PegPlacer />
-				<PlaybackHead />
-				<line
-					x1={0}
-					y1={0}
-					x2={this.wheel.visiblePixelWidth}
-					y2={0}
-					stroke="red"
-				/>
-			</>
-		);
-	}
-}
+	return jsx;
+};
 
-const MovingWindow = WheelComponent.sync(MovingWindow_);
+const MovingWindow = () => {
+	const { scroll } = useContext(ProgrammingWheelContext);
 
-interface NoteLabelProps {
-	tuning: string;
-}
-
-class NoteLabel_ extends WheelComponent<NoteLabelProps> {
-	render() {
-		return (
-			<>
-				<TranslateGrid channel={0.5}>
-					<rect x={-17.5} y={7} width={35} height={22} fill="#444" rx={7} />
-					<text
-						style={{ userSelect: "none" }}
-						x={0}
-						y={20}
-						textAnchor="middle"
-						dominantBaseline="middle"
-						fill="white"
-					>
-						{this.props.tuning}
-					</text>
-				</TranslateGrid>
-			</>
-		);
-	}
-}
-
-const NoteLabel = WheelComponent.sync(NoteLabel_);
+	return (
+		<ScrollBody scroll={scroll}>
+			<ProgramGrid />
+			<PegPlacer />
+			<PlaybackHead />
+			<line
+				x1={0}
+				y1={0}
+				x2={scroll.x.visiblePixelRange()}
+				y2={0}
+				stroke="red"
+			/>
+		</ScrollBody>
+	);
+};

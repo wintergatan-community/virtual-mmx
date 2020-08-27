@@ -1,56 +1,49 @@
-import React from "react";
-import { DrumsComponent } from "../storeComponents";
 import { SpringPulse } from "../../core/helpers/springPulse";
-import { computed, action } from "mobx";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-class Crash_ extends DrumsComponent {
-	pulse = new SpringPulse();
+export const Crash = () => {
+	const app = useContext(AppContext);
 
-	componentDidMount() {
-		this.crashTimelines.addJointEventListener(this.animateHit);
-		this.pulse.damping = 15;
-		this.pulse.stiffness = 500;
+	const pulse = new SpringPulse();
+	const crashTimelines = app.jointTimelines.drums.crash;
+
+	crashTimelines.addJointEventListener(animateHit);
+	pulse.damping = 15;
+	pulse.stiffness = 500;
+
+	function handlePress() {
+		crashTimelines.performance.triggerEvent();
+		animateHit();
 	}
 
-	@computed get crashTimelines() {
-		return this.app.jointTimelines.drums.crash;
+	function animateHit() {
+		pulse.applyCollision(120);
 	}
 
-	handlePress = () => {
-		this.crashTimelines.performance.triggerEvent();
-		this.animateHit();
-	};
+	return (
+		<g
+			style={{
+				transform: `translate(50px, 91px) rotate(${pulse.value}deg)`,
+			}}
+			onMouseDown={handlePress}
+		>
+			<ellipse
+				rx={34}
+				ry={8}
+				fill="rgb(253, 227, 165)"
+				stroke="rgb(209, 179, 107)"
+				strokeWidth={1}
+			/>
 
-	@action.bound animateHit() {
-		this.pulse.applyCollision(120);
-	}
-
-	render() {
-		return (
-			<g
-				style={{
-					transform: `translate(50px, 91px) rotate(${this.pulse.value}deg)`,
-				}}
-				onMouseDown={this.handlePress}
-			>
-				<ellipse
-					rx={34}
-					ry={8}
-					fill="rgb(253, 227, 165)"
-					stroke="rgb(209, 179, 107)"
-					strokeWidth={1}
-				/>
-
-				<rect
-					x={-4}
-					y={-2}
-					width={8}
-					height={4}
-					rx={2}
-					fill="rgb(111, 111, 111)"
-				/>
-			</g>
-		);
-	}
-}
-export const Crash = DrumsComponent.sync(Crash_);
+			<rect
+				x={-4}
+				y={-2}
+				width={8}
+				height={4}
+				rx={2}
+				fill="rgb(111, 111, 111)"
+			/>
+		</g>
+	);
+};

@@ -1,7 +1,6 @@
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { Destination, Volume, Sampler, context } from "tone";
 import { mapToObject } from "../../helpers/functions";
-import { computed } from "mobx";
 import {
 	VibraphoneStore,
 	VibraphoneBarStore,
@@ -59,7 +58,7 @@ export class VibraphoneBarChannel extends VmmxInstrumentChannel<
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.vibraphone[barStore.bar],
 			this.triggerStrike,
-			() => muted.vibraphone
+			() => muted.vibraphone() ?? false
 		);
 	}
 
@@ -67,7 +66,7 @@ export class VibraphoneBarChannel extends VmmxInstrumentChannel<
 		this.channelSynth = synth;
 	}
 
-	@computed get note() {
+	get note() {
 		return this.barStore.note;
 	}
 

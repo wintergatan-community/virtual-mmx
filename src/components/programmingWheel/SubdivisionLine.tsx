@@ -1,32 +1,23 @@
-import React from "react";
-import { computed } from "mobx";
-import { WheelComponent } from "../storeComponents";
-import { TranslateGrid } from "./TranslateGrid";
+import { useContext } from "solid-js";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
+import { TranslateOnScroll } from "../Scroll";
 
 interface SubdivisionLineProps {
 	tick: number;
 }
 
-class SubdivisionLine_ extends WheelComponent<SubdivisionLineProps> {
-	@computed get stroke() {
-		return this.wheel.subdivisionLineFunction(this.props.tick).stroke;
-	}
-	@computed get strokeWidth() {
-		return this.wheel.subdivisionLineFunction(this.props.tick).strokeWidth;
-	}
+export const SubdivisionLine = (props: SubdivisionLineProps) => {
+	const { wheel, scroll } = useContext(ProgrammingWheelContext);
 
-	render() {
-		return (
-			<TranslateGrid tick={this.props.tick}>
-				<line
-					x1={0}
-					x2={this.wheel.visiblePixelWidth}
-					stroke={this.stroke}
-					strokeWidth={this.strokeWidth}
-				/>
-			</TranslateGrid>
-		);
-	}
-}
+	const lineStyle = () => wheel.subdivisionLineFunction()(props.tick);
 
-export const SubdivisionLine = WheelComponent.sync(SubdivisionLine_);
+	return (
+		<TranslateOnScroll scroll={scroll} axis="y" by={() => props.tick}>
+			<line
+				x2={scroll.x.visiblePixelRange()}
+				stroke={lineStyle().stroke}
+				strokeWidth={lineStyle().strokeWidth}
+			/>
+		</TranslateOnScroll>
+	);
+};

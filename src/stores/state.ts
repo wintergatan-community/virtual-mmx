@@ -1,11 +1,11 @@
-import { State, HihatMachineState, HihatState } from "vmmx-schema";
 import { AppStore } from "./app";
 import { VibraphoneStore } from "./vibraphone";
 import { BassStore } from "./bass";
 import { DrumsStore } from "./drums";
 import { MachineStore } from "./machine";
+import { HihatMachineState, HihatState, State } from "vmmx-schema";
 
-export class StateStore implements State {
+export class StateStore /* implements SomeSignalWrapped<State> */ {
 	appStore: AppStore;
 
 	machine = new MachineStore(this.appStore);

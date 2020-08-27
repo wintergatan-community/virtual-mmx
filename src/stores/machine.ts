@@ -1,27 +1,30 @@
 import { MachineState } from "vmmx-schema";
 import { AppStore } from "./app";
 import { ChannelGroupTOFIX } from "../toFutureSchema";
-import { observable, action } from "mobx";
+import { Signal, signal } from "../core/helpers/solid";
+import { SomeSignalWrapped } from "../core/helpers/types";
 
-export class MachineStore implements MachineState {
+type T = SomeSignalWrapped<MachineState>;
+export class MachineStore implements SomeSignalWrapped<MachineState> {
 	appStore: AppStore;
 
-	@observable mute: Record<ChannelGroupTOFIX, boolean> = {
-		bassdrum: false,
-		hihat: false,
-		snare: false,
-		crash: false,
-		vibraphone: false,
-		bass: false,
+	mute = {
+		// TODO why can these be undefined in schema??
+		bassdrum: signal<boolean | undefined>(false),
+		hihat: signal<boolean | undefined>(false),
+		snare: signal<boolean | undefined>(false),
+		crash: signal<boolean | undefined>(false),
+		vibraphone: signal<boolean | undefined>(false),
+		bass: signal<boolean | undefined>(false),
 	};
-	@observable bpm = 180;
-	flywheelConnected = true;
+	bpm = signal(180);
+	flywheelConnected = signal(true);
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
 	}
 
-	@action setMuted(channelGroup: ChannelGroupTOFIX, muted: boolean) {
-		this.mute[channelGroup] = muted;
+	setMuted(channelGroup: ChannelGroupTOFIX, muted: boolean) {
+		this.mute[channelGroup](muted);
 	}
 }

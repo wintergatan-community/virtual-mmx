@@ -1,8 +1,6 @@
-import React from "react";
-import { observable, computed, action } from "mobx";
-import { observer } from "mobx-react";
+import { For } from "solid-js";
+import { Signal, signal } from "../../core/helpers/solid";
 import { mapArrayToObj } from "../../core/helpers/functions";
-import CSS from "csstype";
 
 import { HiHatMachineMode } from "../../toFutureSchema";
 
@@ -38,85 +36,79 @@ type HighlightState = OptionPosition | "bothSides";
 type HoverState = HiHatMachineMode | null;
 
 interface ModeSelectorProps {
-	currentMode: HiHatMachineMode;
+	currentMode: Signal<HiHatMachineMode>;
 	selectMode: (mode: HiHatMachineMode) => void;
 }
-@observer
-export class ModeSelector extends React.Component<ModeSelectorProps> {
-	@observable currentHover: HoverState = null;
-	@observable mouseDown = false;
 
-	@computed get activeHighlighted() {
-		return getHighlightsFromMode(this.props.currentMode);
-	}
+export const ModeSelector = (props: ModeSelectorProps) => {
+	const currentHover = signal<HoverState>(null);
+	const mouseDown = signal(false);
 
-	@computed get hoverHighlighted() {
-		return getHighlightsFromMode(this.currentHover);
-	}
+	const activeHighlighted = () => getHighlightsFromMode(props.currentMode());
+	const hoverHighlighted = () => getHighlightsFromMode(currentHover());
 
-	@action.bound hover(state: HoverState) {
-		this.currentHover = state;
+	function hover(state: HoverState) {
+		currentHover(state);
 		// This is still a little quirky, halp
 		// (Press down, move out, come back. Releasing triggers a click but it isn't
 		//  shown darker.)
-		this.mouseDown = false;
+		mouseDown(false);
 	}
 
-	@action.bound press(down: boolean) {
-		this.mouseDown = down;
+	function press(down: boolean) {
+		mouseDown(down);
 	}
 
-	render() {
-		return (
+	return (
+		<div
+			onMouseDown={() => press(true)}
+			onMouseUp={() => press(false)}
+			style={{
+				// TODO: Prefixing?
+				"user-select": "none",
+				display: "flex",
+				"flex-direction": "column",
+				"align-items": "center",
+			}}
+		>
 			<div
-				onMouseDown={() => this.press(true)}
-				onMouseUp={() => this.press(false)}
 				style={{
-					// TODO: Prefixing?
-					userSelect: "none",
 					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
+					background: "white",
+					"border-radius": "100vmax",
+					"box-shadow": "0 0 4px rgba(0,0,0,40%)",
+					padding: "3px",
+					// Be above the off button _and_ start a new stacking context
+					// for highlights
+					"z-index": 2,
+					position: "relative",
 				}}
 			>
-				<div
-					style={{
-						background: "white",
-						borderRadius: "100vmax",
-						boxShadow: "0 0 4px rgba(0,0,0,40%)",
-						padding: "3px",
-						display: "flex",
-						// Be above the off button _and_ start a new stacking context
-						// for highlights
-						zIndex: 2,
-						position: "relative",
-					}}
-				>
-					{optionOrder.map((mode) => (
+				<For each={optionOrder}>
+					{(mode) => (
 						<Option
 							mode={mode}
 							position={getPositionFromMode(mode)}
-							active={this.activeHighlighted[mode]}
-							hover={this.hoverHighlighted[mode]}
-							onClick={this.props.selectMode}
-							onHoverChange={this.hover}
-							mouseDown={this.mouseDown}
-							key={mode}
+							active={activeHighlighted()[mode]}
+							hover={hoverHighlighted()[mode]}
+							onClick={props.selectMode}
+							onHoverChange={hover}
+							mouseDown={mouseDown()}
 						/>
-					))}
-				</div>
-				<OffOption
-					active={this.props.currentMode === "off"}
-					hover={this.currentHover === "off"}
-					onClick={this.props.selectMode}
-					onHoverChange={this.hover}
-				/>
+					)}
+				</For>
 			</div>
-		);
-	}
-}
+			<OffOption
+				active={props.currentMode() === "off"}
+				hover={currentHover() === "off"}
+				onClick={props.selectMode}
+				onHoverChange={hover}
+			/>
+		</div>
+	);
+};
 
-const Option = observer(function (props: {
+interface OptionProps {
 	mode: HiHatMachineMode;
 	position: OptionPosition;
 	active: HighlightState | false;
@@ -124,13 +116,16 @@ const Option = observer(function (props: {
 	onClick: (mode: HiHatMachineMode) => void;
 	onHoverChange: (mode: HoverState) => void;
 	mouseDown: boolean;
-}) {
-	const style: CSS.Properties = {
+}
+
+const Option = (props: OptionProps) => {
+	const style: JSX.CSSProperties = {
 		display: "flex",
 		position: "relative",
-		padding: "0",
+		padding: "0px",
 		cursor: "pointer",
 	};
+
 	return (
 		<div
 			onClick={() => props.onClick(props.mode)}
@@ -163,14 +158,16 @@ const Option = observer(function (props: {
 			)}
 		</div>
 	);
-});
+};
 
-const OptionHighlight = observer(function (props: {
+interface OptionHighlightProps {
 	zIndex: number;
 	color: string;
 	position: OptionPosition;
 	highlightPosition: HighlightState;
-}) {
+}
+
+const OptionHighlight = (props: OptionHighlightProps) => {
 	const highlightEdgeRadius = "3px", // can't do % here, so just something sensible
 		panelEdgeRadius = "16px";
 	let leftRadius = "0";
@@ -193,36 +190,38 @@ const OptionHighlight = observer(function (props: {
 	if (props.position === "right") {
 		rightRadius = panelEdgeRadius;
 	}
-	const style: CSS.Properties = {
+	const style: JSX.CSSProperties = {
 		position: "absolute",
-		top: 0,
-		bottom: 0,
-		left: 0,
-		right: 0,
-		pointerEvents: "none",
-		zIndex: props.zIndex,
-		backgroundColor: props.color,
-		borderRadius: `${leftRadius} ${rightRadius} ${rightRadius} ${leftRadius}`,
+		top: "0px",
+		bottom: "0px",
+		left: "0px",
+		right: "0px",
+		"pointer-events": "none",
+		"z-index": props.zIndex,
+		"background-color": props.color,
+		"border-radius": `${leftRadius} ${rightRadius} ${rightRadius} ${leftRadius}`,
 	};
 	return <div style={style} />;
-});
+};
 
-const OffOption = observer(function (props: {
+interface OffOptionProps {
 	active: boolean;
 	hover: boolean;
 	onClick: (mode: HiHatMachineMode) => void;
 	onHoverChange: (mode: HoverState) => void;
-}) {
-	const style: CSS.Properties = {
+}
+
+const OffOption = (props: OffOptionProps) => {
+	const style: JSX.CSSProperties = {
 		display: "inline-block",
-		backgroundColor: "#f8f8f8",
-		lineHeight: "1.6em",
+		"background-color": "#f8f8f8",
+		"line-height": "1.6em",
 		padding: "0 0.5em",
-		boxShadow: "0 0 4px rgba(0,0,0,30%)",
-		borderRadius: "0 0 0.4em 0.4em",
+		"box-shadow": "0 0 4px rgba(0,0,0,30%)",
+		"border-radius": "0 0 0.4em 0.4em",
 		cursor: "pointer",
 		// Be above HiHatMachineBrass
-		zIndex: 1,
+		"z-index": 1,
 	};
 	if (props.hover) {
 		style.backgroundColor = "#f1f1f1";
@@ -240,7 +239,7 @@ const OffOption = observer(function (props: {
 			OFF
 		</div>
 	);
-});
+};
 
 function getHighlightsFromMode(mode: HiHatMachineMode | null) {
 	const highlighted = mapArrayToObj<HiHatMachineMode, HighlightState | false>(

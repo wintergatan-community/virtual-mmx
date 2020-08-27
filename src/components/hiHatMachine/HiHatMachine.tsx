@@ -1,6 +1,4 @@
-import React from "react";
-import { observable, action } from "mobx";
-import { AppComponent } from "../storeComponents";
+import { signal } from "../../core/helpers/solid";
 
 import { SpringPulse } from "../../core/helpers/springPulse";
 import { HiHatMachineMode } from "../../toFutureSchema";
@@ -18,32 +16,34 @@ const hatRotation: Record<HiHatMachineMode, number> = {
 	off: 45,
 };
 
-class HiHatMachine_ extends AppComponent {
+export const HiHatMachine = () => {
 	// Will move to store
-	@observable currentMode: HiHatMachineMode = "beat";
-	rotationSpring = new SpringPulse();
+	const currentMode = signal<HiHatMachineMode>("beat");
+	const rotationSpring = new SpringPulse();
 
-	componentDidMount() {
-		this.rotationSpring.stiffness = 800;
-		this.rotationSpring.damping = 100;
-		this.rotationSpring.snapTo(hatRotation[this.currentMode]);
-	}
+	rotationSpring.stiffness = 800;
+	rotationSpring.damping = 100;
+	rotationSpring.snapTo(hatRotation[currentMode()]);
 
-	@action.bound select(mode: HiHatMachineMode) {
-		this.currentMode = mode;
+	function select(mode: HiHatMachineMode) {
+		currentMode(mode);
 		let rot = hatRotation[mode];
-		if (mode === "off" && this.rotationSpring.value < 0) rot = -rot;
-		this.rotationSpring.moveTo(rot);
+		if (mode === "off" && rotationSpring.value < 0) rot = -rot;
+		rotationSpring.moveTo(rot);
 	}
 
-	render() {
-		return (
+	return (
+		<div
+			style={{
+				display: "grid",
+				"place-items": "center",
+				transform: "translate(0px, 85px)", // TODO temp fix
+			}}
+		>
 			<div style={{ position: "relative", width: "80%" }}>
-				<ModeSelector currentMode={this.currentMode} selectMode={this.select} />
-				<HiHatMachineBrass angle={this.rotationSpring.value} />
+				<ModeSelector currentMode={currentMode} selectMode={select} />
+				<HiHatMachineBrass angle={rotationSpring.value} />
 			</div>
-		);
-	}
-}
-
-export const HiHatMachine = AppComponent.sync(HiHatMachine_);
+		</div>
+	);
+};

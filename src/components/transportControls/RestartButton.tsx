@@ -1,4 +1,3 @@
-import React from "react";
 import { MediaButton } from "./MediaButton";
 
 interface RestartButtonProps {

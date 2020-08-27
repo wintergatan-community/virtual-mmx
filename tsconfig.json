@@ -2,10 +2,11 @@
 	"compileOnSave": false,
 	"exclude": ["node_modules"],
 	"include": ["src"],
+	"files": ["./node_modules/solid-scripts/types/solid-app.d.ts"],
 	"compilerOptions": {
 		"declaration": true /* Generates corresponding '.d.ts' file. */,
 		"isolatedModules": true /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
-		"jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
+		"jsx": "preserve" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
 		"lib": [
 			"dom",
 			"dom.iterable",

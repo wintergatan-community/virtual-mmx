@@ -1,45 +1,39 @@
-import React from "react";
 import { mapValue } from "../../core/helpers/functions";
-import { TranslateGrid } from "./TranslateGrid";
-import { computed } from "mobx";
-import { WheelComponent } from "../storeComponents";
+import { useContext } from "solid-js";
+import { Signal } from "../../core/helpers/solid";
+import { ProgrammingWheelContext } from "./ProgrammingWheel";
 
 interface PegProps {
-	pegTick: number;
+	pegTick: Signal<number>;
 	activeDivision: boolean;
 	spawnsEvent: boolean;
 	click?: () => void;
 }
 
-class Peg_ extends WheelComponent<PegProps> {
-	@computed get w() {
+export const Peg = (props: PegProps) => {
+	const { wheel, scroll } = useContext(ProgrammingWheelContext);
+
+	function w() {
 		return 10;
 	}
-	@computed get h() {
-		const hNormal =
-			this.wheel.tickToPixel(this.wheel.ticksPerNoteSubdivision) - 5;
+	function h() {
+		const hNormal = scroll.y.toPixel(wheel.ticksPerNoteSubdivision()) - 5;
 		return Math.min(20, Math.max(hNormal, 5));
 	}
-	@computed get shift() {
-		const offset = this.wheel.pegOffsetFunction(this.props.pegTick);
-		const end = this.wheel.channelToPixel(1) - this.w;
+	function shift() {
+		const offset = wheel.pegOffsetFunction()(props.pegTick());
+		const end = scroll.x.toPixel(1) - w();
 		return mapValue(offset, 0, 1, 0, end);
 	}
 
-	render() {
-		return (
-			<TranslateGrid tick={this.props.pegTick}>
-				<rect
-					width={this.w}
-					height={this.h}
-					fill={this.props.activeDivision ? "#ccc" : "#ccc9"}
-					x={this.shift}
-					rx={3}
-					onClick={this.props.click}
-				/>
-			</TranslateGrid>
-		);
-	}
-}
-
-export const Peg = WheelComponent.sync(Peg_);
+	return (
+		<rect
+			width={w()}
+			height={h()}
+			fill={props.activeDivision ? "#ccc" : "#ccc9"}
+			x={shift()}
+			rx={3}
+			onClick={props.click}
+		/>
+	);
+};

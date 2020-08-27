@@ -1,14 +1,12 @@
-import React from "react";
-
 export const HiHatMachineBrass = (props: { angle: number }) => (
 	<svg
 		viewBox="-40 -40 80 80"
 		style={{
 			width: "100%",
 			position: "absolute",
-			marginTop: "-50%",
+			"margin-top": "-50%",
 			top: "25%",
-			zIndex: 0,
+			"z-index": 0,
 		}}
 	>
 		<path

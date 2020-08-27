@@ -1,14 +1,14 @@
-import { WheelComponent } from "../../storeComponents";
-import React from "react";
 import { SubdivisionOption } from "./SubdivisionOption";
-import { NoteSubdivision } from "../../../core/helpers/types";
-import { action } from "mobx";
 
 import eighthIcon from "./noteIcons/eighth.png";
 import quarterIcon from "./noteIcons/quarter.png";
 import sixteenthIcon from "./noteIcons/sixteenth.png";
 import tripletIcon from "./noteIcons/triplet.png";
 import wholeIcon from "./noteIcons/whole.png";
+import { useContext, For } from "solid-js";
+import { keys } from "../../../core/helpers/functions";
+import { NoteSubdivision } from "../programmingWheelDisplay";
+import { ProgrammingWheelContext } from "../ProgrammingWheel";
 
 const icons: Record<NoteSubdivision, any> = {
 	eighth: eighthIcon,
@@ -18,39 +18,39 @@ const icons: Record<NoteSubdivision, any> = {
 	whole: wholeIcon,
 };
 
-class SubdivisionChooser_ extends WheelComponent {
-	subdivionsOptions = Object.keys(this.wheel.ticksPerNoteSubdivisions).map(
+export const SubdivisionChooser = () => {
+	const { wheel } = useContext(ProgrammingWheelContext);
+
+	const subdivionsOptions = keys(wheel.ticksPerNoteSubdivisions()).map(
 		(division) => ({
 			division,
 			icon: icons[division as NoteSubdivision],
 		})
 	);
 
-	@action.bound selectSubdivision(division: NoteSubdivision) {
-		this.wheel.setSubdivision(division);
+	function selectSubdivision(division: NoteSubdivision) {
+		wheel.setSubdivision(division);
 	}
 
-	render() {
-		return (
-			<div
-				style={{
-					display: "flex",
-					height: 20,
-					borderRadius: 4,
-					overflow: "hidden",
-				}}
-			>
-				{this.subdivionsOptions.map(({ division, icon }) => (
+	return (
+		<div
+			style={{
+				display: "flex",
+				height: "20px",
+				"border-radius": "4px",
+				padding: "3px",
+				overflow: "hidden",
+			}}
+		>
+			<For each={subdivionsOptions}>
+				{({ division, icon }) => (
 					<SubdivisionOption
-						division={division as NoteSubdivision}
+						division={division}
 						icon={icon}
-						select={this.selectSubdivision}
-						key={division}
+						select={selectSubdivision}
 					/>
-				))}
-			</div>
-		);
-	}
-}
-
-export const SubdivisionChooser = WheelComponent.sync(SubdivisionChooser_);
+				)}
+			</For>
+		</div>
+	);
+};

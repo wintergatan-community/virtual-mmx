@@ -1,76 +1,65 @@
-import React from "react";
 import { noteToVibraphoneLength } from "../../core/helpers/functions";
-import { computed, action } from "mobx";
-import { VibraphoneComponent } from "../storeComponents";
 import { VibraphoneBarStore } from "../../stores/vibraphone";
 import { SpringPulse } from "../../core/helpers/springPulse";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
+import { VibraphoneContext } from "./Vibraphone";
 
 interface VibraphoneBarProps {
 	barStore: VibraphoneBarStore;
 }
 
-class VibraphoneBar_ extends VibraphoneComponent<VibraphoneBarProps> {
-	pulse = new SpringPulse();
+export const VibraphoneBar = (props: VibraphoneBarProps) => {
+	const { vibra } = useContext(VibraphoneContext);
+	const app = useContext(AppContext);
+	const pulse = new SpringPulse();
+	const vibraphoneTimelines = app.jointTimelines.vibraphone[props.barStore.bar];
 
-	componentDidMount() {
-		this.vibraphoneTimelines.addJointEventListener(this.animateHit);
-		this.pulse.damping = 8;
-		this.pulse.stiffness = 100;
-		// TODO disposer?
-	}
-	@computed get vibraphoneTimelines() {
-		return this.app.jointTimelines.vibraphone[this.props.barStore.bar];
-	}
-	@computed get x() {
-		return this.vibra.noteWidth * (this.props.barStore.bar - 1);
-	}
-	@computed get y() {
-		return -this.height / 2 + this.pulse.value;
-	}
-	@computed get height() {
-		return noteToVibraphoneLength(this.props.barStore.note);
-	}
+	vibraphoneTimelines.addJointEventListener(animateHit);
+	pulse.damping = 8;
+	pulse.stiffness = 100;
+	// TODO disposer?
 
-	handlePress = (e: React.MouseEvent<SVGGElement, MouseEvent>) => {
+	const x = () => vibra.noteWidth * (props.barStore.bar - 1);
+	const y = () => -height() / 2 + pulse.value;
+	const height = () => noteToVibraphoneLength(props.barStore.note);
+
+	function handlePress(e: MouseEvent) {
 		if (e.buttons === 1) {
-			this.vibraphoneTimelines.performance.triggerEvent();
-			this.animateHit();
+			vibraphoneTimelines.performance.triggerEvent();
+			animateHit();
 		}
-	};
-
-	@action.bound animateHit() {
-		this.pulse.applyCollision(90);
 	}
 
-	render() {
-		return (
-			<g
-				transform={`translate(${this.x}, ${this.y})`}
-				onMouseDown={this.handlePress}
-				onMouseEnter={this.handlePress}
-				y={this.pulse.value}
+	function animateHit() {
+		pulse.applyCollision(90);
+	}
+
+	return (
+		<g
+			transform={`translate(${x()}, ${y()})`}
+			onMouseDown={handlePress}
+			onMouseEnter={handlePress}
+			y={pulse.value}
+		>
+			<rect
+				width={vibra.noteWidthPadded}
+				height={height()}
+				fill="rgb(225, 225, 225)"
+				rx={4}
+				stroke="rgb(210, 210, 210)"
+			/>
+			<text
+				x={vibra.noteWidthPadded / 2}
+				y={height() / 2}
+				fill="rgb(130, 130, 130)"
+				fontSize={16}
+				textAnchor="middle"
+				alignmentBaseline="central"
+				style={{ "user-select": "none" }}
 			>
-				<rect
-					width={this.vibra.noteWidthPadded}
-					height={this.height}
-					fill="rgb(225, 225, 225)"
-					rx={4}
-					stroke="rgb(210, 210, 210)"
-				/>
-				<text
-					x={this.vibra.noteWidthPadded / 2}
-					y={this.height / 2}
-					fill="rgb(130, 130, 130)"
-					fontSize={16}
-					textAnchor="middle"
-					alignmentBaseline="central"
-					style={{ userSelect: "none" }}
-				>
-					{this.props.barStore.note}
-				</text>
-			</g>
-		);
-	}
-}
-
-export const VibraphoneBar = VibraphoneComponent.sync(VibraphoneBar_);
+				{props.barStore.note}
+			</text>
+		</g>
+	);
+};

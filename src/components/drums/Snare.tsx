@@ -1,45 +1,37 @@
-import React from "react";
-import { DrumsComponent } from "../storeComponents";
 import { SpringPulse } from "../../core/helpers/springPulse";
-import { computed, action } from "mobx";
+import { useContext } from "solid-js";
+import { AppContext } from "../../stores/app";
 
-class Snare_ extends DrumsComponent {
-	pulse = new SpringPulse();
+export const Snare = () => {
+	const app = useContext(AppContext);
 
-	componentDidMount() {
-		this.snareTimelines.addJointEventListener(this.animateHit);
+	const pulse = new SpringPulse();
+	const snareTimelines = app.jointTimelines.drums.snare;
 
-		this.pulse.damping = 20;
-		this.pulse.stiffness = 300;
+	snareTimelines.addJointEventListener(animateHit);
+
+	pulse.damping = 20;
+	pulse.stiffness = 300;
+
+	function handlePress() {
+		snareTimelines.performance.triggerEvent();
+		animateHit();
 	}
 
-	@computed get snareTimelines() {
-		return this.app.jointTimelines.drums.snare;
+	function animateHit() {
+		pulse.applyCollision(1);
 	}
 
-	handlePress = () => {
-		this.snareTimelines.performance.triggerEvent();
-		this.animateHit();
-	};
-
-	@action.bound animateHit() {
-		this.pulse.applyCollision(1);
-	}
-
-	render() {
-		return (
-			<g
-				style={{
-					transform: `translate(53px, 57px) scale(${this.pulse.value + 1})`,
-				}}
-				onMouseDown={this.handlePress}
-			>
-				<circle r={24} fill="rgb(144, 144, 144)" />
-				<circle r={22} fill="rgb(51, 51, 51)" />
-				<circle r={16.5} fill="rgb(247, 247, 247)" />
-			</g>
-		);
-	}
-}
-
-export const Snare = DrumsComponent.sync(Snare_);
+	return (
+		<g
+			style={{
+				transform: `translate(53px, 57px) scale(${pulse.value + 1})`,
+			}}
+			onMouseDown={handlePress}
+		>
+			<circle r={24} fill="rgb(144, 144, 144)" />
+			<circle r={22} fill="rgb(51, 51, 51)" />
+			<circle r={16.5} fill="rgb(247, 247, 247)" />
+		</g>
+	);
+};

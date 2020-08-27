@@ -1,5 +1,4 @@
 import { AppStore } from "./app";
-import { PerformanceMetadata, State, TimedEvent } from "vmmx-schema";
 import { ProgramStore } from "./program";
 import {
 	bassStrings,
@@ -8,7 +7,12 @@ import {
 	vibraphoneBars,
 	channelGroups,
 } from "../toFutureSchema";
-import { Performance } from "vmmx-schema";
+import {
+	Performance,
+	PerformanceMetadata,
+	State,
+	TimedEvent,
+} from "vmmx-schema";
 import { mapArrayToObj } from "../core/helpers/functions";
 import {
 	MuteEventTimeline,
@@ -22,7 +26,7 @@ import {
 	HiHatMachineModeEventTimeline,
 } from "../core/eventTimelines/concrete";
 
-export class PerformanceStore implements Performance {
+export class PerformanceStore /* implements Performance*/ {
 	appStore: AppStore;
 
 	metadata: PerformanceMetadata = {

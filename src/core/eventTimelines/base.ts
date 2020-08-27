@@ -1,9 +1,9 @@
 import {
 	EventBase,
+	VmmxEventListener,
 	TimelineDif,
 	EventChange,
 	VmmxEventChangeListener,
-	VmmxEventListener,
 } from "./types/other";
 
 export abstract class EventTimeline<E extends EventBase> {
@@ -36,8 +36,8 @@ export abstract class EventTimeline<E extends EventBase> {
 		} else {
 			const tick = event.tick;
 			this.eventListeners.forEach((l) => l(event, time));
-			if (this.eventTickListeners[tick]) {
-				this.eventTickListeners[tick].forEach((l) => l(event, time));
+			if (this.eventTickListeners[tick()]) {
+				this.eventTickListeners[tick()].forEach((l) => l(event, time));
 			}
 		}
 	}

@@ -1,12 +1,12 @@
 import { BassString } from "vmmx-schema";
 import { Sampler, Volume, Destination, PitchShift, context } from "tone";
-import { computed, autorun } from "mobx";
 import { VmmxInstrument, VmmxInstrumentChannel } from "../types";
 import { mapToObject } from "../../helpers/functions";
 import { BassStore, BassStringStore } from "../../../stores/bass";
 import { JointToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { BassDropE } from "../../eventTimelines/concrete";
+import { createEffect, createRoot } from "solid-js";
 
 export class BassInstrument implements VmmxInstrument<BassString, BassDropE> {
 	private bassStore: BassStore;
@@ -41,7 +41,7 @@ export class BassStringChannel extends VmmxInstrumentChannel<BassDropE> {
 		this.toneChannels = new JointToneChannel(
 			appStore.jointTimelines.bass[stringStore.string],
 			this.triggerStrike,
-			() => muted.bass
+			() => muted.bass() ?? false
 		);
 	}
 
@@ -71,13 +71,15 @@ export class BassStringChannel extends VmmxInstrumentChannel<BassDropE> {
 
 		const volume = new Volume(-10);
 		const pitchShifter = new PitchShift();
-		autorun(() => {
-			pitchShifter.pitch = this.stringStore.capo ?? 0;
+		createRoot(() => {
+			createEffect(() => {
+				pitchShifter.pitch = this.stringStore.capo ?? 0;
+			});
 		});
 		this.bassSynth.chain(volume, pitchShifter, Destination);
 	}
 
-	@computed get note() {
+	get note() {
 		return this.stringStore.tuning;
 	}
 

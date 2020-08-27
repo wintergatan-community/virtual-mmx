@@ -1,70 +1,63 @@
-import React, { Component } from "react";
-import { AppComponent } from "../storeComponents";
 import { ScrollableTimeline } from "./ScrollableTimeline";
-import { action, observable } from "mobx";
 import { PerformanceAction } from "./other";
 import { TimelineTabs } from "./TimelineTab";
-import { observer } from "mobx-react";
 import { SpringPulse } from "../../core/helpers/springPulse";
+import { signal } from "../../core/helpers/solid";
 
-@observer
-export class PerformanceEditor extends Component {
-	@observable performanceActions: PerformanceAction[] = [
+export const PerformanceEditor = () => {
+	const performanceActions: PerformanceAction[] = [
 		"Muting Levers",
 		"Bass Capo",
 		"Hihat Opening",
 	];
+	const showSpring = new SpringPulse();
 
-	@observable selectedAction: PerformanceAction | undefined = this
-		.performanceActions[1];
+	showSpring.damping = 50;
+	showSpring.stiffness = 300;
+	showSpring.snapTo(130);
 
-	@action.bound setAction(action: PerformanceAction) {
-		this.selectedAction = action;
+	const selectedAction = signal<PerformanceAction | undefined>(
+		performanceActions[1]
+	);
+
+	function setAction(action: PerformanceAction) {
+		selectedAction(action);
 	}
 
-	@observable open = false;
-	showSpring = new SpringPulse();
+	const open = signal(false);
 
-	@action.bound show() {
-		this.open = true;
-		this.showSpring.moveTo(0);
+	function show() {
+		open(true);
+		showSpring.moveTo(0);
 	}
-	@action.bound hide() {
-		this.open = false;
-		this.showSpring.moveTo(130);
+	function hide() {
+		open(false);
+		showSpring.moveTo(130);
 	}
-	@action.bound toggleShow() {
-		this.open ? this.hide() : this.show();
-	}
-
-	componentDidMount() {
-		this.showSpring.damping = 50;
-		this.showSpring.stiffness = 300;
-		this.showSpring.snapTo(130);
+	function toggleShow() {
+		open() ? hide() : show();
 	}
 
-	render() {
-		return (
-			<div
-				style={{
-					position: "absolute",
-					width: "100%",
-					bottom: 0,
-					transform: `translateY(${this.showSpring.value}px)`,
-				}}
-			>
-				<TimelineTabs
-					actions={this.performanceActions}
-					selectedAction={this.selectedAction}
-					setAction={this.setAction}
-					toggleShow={this.toggleShow}
-					show={this.show}
-				/>
-				<ScrollableTimeline
-					actions={this.performanceActions}
-					selectedAction={this.selectedAction}
-				/>
-			</div>
-		);
-	}
-}
+	return (
+		<div
+			style={{
+				position: "absolute",
+				width: "100%",
+				bottom: "0px",
+				transform: `translateY(${showSpring.value}px)`,
+			}}
+		>
+			<TimelineTabs
+				actions={performanceActions}
+				selectedAction={selectedAction()}
+				setAction={setAction}
+				toggleShow={toggleShow}
+				show={show}
+			/>
+			<ScrollableTimeline
+				actions={performanceActions}
+				selectedAction={selectedAction()}
+			/>
+		</div>
+	);
+};
