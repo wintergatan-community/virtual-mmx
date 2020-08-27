@@ -3,61 +3,42 @@ import { PerformanceAction } from "./other";
 import { TimelineTabs } from "./TimelineTab";
 import { SpringPulse } from "../../core/helpers/springPulse";
 import { signal } from "../../core/helpers/solid";
+import { createContext, createEffect } from "solid-js";
+import { ScrollContainerStore } from "../scrollContainerStore";
+import { PerformanceEditorStore } from "./performanceEditorStore";
+
+export const PerformanceEditorContext = createContext<{
+	perf: PerformanceEditorStore;
+	scroll: ScrollContainerStore;
+}>();
 
 export const PerformanceEditor = () => {
-	const performanceActions: PerformanceAction[] = [
-		"Muting Levers",
-		"Bass Capo",
-		"Hihat Opening",
-	];
+	const perf = new PerformanceEditorStore();
+	const scroll = new ScrollContainerStore();
 	const showSpring = new SpringPulse();
 
 	showSpring.damping = 50;
 	showSpring.stiffness = 300;
 	showSpring.snapTo(130);
 
-	const selectedAction = signal<PerformanceAction | undefined>(
-		performanceActions[1]
-	);
-
-	function setAction(action: PerformanceAction) {
-		selectedAction(action);
-	}
-
-	const open = signal(false);
-
-	function show() {
-		open(true);
-		showSpring.moveTo(0);
-	}
-	function hide() {
-		open(false);
-		showSpring.moveTo(130);
-	}
-	function toggleShow() {
-		open() ? hide() : show();
-	}
+	createEffect(() => {
+		console.log("test");
+		showSpring.moveTo(perf.open() ? 130 : 0);
+	});
 
 	return (
-		<div
-			style={{
-				position: "absolute",
-				width: "100%",
-				bottom: "0px",
-				transform: `translateY(${showSpring.value}px)`,
-			}}
-		>
-			<TimelineTabs
-				actions={performanceActions}
-				selectedAction={selectedAction()}
-				setAction={setAction}
-				toggleShow={toggleShow}
-				show={show}
-			/>
-			<ScrollableTimeline
-				actions={performanceActions}
-				selectedAction={selectedAction()}
-			/>
-		</div>
+		<PerformanceEditorContext.Provider value={{ perf, scroll }}>
+			<div
+				style={{
+					position: "absolute",
+					width: "100%",
+					bottom: "0px",
+					transform: `translateY(${showSpring.value}px)`,
+				}}
+			>
+				<TimelineTabs />
+				<ScrollableTimeline />
+			</div>
+		</PerformanceEditorContext.Provider>
 	);
 };

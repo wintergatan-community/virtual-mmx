@@ -23,17 +23,17 @@ export class ToneChannel<E extends EventBase> {
 		muted?: () => boolean
 	) {
 		timeline.on("add", (event) => {
-			this.tonePart.add(event.tick + "i", event);
+			this.tonePart.add(event.tick() + "i", event);
 			this.tickRecord[event.id] = event.tick();
 		});
 		timeline.on("remove", (event) => {
-			this.tonePart.remove(event.tick + "i");
+			this.tonePart.remove(event.tick() + "i");
 			delete this.tickRecord[event.id];
 		});
 		timeline.on("modify", (event) => {
 			const oldTick = this.tickRecord[event.id];
 			this.tonePart.remove(oldTick + "i");
-			this.tonePart.add(event.tick + "i", event);
+			this.tonePart.add(event.tick() + "i", event);
 			this.tickRecord[event.id] = event.tick();
 		});
 		this.tonePart.callback = (time, event) => {

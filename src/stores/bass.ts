@@ -1,6 +1,6 @@
 import { BassState, BassString, Note } from "vmmx-schema";
 import { AppStore } from "./app";
-import { fromEntries } from "../core/helpers/functions";
+import { fromEntries, mapArrayToObj } from "../core/helpers/functions";
 import { bassStrings } from "../toFutureSchema";
 
 export class BassStore implements BassState {
@@ -21,12 +21,9 @@ export class BassStore implements BassState {
 		4: "G3",
 	};
 
-	// TODO would be nice if this were prettier
-	stringStores: Record<BassString, BassStringStore> = fromEntries(
-		bassStrings.map((string) => [
-			string,
-			new BassStringStore(string, this.tuning, this.capos),
-		])
+	stringStores = mapArrayToObj(
+		bassStrings,
+		(string) => new BassStringStore(string, this.tuning, this.capos)
 	);
 
 	constructor(appStore: AppStore) {

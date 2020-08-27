@@ -4,6 +4,7 @@ import { AppContext } from "../../stores/app";
 export const Crank = () => {
 	const app = useContext(AppContext);
 
+	// height of crank in its rotation
 	const y = () => {
 		const tick = app.player.currentTick();
 		const tpq = app.performance.program.metadata.tpq;

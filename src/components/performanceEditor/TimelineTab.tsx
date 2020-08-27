@@ -1,5 +1,6 @@
 import { PerformanceAction } from "./other";
-import { For } from "solid-js";
+import { For, useContext } from "solid-js";
+import { PerformanceEditorContext } from "./PerformanceEditor";
 
 interface TimelineTabProps {
 	label: string;
@@ -26,23 +27,17 @@ export const TimelineTab = (props: TimelineTabProps) => {
 		</div>
 	);
 };
-interface TimelineTabsProps {
-	setAction: (action: PerformanceAction) => void;
-	selectedAction: PerformanceAction | undefined;
-	actions: PerformanceAction[];
-	toggleShow: () => void;
-	show: () => void;
-}
 
-export const TimelineTabs = (props: TimelineTabsProps) => {
+export const TimelineTabs = () => {
+	const { perf } = useContext(PerformanceEditorContext);
 	return (
-		<div style={{ display: "flex" }} onClick={props.show}>
-			<For each={props.actions}>
+		<div style={{ display: "flex" }} onClick={perf.show}>
+			<For each={perf.performanceActions}>
 				{(action) => (
 					<TimelineTab
 						label={action}
-						selected={props.selectedAction === action}
-						select={() => props.setAction(action)}
+						selected={perf.selectedAction() === action}
+						select={() => perf.setAction(action)}
 					/>
 				)}
 			</For>
@@ -54,7 +49,7 @@ export const TimelineTabs = (props: TimelineTabsProps) => {
 				}}
 				onClick={(e) => {
 					e.stopPropagation();
-					props.toggleShow();
+					perf.toggleShow();
 				}}
 			/>
 		</div>

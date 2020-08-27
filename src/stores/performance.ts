@@ -2,22 +2,15 @@ import { AppStore } from "./app";
 import { ProgramStore } from "./program";
 import {
 	bassStrings,
-	DrumTypeTOFIX,
 	drumTypes,
 	vibraphoneBars,
 	channelGroups,
 } from "../toFutureSchema";
-import {
-	Performance,
-	PerformanceMetadata,
-	State,
-	TimedEvent,
-} from "vmmx-schema";
+import { PerformanceMetadata, State, TimedEvent } from "vmmx-schema";
 import { mapArrayToObj } from "../core/helpers/functions";
 import {
 	MuteEventTimeline,
 	BassDropEventTimeline,
-	DrumsDropEventTimeline,
 	HiHatDropEventTimeline,
 	DropEventTimeline,
 	VibraphoneDropEventTimeline,
@@ -40,13 +33,11 @@ export class PerformanceStore /* implements Performance*/ {
 	eventTimelines = {
 		performanceDrop: {
 			bass: mapArrayToObj(bassStrings, () => new BassDropEventTimeline()),
-			drums: mapArrayToObj<DrumTypeTOFIX, DrumsDropEventTimeline>(
-				drumTypes,
-				(drumType) =>
-					drumType === "hihat"
-						? new HiHatDropEventTimeline()
-						: new DropEventTimeline()
-			), // TODO might want separate drum events
+			drums: mapArrayToObj(drumTypes, (drumType) =>
+				drumType === "hihat"
+					? new HiHatDropEventTimeline()
+					: new DropEventTimeline()
+			),
 			vibraphone: mapArrayToObj(
 				vibraphoneBars,
 				() => new VibraphoneDropEventTimeline()
@@ -65,7 +56,6 @@ export class PerformanceStore /* implements Performance*/ {
 		vibraphone: {
 			vibrato: new VibraphoneVibratoEventTimeline(),
 		},
-		// hihatMachine: undefined, // TODO not sure what to do with this yet
 		hihat: {
 			hatOpen: new HiHatDropEventTimeline(),
 		},

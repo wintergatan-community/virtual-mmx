@@ -9,6 +9,7 @@ import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
 // import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 import { VmmxHeader } from "./VmmxHeader/VmmxHeader";
+import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 
 export const App = () => {
 	const app = new AppStore();

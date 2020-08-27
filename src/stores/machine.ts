@@ -1,10 +1,9 @@
 import { MachineState } from "vmmx-schema";
 import { AppStore } from "./app";
 import { ChannelGroupTOFIX } from "../toFutureSchema";
-import { Signal, signal } from "../core/helpers/solid";
+import { signal } from "../core/helpers/solid";
 import { SomeSignalWrapped } from "../core/helpers/types";
 
-type T = SomeSignalWrapped<MachineState>;
 export class MachineStore implements SomeSignalWrapped<MachineState> {
 	appStore: AppStore;
 

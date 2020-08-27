@@ -20,6 +20,7 @@ export const Bass = () => {
 	const mouse = new MouseTracker();
 	const stringStores = values(app.performance.program.state.bass.stringStores);
 
+	/** Circle markings for each fret on bass neck */
 	const fretDatas = range(1, bass.totalFrets + 1).map((n) => {
 		let markings: number[] = [];
 		if (n === 12) markings = [1.5, 3.5];
@@ -30,6 +31,7 @@ export const Bass = () => {
 		};
 	});
 
+	// currently hovered bass string or undefined
 	const hoveredString = () => {
 		const m = mouse.mousePos();
 		if (!m) return;
@@ -38,6 +40,7 @@ export const Bass = () => {
 		return app.performance.program.state.bass.stringStores[hoveredStringNumber];
 	};
 
+	// handle mouse wheel scrolling
 	function handleWheel(e: WheelEvent) {
 		const h = hoveredString();
 		if (!h) return;

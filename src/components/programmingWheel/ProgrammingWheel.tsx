@@ -115,13 +115,7 @@ const MovingWindow = () => {
 			<ProgramGrid />
 			<PegPlacer />
 			<PlaybackHead />
-			<line
-				x1={0}
-				y1={0}
-				x2={scroll.x.visiblePixelRange()}
-				y2={0}
-				stroke="red"
-			/>
+			<line x2={scroll.x.visiblePixelRange()} stroke="red" />
 		</ScrollBody>
 	);
 };

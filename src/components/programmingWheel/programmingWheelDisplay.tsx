@@ -170,8 +170,8 @@ export class ProgrammingWheelDisplayStore {
 		this.subdivisionLines = memo(
 			() => this.allSubdivisionLines[this.subdivision()]
 		);
-		// return appStore.player.currentTick % this.totalTicks;
-		this.playbackHeadTick = () => 1;
+		this.playbackHeadTick = () =>
+			appStore.player.currentTick() % this.totalTicks();
 
 		this.setSubdivision = (subdivision: NoteSubdivision) => {
 			this.subdivision(subdivision);

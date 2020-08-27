@@ -16,7 +16,7 @@ export class HiHatMachineSound extends VmmxSoundChannel<HiHatMachineModeE> {
 		);
 	}
 
-	triggerStrike = (_?: HiHatMachineModeE, time?: number | undefined) => {
+	triggerStrike = (_?: HiHatMachineModeE, time?: number) => {
 		if (this.hiHatMachineSample?.loaded) {
 			this.hiHatMachineSample.triggerAttack("C5", time ?? context.currentTime);
 		}
