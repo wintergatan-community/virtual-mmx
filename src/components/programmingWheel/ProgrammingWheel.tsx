@@ -52,7 +52,23 @@ export const ProgrammingWheel = () => {
 			const factor = mapValue(e.deltaY, -10, 10, 1.1, 0.9);
 			scroll.y.zoom(factor, mouse.mousePos()?.y ?? 0);
 		} else {
-			scroll.y.scroll(e.deltaY);
+			switch (e.deltaMode) {
+				// All non firefox browsers return delta in pixels
+				case WheelEvent.DOM_DELTA_PIXEL:
+					scroll.y.scroll(e.deltaY);
+					break;
+				case WheelEvent.DOM_DELTA_LINE:
+					// Why, firefox, why? -.-
+					// The * 30 is just a rough guess on my pc, maybe we need a more
+					// intelligent way to calculate the value
+					// (e.g. the one from https://stackoverflow.com/a/37474225)
+					scroll.y.scroll(e.deltaY * 30);
+					break;
+				case WheelEvent.DOM_DELTA_PAGE:
+					// Use hardcoded value this is really fucked up to calculate.
+					// See above link why.
+					scroll.y.scroll(100);
+			}
 		}
 		mouse.forceUpdate(e);
 	}
