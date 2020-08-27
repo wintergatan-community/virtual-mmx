@@ -9,7 +9,11 @@ export default class MidiUse {
 	onNote: (note: Note) => void;
 
 	start() {
-		navigator.requestMIDIAccess().then(this.onMIDISuccess, this.onMIDIFailure);
+		if (navigator.requestMIDIAccess) {
+			navigator
+				.requestMIDIAccess()
+				.then(this.onMIDISuccess, this.onMIDIFailure);
+		}
 	}
 
 	onMIDISuccess = (midiAccess: WebMidi.MIDIAccess) => {
