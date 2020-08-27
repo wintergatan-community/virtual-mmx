@@ -47,14 +47,15 @@
 		"typescript": "^3.9.5",
 		"webpack": "^4.43.0",
 		"webpack-cli": "^3.3.11",
-		"webpack-dev-server": "^3.11.0"
+		"webpack-dev-server": "^3.11.0",
+		"webpack-merge": "^5.1.2"
 	},
 	"scripts": {
 		"bundle": "webpack",
 		"test": "echo \"Error: no test specified\" && exit 0",
-		"dev": "webpack-dev-server --mode development --port 3000 --hot",
-		"start": "webpack-dev-server --mode development --port 3000 --hot --open",
-		"build": "webpack --mode production",
+		"dev": "webpack-dev-server --env development --port 3000 --hot",
+		"start": "webpack-dev-server --env development --port 3000 --hot --open",
+		"build": "webpack --env production",
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d dist",
 		"check-types": "tsc"
