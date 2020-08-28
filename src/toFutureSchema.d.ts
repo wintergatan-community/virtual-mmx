@@ -1,0 +1,10 @@
+import { VibraphoneChannel, BassString, DrumType } from "vmmx-schema";
+export declare const vibraphoneBars: VibraphoneChannel[];
+export declare const bassStrings: BassString[];
+export declare const drumTypes: DrumTypeTOFIX[];
+export declare const instruments: InstrumentName[];
+export declare type InstrumentName = "bass" | "drums" | "vibraphone";
+export declare type ChannelGroupTOFIX = DrumTypeTOFIX | "vibraphone" | "bass";
+export declare type DrumTypeTOFIX = DrumType | "crash";
+export declare const channelGroups: ChannelGroupTOFIX[];
+export declare type HiHatMachineMode = "beat" | "beatAndOffbeat" | "offbeat" | "offbeatAndSixteenth" | "sixteenth" | "sixteenthAndTriplet" | "triplet" | "off";
