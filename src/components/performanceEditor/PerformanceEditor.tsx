@@ -1,11 +1,10 @@
-import { ScrollableTimeline } from "./ScrollableTimeline";
-import { PerformanceAction } from "./other";
 import { TimelineTabs } from "./TimelineTab";
 import { SpringPulse } from "../../core/helpers/springPulse";
-import { signal } from "../../core/helpers/solid";
-import { createContext, createEffect } from "solid-js";
+import { createContext, createDependentEffect } from "solid-js";
 import { ScrollContainerStore } from "../scrollContainerStore";
 import { PerformanceEditorStore } from "./performanceEditorStore";
+import { ScrollableTimeline } from "./ScrollableTimeline";
+import { signal } from "../../core/helpers/solid";
 
 export const PerformanceEditorContext = createContext<{
 	perf: PerformanceEditorStore;
@@ -14,17 +13,21 @@ export const PerformanceEditorContext = createContext<{
 
 export const PerformanceEditor = () => {
 	const perf = new PerformanceEditorStore();
-	const scroll = new ScrollContainerStore();
+	const scroll = new ScrollContainerStore({
+		x: {
+			pixelsPerUnit: signal(1),
+			visiblePixelRange: signal(500),
+		},
+	});
 	const showSpring = new SpringPulse();
 
 	showSpring.damping = 50;
 	showSpring.stiffness = 300;
 	showSpring.snapTo(130);
 
-	createEffect(() => {
-		console.log("test");
-		showSpring.moveTo(perf.open() ? 130 : 0);
-	});
+	createDependentEffect(() => {
+		showSpring.moveTo(perf.open() ? 0 : 130);
+	}, [perf.open]);
 
 	return (
 		<PerformanceEditorContext.Provider value={{ perf, scroll }}>

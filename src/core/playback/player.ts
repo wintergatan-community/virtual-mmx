@@ -68,10 +68,10 @@ export class VmmxPlayer {
 		window.addEventListener(
 			"mousedown",
 			() => {
-				console.log("Tone Instruments Loaded");
 				values(this.instruments).forEach((i) => i.onToneLoad());
 				values(this.sounds).forEach((i) => i.onToneLoad());
 				this.toneLoaded(true);
+				console.log("Tone Instruments Loaded");
 			},
 			{ once: true }
 		);

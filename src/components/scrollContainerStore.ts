@@ -15,6 +15,7 @@ export class ScrollAxisStore {
 	pixelsPerUnit: Signal<number>;
 	visiblePixelRange: Signal<number>;
 	total: Signal<number>;
+	circular: boolean;
 
 	constructor(c?: ScrollAxisStoreProps) {
 		// TODO these constants won't be here
@@ -22,6 +23,7 @@ export class ScrollAxisStore {
 		this.pixelsPerUnit = c?.pixelsPerUnit ?? signal(24);
 		this.visiblePixelRange = c?.visiblePixelRange ?? signal(500);
 		this.total = c?.total ?? signal(1500);
+		this.circular = c?.circular ?? false;
 	}
 
 	visibleRange = () => this.visiblePixelRange() / this.pixelsPerUnit();
@@ -56,8 +58,13 @@ export class ScrollAxisStore {
 	};
 	scroll = (dy: number) => {
 		let newLeast = this.visibleLeast() + this.fromPixel(dy);
-		if (newLeast >= this.total()) newLeast -= this.total();
-		if (newLeast < 0) newLeast += this.total();
+		if (this.circular) {
+			if (newLeast >= this.total()) newLeast -= this.total();
+			if (newLeast < 0) newLeast += this.total();
+		} else {
+			if (newLeast >= this.total()) newLeast = this.total();
+			if (newLeast < 0) newLeast = 0;
+		}
 		this.visibleLeast(newLeast);
 	};
 

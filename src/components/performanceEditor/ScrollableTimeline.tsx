@@ -8,7 +8,7 @@ import { PerformanceEditorContext } from "./PerformanceEditor";
 
 export const ScrollableTimeline = () => {
 	const app = useContext(AppContext);
-	const { perf } = useContext(PerformanceEditorContext);
+	const { perf, scroll } = useContext(PerformanceEditorContext);
 
 	const height = 180;
 	const tick = app.player.currentTick;
@@ -25,8 +25,12 @@ export const ScrollableTimeline = () => {
 		}
 	};
 
+	function handleWheel(e: WheelEvent) {
+		scroll.x.scroll(e.deltaY);
+	}
+
 	return (
-		<svg style={{ width: "100%", "user-select": "none" }}>
+		<svg style={{ width: "100%", "user-select": "none" }} onWheel={handleWheel}>
 			<rect width={2000} height={150} fill="#d9d9d9" /> {/*TODO not fixed*/}
 			{actionEditor}
 			<line

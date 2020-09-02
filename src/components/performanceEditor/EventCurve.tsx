@@ -1,6 +1,7 @@
 import { EventBlip } from "./EventBlip";
 import { Curve } from "../../core/eventTimelines/types/curves";
 import { EventBase } from "../../core/eventTimelines/types/other";
+import { Show } from "solid-js";
 
 export interface Bounds {
 	left: number;
@@ -60,18 +61,18 @@ export function EventCurve<E extends EventBase>(props: EventCurveProps<E>) {
 				valToPixel={p.valToPixel}
 			/>
 
-			{/* {p.curve.end && (
-					<EventBlip
-						event={p.curve.end}
-						bounds={{ left: p.bounds.end.left, right: p.bounds.end.right }}
-						// swapEvents={p.swapEventCurve}
-						color={p.color}
-						selected={p.selectedEvent === p.curve.end}
-						setSelected={setEndSelected}
-						dragging={props.dragging}
-						setDragging={props.setDragging}
-					/>
-				)} */}
+			{/* <Show when={p.curve.end}>
+				<EventBlip
+					event={p.curve.end}
+					bounds={{ left: p.bounds.end.left, right: p.bounds.end.right }}
+					// swapEvents={p.swapEventCurve}
+					color={p.color}
+					selected={p.selectedEvent === p.curve.end}
+					setSelected={setEndSelected}
+					dragging={props.dragging}
+					setDragging={props.setDragging}
+				/>
+			</Show> */}
 		</g>
 	);
 }

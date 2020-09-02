@@ -58,7 +58,7 @@ export const App = () => {
 						<TransportControls />
 					</GridLayout>
 				</div>
-				{/* <PerformanceEditor /> */}
+				<PerformanceEditor />
 			</div>
 		</AppContext.Provider>
 	);

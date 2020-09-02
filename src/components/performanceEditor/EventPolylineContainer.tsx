@@ -102,31 +102,30 @@ export function EventPolylineContainer<E extends EventBase>(
 				{(curve, ind) => {
 					const i = ind();
 					const start = {
-						left: i > 0 ? curves[i - 1].start.tick : 0,
-						right: curve.end?.tick ?? Infinity,
+						left: i > 0 ? curves[i - 1].start.tick() : 0,
+						right: curve.end?.tick() ?? Infinity,
 					};
 					const end = {
-						left: curve.start.tick,
+						left: curve.start.tick(),
 						right:
 							i < curves.length - 1
-								? curves[i + 1].start?.tick ?? Infinity
+								? curves[i + 1].start?.tick() ?? Infinity
 								: Infinity,
 					};
 
 					return (
-						<></>
-						// <EventCurve
-						// 	curve={curve}
-						// 	bounds={{ start, end }}
-						// 	setSelected={setSelected}
-						// 	selectedEvent={selectedEvent()}
-						// 	dragging={dragging()}
-						// 	setDragging={setDragging}
-						// 	shouldShow={props.shouldShow}
-						// 	colorOf={props.colorOf}
-						// 	value={props.value}
-						// 	valToPixel={props.valToPixel}
-						// />
+						<EventCurve
+							curve={curve}
+							bounds={{ start, end }}
+							setSelected={setSelected}
+							selectedEvent={selectedEvent()}
+							dragging={dragging()}
+							setDragging={setDragging}
+							shouldShow={props.shouldShow}
+							colorOf={props.colorOf}
+							value={props.value}
+							valToPixel={props.valToPixel}
+						/>
 					);
 				}}
 			</For>

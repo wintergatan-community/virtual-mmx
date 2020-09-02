@@ -18,13 +18,13 @@ export class PerformanceEditorStore {
 
 	open = signal(false);
 
-	show() {
+	show = () => {
 		this.open(true);
-	}
+	};
 	hide() {
 		this.open(false);
 	}
 	toggleShow() {
-		open() ? this.hide() : this.show();
+		this.open() ? this.hide() : this.show();
 	}
 }

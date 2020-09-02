@@ -24,7 +24,7 @@ export const Crank = () => {
 			<rect x={-26} y={-35} width={6} height={70} fill="rgb(83, 83, 83)" />
 			<rect x={-39} y={-18} width={6} height={36} fill="rgb(83, 83, 83)" />
 
-			<g transform={`translate(0, ${y})`}>
+			<g transform={`translate(0, ${y()})`}>
 				<rect x={-33} y={-3} width={25} height={6} fill="rgb(159, 159, 159)" />
 				<rect
 					x={-10}

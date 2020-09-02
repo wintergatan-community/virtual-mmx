@@ -1,6 +1,8 @@
 import { mapValue } from "../../core/helpers/functions";
 import { RunningTimeline } from "./RunningTimeline";
-import { For } from "solid-js";
+import { For, useContext } from "solid-js";
+import { ScrollBody } from "../Scroll";
+import { PerformanceEditorContext } from "./PerformanceEditor";
 
 interface ValueTimelineProps {
 	labels: number[];
@@ -8,6 +10,8 @@ interface ValueTimelineProps {
 }
 
 export const ValueTimeline = (props: ValueTimelineProps) => {
+	const { scroll } = useContext(PerformanceEditorContext);
+
 	const valueToPixel = (value: number) => {
 		const labels = props.labels;
 		const last = labels[labels.length - 1];
@@ -20,7 +24,7 @@ export const ValueTimeline = (props: ValueTimelineProps) => {
 			<For each={props.labels}>
 				{(label) => <RunningTimeline label={label} y={valueToPixel(label)} />}
 			</For>
-			{props.children(valueToPixel)}
+			<ScrollBody scroll={scroll}>{props.children(valueToPixel)}</ScrollBody>
 		</g>
 	);
 };
