@@ -11,6 +11,7 @@ export declare class ScrollAxisStore {
     pixelsPerUnit: Signal<number>;
     visiblePixelRange: Signal<number>;
     total: Signal<number>;
+    circular: boolean;
     constructor(c?: ScrollAxisStoreProps);
     visibleRange: () => number;
     visibleMost: () => number;
