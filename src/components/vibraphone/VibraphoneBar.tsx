@@ -40,6 +40,7 @@ export const VibraphoneBar = (props: VibraphoneBarProps) => {
 			transform={`translate(${x()}, ${y()})`}
 			onMouseDown={handlePress}
 			onMouseEnter={handlePress}
+			id="vibraphoneBar"
 			y={pulse.value}
 		>
 			<rect

@@ -18,6 +18,7 @@ export const Vibraphone = () => {
 		<VibraphoneContext.Provider value={{ vibra }}>
 			<svg
 				viewBox={`0 0 ${vibra.wholeWidth} ${vibra.height}`}
+				id="vibraphone"
 				style={{
 					width: "100%",
 					height: "100%",
