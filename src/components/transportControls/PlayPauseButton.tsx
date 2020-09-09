@@ -9,6 +9,7 @@ export const PlayPauseButton = (props: PlayPauseButtonProps) => (
 	<MediaButton
 		click={props.togglePlay}
 		color={props.running ? "#93c47d" : "#b7b7b7"}
+		title="Play/Pause"
 	>
 		{props.running ? <PauseIcon /> : <PlayIcon />}
 	</MediaButton>

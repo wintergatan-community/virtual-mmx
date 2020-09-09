@@ -1,6 +1,7 @@
 interface MediaButtonProps {
 	click: () => void;
 	color: string;
+	title: string;
 	children: JSX.Element;
 }
 
@@ -18,6 +19,7 @@ export const MediaButton = (props: MediaButtonProps) => (
 			transition: "0.1s",
 		}}
 		onClick={props.click}
+		title={props.title}
 	>
 		{props.children}
 	</div>

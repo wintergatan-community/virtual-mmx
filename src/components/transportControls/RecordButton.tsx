@@ -9,6 +9,7 @@ export const RecordButton = (props: RecordButtonProps) => (
 	<MediaButton
 		click={props.toggleRecord}
 		color={props.recording ? "#cc0000" : "#b7b7b7"}
+		title="Record"
 	>
 		<RecordIcon color={props.recording ? "#990000" : "#cc0000"} />
 	</MediaButton>

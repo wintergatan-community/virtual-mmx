@@ -7,7 +7,6 @@ import { AppStore, AppContext } from "../stores/app";
 import { ProgrammingWheel } from "./programmingWheel/ProgrammingWheel";
 import { Crank } from "./crank/Crank";
 import { MutingLevers } from "./mutingLevers/MutingLevers";
-// import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 import { VmmxHeader } from "./VmmxHeader/VmmxHeader";
 import { PerformanceEditor } from "./performanceEditor/PerformanceEditor";
 
