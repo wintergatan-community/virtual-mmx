@@ -26,7 +26,7 @@ export class PerformanceStore /* implements Performance*/ {
 		title: "Untitled",
 		author: "Unknown Author",
 	};
-	program: ProgramStore = new ProgramStore(this.appStore);
+	program: ProgramStore;
 	initialState: State = {} as State;
 	events: TimedEvent[] = []; // TODO these last two lines are currently unimplemented garbage
 
@@ -78,5 +78,6 @@ export class PerformanceStore /* implements Performance*/ {
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
+		this.program = new ProgramStore(this.appStore);
 	}
 }

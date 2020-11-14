@@ -18,6 +18,7 @@ export const TimelineTab = (props: TimelineTabProps) => {
 				"border-radius": "20px 20px 0px 0px",
 				"user-select": "none",
 				"line-height": "13px",
+				"pointer-events": "auto",
 				// textAlign: "center",
 				padding: "10px",
 			}}
@@ -46,6 +47,7 @@ export const TimelineTabs = () => {
 					width: "30px",
 					"background-color": "blue",
 					"border-radius": "20px 20px 0px 0px",
+					"pointer-events": "auto",
 				}}
 				onClick={(e) => {
 					e.stopPropagation();
