@@ -30,8 +30,8 @@ import {
 export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
 	appStore: AppStore;
 
-	metadata = new ProgramMetadataStore(this.appStore);
-	state = new StateStore(this.appStore);
+	metadata: ProgramMetadataStore;
+	state: StateStore;
 	dropEvents = []; // TODO computed get
 	dropEventTimelines = {
 		bass: mapArrayToObj(bassStrings, () => new BassDropEventTimeline()),
@@ -54,6 +54,8 @@ export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
 
 	constructor(appStore: AppStore) {
 		this.appStore = appStore;
+		this.metadata = new ProgramMetadataStore(appStore);
+		this.state = new StateStore(appStore);
 	}
 
 	loadProgram(program: Program) {

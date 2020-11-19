@@ -37,6 +37,7 @@ export const PerformanceEditor = () => {
 					width: "100%",
 					bottom: "0px",
 					transform: `translateY(${showSpring.value}px)`,
+					"pointer-events": "none",
 				}}
 			>
 				<TimelineTabs />

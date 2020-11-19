@@ -30,7 +30,10 @@ export const ScrollableTimeline = () => {
 	}
 
 	return (
-		<svg style={{ width: "100%", "user-select": "none" }} onWheel={handleWheel}>
+		<svg
+			style={{ width: "100%", "user-select": "none", "pointer-events": "auto" }}
+			onWheel={handleWheel}
+		>
 			<rect width={2000} height={150} fill="#d9d9d9" /> {/*TODO not fixed*/}
 			{actionEditor}
 			<line
