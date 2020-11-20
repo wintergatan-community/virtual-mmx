@@ -25,6 +25,7 @@ export const Bassdrum = () => {
 		<g
 			style={{
 				transform: `translate(27.3px, 35.3px) scale(${pulse.value + 1})`,
+				cursor: "pointer",
 			}}
 			onMouseDown={handlePress}
 		>

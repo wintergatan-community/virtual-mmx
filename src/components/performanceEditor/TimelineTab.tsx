@@ -19,6 +19,7 @@ export const TimelineTab = (props: TimelineTabProps) => {
 				"user-select": "none",
 				"line-height": "13px",
 				"pointer-events": "auto",
+				cursor: "pointer",
 				// textAlign: "center",
 				padding: "10px",
 			}}

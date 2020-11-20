@@ -26,6 +26,7 @@ export const Snare = () => {
 		<g
 			style={{
 				transform: `translate(53px, 57px) scale(${pulse.value + 1})`,
+				cursor: "pointer",
 			}}
 			onMouseDown={handlePress}
 		>

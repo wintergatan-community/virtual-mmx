@@ -55,6 +55,7 @@ export const PegPlacer = () => {
 					<rect
 						onMouseDown={addPeg}
 						onMouseMove={(e) => e.buttons === 1 && addPeg()}
+						style={{cursor: 'pointer'}}
 						width={scroll.x.toPixel(1)}
 						height={height()}
 						fill="#0004"

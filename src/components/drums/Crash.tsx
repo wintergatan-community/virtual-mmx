@@ -25,6 +25,7 @@ export const Crash = () => {
 		<g
 			style={{
 				transform: `translate(50px, 91px) rotate(${pulse.value}deg)`,
+				cursor: 'pointer'
 			}}
 			onMouseDown={handlePress}
 		>

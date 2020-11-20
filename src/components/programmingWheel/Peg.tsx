@@ -33,6 +33,7 @@ export const Peg = (props: PegProps) => {
 			fill={props.activeDivision ? "#ccc" : "#ccc9"}
 			x={shift()}
 			rx={3}
+			style={{cursor: 'pointer'}}
 			onClick={props.click}
 		/>
 	);
