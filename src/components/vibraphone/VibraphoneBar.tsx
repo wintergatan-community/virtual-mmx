@@ -41,6 +41,7 @@ export const VibraphoneBar = (props: VibraphoneBarProps) => {
 			onMouseDown={handlePress}
 			onMouseEnter={handlePress}
 			y={pulse.value}
+			style={{cursor: "pointer"}}
 		>
 			<rect
 				width={vibra.noteWidthPadded}

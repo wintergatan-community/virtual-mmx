@@ -26,6 +26,7 @@ export const HiHat = () => {
 		<g
 			style={{
 				transform: `translate(59.5px, 21.5px) scale(${pulse.value + 1})`,
+				cursor: "pointer",
 			}}
 			onMouseDown={handlePress}
 		>
