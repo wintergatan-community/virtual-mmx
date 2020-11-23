@@ -24,14 +24,14 @@ export const PegPlacer = () => {
 	const alreadyPlaced = () => {
 		const t = timeline();
 		const mouseTick = mouseSnapped()?.mouseTick;
-		if (!mouseTick || !t) return true;
+		if (mouseTick === undefined || mouseTick < 0 || !t) return true;
 		return t.events().some((e) => e.tick() === mouseTick);
 	};
 
 	function addPeg() {
 		const t = timeline();
 		const mouseTick = mouseSnapped()?.mouseTick;
-		if (!mouseTick || !t) return;
+		if (mouseTick === undefined || mouseTick < 0 || !t) return;
 		const difs = t.getAddDifs(new DropE({ tick: mouseTick }));
 		if (!difs) return;
 		t.applyDifs(difs);
