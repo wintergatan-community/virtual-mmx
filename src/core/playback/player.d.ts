@@ -6,6 +6,7 @@ import { ToneChannel } from "./toneChannel";
 import { EventBase } from "../eventTimelines/types/other";
 import { HiHatMachineSound } from "./sounds/hiHatMachine";
 import { MutingLeverSound } from "./sounds/mutingLever";
+/** Container for playback state */
 export declare class VmmxPlayer {
     appStore: AppStore;
     running: import("../helpers/solid").Signal<boolean>;
