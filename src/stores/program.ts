@@ -28,8 +28,6 @@ import {
 } from "../core/eventTimelines/concrete";
 
 export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
-	appStore: AppStore;
-
 	metadata: ProgramMetadataStore;
 	state: StateStore;
 	dropEvents = []; // TODO computed get
@@ -52,10 +50,9 @@ export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
 		return {} as Program; // TODO serialize to file format
 	}
 
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-		this.metadata = new ProgramMetadataStore(appStore);
-		this.state = new StateStore(appStore);
+	constructor() {
+		this.metadata = new ProgramMetadataStore();
+		this.state = new StateStore();
 	}
 
 	loadProgram(program: Program) {
@@ -93,16 +90,10 @@ export class ProgramStore /* implements SomeSignalWrapped<Program> */ {
 }
 
 class ProgramMetadataStore implements ProgramMetadata {
-	appStore: AppStore;
-
 	title = "Untitled";
 	author = "Unknown Author";
 	tpq: 240 = 240; // TODO interface in schema shouldn't force 240
 	version = "0.1.0-beta";
 	readonly length = 61440;
 	procrastination = 69420;
-
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-	}
 }

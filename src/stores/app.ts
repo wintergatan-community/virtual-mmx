@@ -12,7 +12,7 @@ import sampleProgram from "../sampleProgram.json";
 export const AppContext = createContext<AppStore>();
 
 export class AppStore {
-	performance = new PerformanceStore(this);
+	performance = new PerformanceStore();
 
 	jointTimelines = {
 		// TODO cant figure out how to let TypeScript let me do this better

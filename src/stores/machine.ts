@@ -5,8 +5,6 @@ import { signal } from "../core/helpers/solid";
 import { SomeSignalWrapped } from "../core/helpers/types";
 
 export class MachineStore implements SomeSignalWrapped<MachineState> {
-	appStore: AppStore;
-
 	mute = {
 		// TODO why can these be undefined in schema??
 		bassdrum: signal<boolean | undefined>(false),
@@ -18,10 +16,6 @@ export class MachineStore implements SomeSignalWrapped<MachineState> {
 	};
 	bpm = signal(180);
 	flywheelConnected = signal(true);
-
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-	}
 
 	setMuted(channelGroup: ChannelGroupTOFIX, muted: boolean) {
 		this.mute[channelGroup](muted);

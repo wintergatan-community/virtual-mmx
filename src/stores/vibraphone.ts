@@ -4,8 +4,6 @@ import { vibraphoneBars } from "../toFutureSchema";
 import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 
 export class VibraphoneStore implements VibraphoneState {
-	appStore: AppStore;
-
 	vibratoEnabled = true;
 	vibratoSpeed = 1;
 
@@ -28,10 +26,6 @@ export class VibraphoneStore implements VibraphoneState {
 		vibraphoneBars,
 		(bar) => new VibraphoneBarStore(bar, this.notes)
 	);
-
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-	}
 }
 
 export class VibraphoneBarStore {

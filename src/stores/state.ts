@@ -6,17 +6,11 @@ import { MachineStore } from "./machine";
 import { HihatMachineState, HihatState, State } from "vmmx-schema";
 
 export class StateStore /* implements SomeSignalWrapped<State> */ {
-	appStore: AppStore;
-
-	machine = new MachineStore(this.appStore);
-	vibraphone = new VibraphoneStore(this.appStore);
-	bass = new BassStore(this.appStore);
-	drums = new DrumsStore(this.appStore);
+	machine = new MachineStore();
+	vibraphone = new VibraphoneStore();
+	bass = new BassStore();
+	drums = new DrumsStore();
 	// hihatMachine = new HihatMachineStore(this.appStore);
-
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-	}
 
 	hihatMachine = {} as HihatMachineState; // TODO fix in schema
 	hihat = {} as HihatState; // TODO fix in schema

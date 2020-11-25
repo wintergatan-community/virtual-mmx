@@ -20,8 +20,6 @@ import {
 } from "../core/eventTimelines/concrete";
 
 export class PerformanceStore /* implements Performance*/ {
-	appStore: AppStore;
-
 	metadata: PerformanceMetadata = {
 		title: "Untitled",
 		author: "Unknown Author",
@@ -76,8 +74,7 @@ export class PerformanceStore /* implements Performance*/ {
 		},
 	};
 
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-		this.program = new ProgramStore(this.appStore);
+	constructor() {
+		this.program = new ProgramStore();
 	}
 }

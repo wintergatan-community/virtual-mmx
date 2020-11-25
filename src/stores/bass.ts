@@ -1,11 +1,8 @@
 import { BassState, BassString, Note } from "vmmx-schema";
-import { AppStore } from "./app";
-import { fromEntries, mapArrayToObj } from "../core/helpers/functions";
+import { mapArrayToObj } from "../core/helpers/functions";
 import { bassStrings } from "../toFutureSchema";
 
 export class BassStore implements BassState {
-	appStore: AppStore;
-
 	capos: Record<BassString, number> = {
 		// TODO should use Record and prevent optional in schema
 		1: 0,
@@ -25,10 +22,6 @@ export class BassStore implements BassState {
 		bassStrings,
 		(string) => new BassStringStore(string, this.tuning, this.capos)
 	);
-
-	constructor(appStore: AppStore) {
-		this.appStore = appStore;
-	}
 }
 
 export class BassStringStore {
