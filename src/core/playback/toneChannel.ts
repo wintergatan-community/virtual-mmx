@@ -13,8 +13,10 @@ const partOptions = {
 	loopEnd: 240 * 4 * 16 + "i",
 };
 
+/** Wrapper around ToneJS Parts synced with some EventTimeline */
 export class ToneChannel<E extends EventBase> {
 	private tonePart = new Part(partOptions);
+	// poor implementation until a reliable reactivity mechanism is used
 	tickRecord: Record<number, number> = {};
 
 	constructor(
@@ -49,6 +51,7 @@ export class ToneChannel<E extends EventBase> {
 	}
 }
 
+/** A container for two ToneChannels, one for program and one for performance */
 export class JointToneChannel<E extends EventBase> {
 	program: ToneChannel<E>;
 	performance: ToneChannel<E>;

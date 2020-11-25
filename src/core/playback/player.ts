@@ -12,6 +12,7 @@ import { MutingLeverSound } from "./sounds/mutingLever";
 import { signal } from "../helpers/solid";
 import { createEffect } from "solid-js";
 
+/** Container for playback state */
 export class VmmxPlayer {
 	appStore: AppStore;
 

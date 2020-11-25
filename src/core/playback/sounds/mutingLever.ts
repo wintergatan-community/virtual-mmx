@@ -1,11 +1,11 @@
-import { VmmxSoundChannel } from "../types";
+import { VmmxSound } from "../types";
 import { AppStore } from "../../../stores/app";
 import { Sampler, context, Volume, Destination } from "tone";
 import { values } from "../../helpers/functions";
 import { MuteE } from "../../eventTimelines/concrete";
 import { ToneChannel } from "../toneChannel";
 
-export class MutingLeverSound extends VmmxSoundChannel<MuteE> {
+export class MutingLeverSound extends VmmxSound<MuteE> {
 	muteChannels: ToneChannel<MuteE>[];
 	mutingLeverSample?: Sampler;
 

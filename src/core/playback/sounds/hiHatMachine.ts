@@ -1,10 +1,10 @@
-import { VmmxSoundChannel } from "../types";
+import { VmmxSound } from "../types";
 import { ToneChannel } from "../toneChannel";
 import { AppStore } from "../../../stores/app";
 import { Sampler, context, Volume, Destination } from "tone";
 import { HiHatMachineModeE } from "../../eventTimelines/concrete";
 
-export class HiHatMachineSound extends VmmxSoundChannel<HiHatMachineModeE> {
+export class HiHatMachineSound extends VmmxSound<HiHatMachineModeE> {
 	hiHatMachineSample?: Sampler;
 	toneChannel: ToneChannel<HiHatMachineModeE>;
 

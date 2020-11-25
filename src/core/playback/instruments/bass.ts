@@ -8,6 +8,7 @@ import { AppStore } from "../../../stores/app";
 import { BassDropE } from "../../eventTimelines/concrete";
 import { createEffect, createRoot } from "solid-js";
 
+// Represents the bass instrument
 export class BassInstrument implements VmmxInstrument<BassString, BassDropE> {
 	private bassStore: BassStore;
 	readonly channels: Record<BassString, BassStringChannel>;
