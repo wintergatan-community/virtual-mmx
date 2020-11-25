@@ -1,9 +1,7 @@
-import { AppStore } from "./app";
 import { ProgramStore } from "./program";
 import { PerformanceMetadata, State, TimedEvent } from "vmmx-schema";
 import { MuteEventTimeline, BassDropEventTimeline, HiHatDropEventTimeline, VibraphoneDropEventTimeline, VibraphoneVibratoEventTimeline, CapoEventTimeline, HiHatMachineModeEventTimeline } from "../core/eventTimelines/concrete";
 export declare class PerformanceStore {
-    appStore: AppStore;
     metadata: PerformanceMetadata;
     program: ProgramStore;
     initialState: State;
@@ -30,5 +28,5 @@ export declare class PerformanceStore {
             mode: HiHatMachineModeEventTimeline;
         };
     };
-    constructor(appStore: AppStore);
+    constructor();
 }

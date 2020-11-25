@@ -1,12 +1,9 @@
-import { AppStore } from "./app";
 import { VibraphoneState, VibraphoneChannel, Note } from "vmmx-schema";
 export declare class VibraphoneStore implements VibraphoneState {
-    appStore: AppStore;
     vibratoEnabled: boolean;
     vibratoSpeed: number;
     notes: Record<VibraphoneChannel, Note>;
     barStores: Record<VibraphoneChannel, VibraphoneBarStore>;
-    constructor(appStore: AppStore);
 }
 export declare class VibraphoneBarStore {
     notesObj: Record<VibraphoneChannel, Note>;

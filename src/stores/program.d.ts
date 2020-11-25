@@ -1,10 +1,8 @@
 import { Program, ProgramMetadata } from "vmmx-schema";
-import { AppStore } from "./app";
 import { DrumTypeTOFIX } from "../toFutureSchema";
 import { StateStore } from "./state";
 import { BassDropEventTimeline, VibraphoneDropEventTimeline, DrumsDropEventTimeline } from "../core/eventTimelines/concrete";
 export declare class ProgramStore {
-    appStore: AppStore;
     metadata: ProgramMetadataStore;
     state: StateStore;
     dropEvents: never[];
@@ -14,17 +12,15 @@ export declare class ProgramStore {
         vibraphone: Record<import("vmmx-schema").VibraphoneChannel, VibraphoneDropEventTimeline>;
     };
     serialize(): Program;
-    constructor(appStore: AppStore);
+    constructor();
     loadProgram(program: Program): void;
 }
 declare class ProgramMetadataStore implements ProgramMetadata {
-    appStore: AppStore;
     title: string;
     author: string;
     tpq: 240;
     version: string;
     readonly length = 61440;
     procrastination: number;
-    constructor(appStore: AppStore);
 }
 export {};
