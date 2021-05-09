@@ -9,6 +9,12 @@
 			}
 		],
 		[
+			"@babel/proposal-private-methods",
+			{
+				"loose": true
+			}
+		],
+		[
 			"@babel/proposal-class-properties",
 			{
 				"loose": true
