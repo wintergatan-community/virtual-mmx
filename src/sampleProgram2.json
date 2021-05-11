@@ -1,0 +1,48 @@
+{
+	"dropEvents": [
+		{ "kind": "drum", "tick": 120, "drum": "bassdrum" },
+		{ "kind": "drum", "tick": 120, "drum": "hihat" }
+	],
+	"metadata": {
+		"author": "Felix Wohlfrom",
+		"title": "Sample Program",
+		"length": 61440,
+		"tpq": 240,
+		"procrastination": 9001,
+		"version": "0.1.0-beta"
+	},
+	"state": {
+		"bass": {
+			"capos": {},
+			"tuning": {}
+		},
+		"hihatMachine": {
+			"setting": ""
+		},
+		"machine": {
+			"bpm": 138,
+			"flywheelConnected": true,
+			"mute": {}
+		},
+		"vibraphone": {
+			"vibratoSpeed": 1,
+			"vibratoEnabled": true,
+			"notes": {
+				"1": "B4",
+				"2": "C5",
+				"3": "D5",
+				"4": "E5",
+				"5": "F#5",
+				"6": "G5",
+				"7": "A5",
+				"8": "B5",
+				"9": "C6",
+				"10": "D6",
+				"11": "E6"
+			}
+		},
+		"hihat": {
+			"closed": true
+		}
+	}
+}

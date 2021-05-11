@@ -127,7 +127,17 @@
 		{ "kind": "vibraphone", "tick": 14760, "channel": 8 },
 		{ "kind": "vibraphone", "tick": 14880, "channel": 3 },
 		{ "kind": "vibraphone", "tick": 15000, "channel": 6 },
-		{ "kind": "vibraphone", "tick": 15120, "channel": 7 }
+		{ "kind": "vibraphone", "tick": 15120, "channel": 7 },
+		{ "kind": "drum", "tick": 0, "drum": "bassdrum" },
+		{ "kind": "drum", "tick": 0, "drum": "hihat" },
+		{ "kind": "drum", "tick": 480, "drum": "bassdrum" },
+		{ "kind": "drum", "tick": 480, "drum": "hihat" },
+		{ "kind": "drum", "tick": 960, "drum": "bassdrum" },
+		{ "kind": "drum", "tick": 960, "drum": "hihat" },
+		{ "kind": "drum", "tick": 240, "drum": "snare" },
+		{ "kind": "drum", "tick": 720, "drum": "snare" },
+		{ "kind": "drum", "tick": 1440, "drum": "hihat" },
+		{ "kind": "drum", "tick": 1680, "drum": "crash" }
 	],
 	"metadata": {
 		"author": "Martin Mollin",

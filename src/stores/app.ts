@@ -68,7 +68,7 @@ export class AppStore {
 	}
 
 	setupTesting() {
-		this.loadProgram(sampleProgram as Program);
+		/*this.loadProgram(sampleProgram as Program);
 		const mute = this.performance.eventTimelines.machine.channelMute;
 
 		const debugAddMute = (m: boolean, tick: number) => {
@@ -96,6 +96,6 @@ export class AppStore {
 		debugAddCapo(0, 100);
 		debugAddCapo(2, 200);
 		debugAddCapo(15, 500);
-		debugAddCapo(8, 640);
+		debugAddCapo(8, 640);*/
 	}
 }

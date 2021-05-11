@@ -5,7 +5,7 @@ interface RestartButtonProps {
 }
 
 export const RestartButton = (props: RestartButtonProps) => (
-	<MediaButton click={props.restart} color="#b7b7b7">
+	<MediaButton click={props.restart} color="#b7b7b7" title="Restart playback">
 		<RestartIcon />
 	</MediaButton>
 );
