@@ -1,3 +1,9 @@
+# Repository archived
+
+This repository is no longer worked on and in read-only mode.
+
+It has been fun, but just like the MMX was put to rest, so was its virtual (work in progress) counterpart a long time ago.
+
 # Virtual MMX
 
 [![](https://img.shields.io/github/issues/wintergatan-community/virtual-mmx)](https://github.com/wintergatan-community/virtual-mmx/issues)
